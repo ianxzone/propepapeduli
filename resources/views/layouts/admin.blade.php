@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Admin - ProPePa')</title>
+    @vite('resources/css/app.css')
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+</head>
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden">
+    
+    <!-- Sidebar -->
+    <aside class="w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-20">
+        <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
+            <x-logo variant="pill" />
+            <span class="ml-3 font-headline font-bold text-lg text-primary-fixed">ProPePa PEDULI</span>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.dashboard') ? "font-variation-settings: 'FILL' 1;" : "" }}">dashboard</span>
+                <span>Dasbor</span>
+            </a>
+            <a href="{{ route('admin.modules.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.modules.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.modules.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">library_books</span>
+                <span>Modul Belajar</span>
+            </a>
+            <!-- Placeholders for future menus -->
+            <a href="{{ route('admin.schools.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.schools.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.schools.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">domain</span>
+                <span>Data Sekolah</span>
+            </a>
+            <a href="{{ route('admin.classes.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.classes.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.classes.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">school</span>
+                <span>Data Kelas</span>
+            </a>
+            <a href="{{ route('admin.teachers.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.teachers.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.teachers.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">badge</span>
+                <span>Data Guru</span>
+            </a>
+            <a href="{{ route('admin.students.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.students.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.students.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">group</span>
+                <span>Data Siswa</span>
+            </a>
+            
+            <div class="h-px bg-white/10 my-4 mx-3"></div>
+            
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.users.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.users.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">manage_accounts</span>
+                <span>Manajemen User</span>
+            </a>
+            <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.settings.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">settings</span>
+                <span>Pengaturan Sistem</span>
+            </a>
+        </div>
+        
+        <div class="p-4 border-t border-white/10 shrink-0">
+            <form action="{{ route('admin.logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full transition-colors text-error-container hover:bg-error/20">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                    <span>Keluar</span>
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Topbar -->
+        <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-6 shrink-0 z-10 shadow-sm">
+            <div class="flex items-center gap-4">
+                <h1 class="font-headline text-lg font-bold text-on-surface">@yield('header_title', 'Admin ProPePa')</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-sm">
+                    A
+                </div>
+            </div>
+        </header>
+        
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto p-6 bg-surface-container-low">
+            @if(session('success'))
+                <div class="bg-[#d4edda] text-[#155724] border border-[#c3e6cb] px-4 py-3 rounded-xl mb-6 shadow-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="bg-error-container text-on-error-container border border-error/20 px-4 py-3 rounded-xl mb-6 shadow-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+            
+            @yield('content')
+        </main>
+    </div>
+</body>
+</html>

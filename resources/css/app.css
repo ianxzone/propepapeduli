@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Nunito Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-headline: 'Lexend', sans-serif;
+
+    --color-primary: #570000;
+    --color-primary-container: #800000;
+    --color-secondary: #785900;
+    --color-secondary-container: #fdc003;
+    --color-surface: #f8f9fa;
+    --color-on-surface: #191c1d;
+    --color-on-surface-variant: #5a413d;
+    --color-outline-variant: #e2bfb9;
+
+    --radius-2xl: 1.25rem;
+
+    --spacing-container-padding: 20px;
+    --spacing-touch-target: 44px;
+}
