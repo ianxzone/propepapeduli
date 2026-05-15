@@ -10,13 +10,24 @@
             <h2 class="text-2xl font-bold text-on-surface">Manajemen Backup</h2>
             <p class="text-sm text-on-surface-variant">Cadangkan database Anda secara rutin untuk keamanan data.</p>
         </div>
-        <form action="{{ route('admin.backups.create') }}" method="POST">
-            @csrf
-            <button type="submit" class="bg-primary text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-soft hover:bg-primary/90 transition-all">
-                <span class="material-symbols-outlined">database</span>
-                Buat Backup Baru
-            </button>
-        </form>
+        <div class="flex items-center gap-3">
+            <form action="{{ route('admin.backups.create') }}" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="db">
+                <button type="submit" class="bg-surface-container-high text-on-surface px-6 py-3 rounded-2xl font-bold flex items-center gap-2 border border-outline-variant/30 hover:bg-surface-container-highest transition-all">
+                    <span class="material-symbols-outlined">database</span>
+                    Backup Database
+                </button>
+            </form>
+            <form action="{{ route('admin.backups.create') }}" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="full">
+                <button type="submit" class="bg-primary text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-soft hover:bg-primary/90 transition-all">
+                    <span class="material-symbols-outlined">folder_zip</span>
+                    Backup Database & File
+                </button>
+            </form>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -30,15 +41,15 @@
                 <ul class="space-y-4">
                     <li class="flex items-start gap-3">
                         <span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
-                        <p class="text-sm text-on-surface-variant">Backup hanya mencakup <strong>struktur dan data database</strong> saat ini.</p>
+                        <p class="text-sm text-on-surface-variant"><strong>Backup Database</strong>: Hanya mencakup tabel dan data MySQL.</p>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
-                        <p class="text-sm text-on-surface-variant">File diunggah (gambar/PDF) tidak termasuk dalam backup ini.</p>
+                        <p class="text-sm text-on-surface-variant"><strong>Backup Database & File</strong>: Mencakup database dan semua file yang diunggah (gambar/PDF/dokumen).</p>
                     </li>
                     <li class="flex items-start gap-3">
                         <span class="material-symbols-outlined text-primary text-sm mt-1">check_circle</span>
-                        <p class="text-sm text-on-surface-variant">Simpan file backup di tempat yang aman (Cloud/Flashdisk).</p>
+                        <p class="text-sm text-on-surface-variant">File backup disimpan dalam format .sql atau .zip di server.</p>
                     </li>
                 </ul>
             </div>

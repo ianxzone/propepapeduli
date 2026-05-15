@@ -24,46 +24,68 @@ class BackupController extends Controller
         return view('admin.backup.index', compact('backups'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        $type = $request->input('type', 'db'); // 'db' or 'full'
+
         try {
             $database = config('database.connections.mysql.database');
-            $filename = 'backup-' . $database . '-' . date('Y-m-d-His') . '.sql';
+            $timestamp = date('Y-m-d-His');
+            $filename = 'backup-' . $database . '-' . $timestamp;
             
-            // Simple SQL Export logic
+            // 1. Generate SQL
             $tables = DB::select('SHOW TABLES');
             $tableKey = 'Tables_in_' . $database;
-            
-            $sql = "-- ProPePa PEDULI Database Backup\n";
-            $sql .= "-- Date: " . date('Y-m-d H:i:s') . "\n\n";
+            $sql = "-- ProPePa PEDULI Database Backup\n-- Date: " . date('Y-m-d H:i:s') . "\n\n";
             
             foreach ($tables as $table) {
                 $tableName = $table->$tableKey;
-                
-                // Structure
                 $createTable = DB::select("SHOW CREATE TABLE `$tableName`")[0];
-                $sql .= "\n\n-- Table structure for `$tableName` --\n";
-                $sql .= "DROP TABLE IF EXISTS `$tableName`;\n";
-                $sql .= $createTable->{'Create Table'} . ";\n\n";
+                $sql .= "\n\nDROP TABLE IF EXISTS `$tableName`;\n" . $createTable->{'Create Table'} . ";\n\n";
                 
-                // Data
                 $rows = DB::table($tableName)->get();
-                if ($rows->count() > 0) {
-                    $sql .= "-- Dumping data for `$tableName` --\n";
-                    foreach ($rows as $row) {
-                        $values = collect((array)$row)->map(function ($val) {
-                            if (is_null($val)) return 'NULL';
-                            return "'" . addslashes($val) . "'";
-                        })->implode(', ');
-                        
-                        $sql .= "INSERT INTO `$tableName` VALUES ($values);\n";
-                    }
+                foreach ($rows as $row) {
+                    $values = collect((array)$row)->map(fn($val) => is_null($val) ? 'NULL' : "'" . addslashes($val) . "'")->implode(', ');
+                    $sql .= "INSERT INTO `$tableName` VALUES ($values);\n";
                 }
             }
 
-            Storage::disk('local')->put('backups/' . $filename, $sql);
+            if ($type === 'full') {
+                // 2. Create ZIP (SQL + Uploads)
+                $zipFilename = $filename . '-full.zip';
+                $zipPath = storage_path('app/backups/' . $zipFilename);
+                
+                if (!file_exists(dirname($zipPath))) {
+                    mkdir(dirname($zipPath), 0755, true);
+                }
 
-            return back()->with('success', 'Backup database berhasil dibuat: ' . $filename);
+                $zip = new \ZipArchive();
+                if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+                    // Add SQL file
+                    $zip->addFromString('database.sql', $sql);
+                    
+                    // Add public uploads
+                    $uploadPath = storage_path('app/public');
+                    if (is_dir($uploadPath)) {
+                        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($uploadPath), \RecursiveIteratorIterator::LEAVES_ONLY);
+                        foreach ($files as $name => $file) {
+                            if (!$file->isDir()) {
+                                $filePath = $file->getRealPath();
+                                $relativePath = 'uploads/' . substr($filePath, strlen($uploadPath) + 1);
+                                $zip->addFile($filePath, $relativePath);
+                            }
+                        }
+                    }
+                    $zip->close();
+                }
+                $finalFilename = $zipFilename;
+            } else {
+                // Save as SQL only
+                $finalFilename = $filename . '.sql';
+                Storage::disk('local')->put('backups/' . $finalFilename, $sql);
+            }
+
+            return back()->with('success', 'Backup berhasil dibuat: ' . $finalFilename);
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membuat backup: ' . $e->getMessage());
         }
