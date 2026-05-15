@@ -1,3 +1,17 @@
 {
-    "DEPLOYPATH": "/home/ianxzone/devpropepap"
+    "DEPLOYPATH": "/home/ianxzone/devpropepap",
+    "task": [
+        "app",
+        "bootstrap",
+        "config",
+        "database",
+        "public",
+        "resources",
+        "routes",
+        "storage",
+        "tests",
+        "artisan",
+        "composer.json",
+        ".env.example"
+    ]
 }
