@@ -75,13 +75,13 @@
                         </a>
                         @endif
                         @if($team->sinta_link)
-                        <a href="{{ $team->sinta_link }}" target="_blank" title="SINTA" class="px-5 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center hover:bg-primary/5 transition-all group">
-                            <span class="text-[10px] font-black text-outline group-hover:text-primary">SINTA</span>
+                        <a href="{{ $team->sinta_link }}" target="_blank" title="SINTA" class="px-4 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center hover:bg-primary/5 transition-all group">
+                            <img src="{{ asset('assets/img/icons/sinta.png') }}" class="h-6 grayscale group-hover:grayscale-0" alt="SINTA">
                         </a>
                         @endif
                         @if($team->scopus_link)
-                        <a href="{{ $team->scopus_link }}" target="_blank" title="Scopus" class="px-5 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center hover:bg-primary/5 transition-all group text-orange-400 group-hover:text-orange-600">
-                            <span class="text-[10px] font-black">SCOPUS</span>
+                        <a href="{{ $team->scopus_link }}" target="_blank" title="Scopus" class="px-4 h-12 rounded-2xl bg-surface-container-low flex items-center justify-center hover:bg-primary/5 transition-all group">
+                            <img src="{{ asset('assets/img/icons/scopus.png') }}" class="h-6 grayscale group-hover:grayscale-0" alt="Scopus">
                         </a>
                         @endif
                         @if($team->orcid_link)
