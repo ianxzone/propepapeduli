@@ -53,11 +53,13 @@ class BackupController extends Controller
             if ($type === 'full') {
                 // 2. Create ZIP (SQL + Uploads)
                 $zipFilename = $filename . '-full.zip';
-                $zipPath = storage_path('app/backups/' . $zipFilename);
                 
-                if (!file_exists(dirname($zipPath))) {
-                    mkdir(dirname($zipPath), 0755, true);
+                // Ensure backups directory exists in local disk
+                if (!Storage::disk('local')->exists('backups')) {
+                    Storage::disk('local')->makeDirectory('backups');
                 }
+
+                $zipPath = Storage::disk('local')->path('backups/' . $zipFilename);
 
                 $zip = new \ZipArchive();
                 if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
@@ -77,6 +79,8 @@ class BackupController extends Controller
                         }
                     }
                     $zip->close();
+                } else {
+                    throw new \Exception("Gagal membuat file ZIP di: " . $zipPath);
                 }
                 $finalFilename = $zipFilename;
             } else {
