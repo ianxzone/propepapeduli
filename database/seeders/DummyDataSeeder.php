@@ -53,6 +53,21 @@ class DummyDataSeeder extends Seeder
             'class_id' => $class5B->id
         ]);
 
+        // 3a. Create Admins
+        User::create([
+            'name' => 'Administrator ProPePa',
+            'email' => 'admin@propepa.id',
+            'password' => Hash::make('password'),
+            'role' => 'admin'
+        ]);
+
+        User::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@propepa.id',
+            'password' => Hash::make('password'),
+            'role' => 'super_admin'
+        ]);
+
         // 4. Create Students
         $studentsA = ['Ahmad', 'Bambang', 'Cici', 'Dedi', 'Euis', 'Farhan', 'Gita', 'Hadi', 'Indah', 'Joko'];
         foreach ($studentsA as $name) {
