@@ -31,6 +31,7 @@
                     <tr class="bg-surface-container-low text-on-surface-variant text-sm border-b border-outline-variant/30">
                         <th class="p-4 font-bold">Nama Kelas</th>
                         <th class="p-4 font-bold">Sekolah</th>
+                        <th class="p-4 font-bold text-center">Kode Kelas</th>
                         <th class="p-4 font-bold text-center">Jumlah Siswa</th>
                         <th class="p-4 font-bold text-center">Aksi</th>
                     </tr>
@@ -40,6 +41,11 @@
                         <tr class="hover:bg-surface-container-lowest transition-colors">
                             <td class="p-4 font-bold text-on-surface">{{ $class->name }}</td>
                             <td class="p-4 text-sm text-on-surface-variant">{{ $class->school->name }}</td>
+                            <td class="p-4 text-center">
+                                <span class="font-mono font-black text-primary bg-primary/10 px-3 py-1 rounded-lg">
+                                    {{ $class->code }}
+                                </span>
+                            </td>
                             <td class="p-4 text-center">
                                 <span class="bg-secondary-container/30 text-secondary px-3 py-1 rounded-full text-xs font-bold">
                                     {{ $class->students_count }} Siswa

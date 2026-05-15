@@ -47,8 +47,10 @@
                         <p class="font-headline text-4xl font-bold">{{ $totalStudents }} <span class="text-base font-normal opacity-80">Siswa</span></p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] text-primary-fixed uppercase font-bold tracking-widest">Kode Kelas</p>
-                        <p class="font-headline text-2xl font-black bg-white/20 px-3 py-1 rounded-lg">{{ $class->code }}</p>
+                        <p class="text-[10px] text-primary-fixed uppercase font-bold tracking-widest opacity-80">Kode Kelas</p>
+                        <p class="font-headline text-2xl font-black text-white bg-white/20 px-4 py-1.5 rounded-xl border border-white/30 shadow-inner">
+                            {{ $class->code }}
+                        </p>
                     </div>
                 </div>
             </div>
