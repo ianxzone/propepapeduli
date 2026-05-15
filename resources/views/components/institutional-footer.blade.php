@@ -3,22 +3,19 @@
         <div class="text-center group">
             <p class="text-[9px] font-bold text-outline-variant mb-2 tracking-widest uppercase">Partner</p>
             <div class="h-12 flex items-center justify-center grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                <img src="https://berita.upi.edu/wp-content/uploads/2015/10/logo-upi.png" alt="Logo UPI" class="h-full w-auto object-contain">
+                <img src="https://upload.wikimedia.org/wikipedia/id/thumb/0/09/Logo_Almamater_UPI.svg/250px-Logo_Almamater_UPI.svg.png" alt="Logo UPI" class="h-full w-auto object-contain">
             </div>
         </div>
         <div class="text-center group">
             <p class="text-[9px] font-bold text-outline-variant mb-2 tracking-widest uppercase">Partner</p>
             <div class="h-12 flex items-center justify-center grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                <img src="https://ikipsiliwangi.ac.id/wp-content/uploads/2018/10/logo-ikip-siliwangi.png" alt="Logo IKIP Siliwangi" class="h-full w-auto object-contain">
+                <img src="https://ikipsiliwangi.ac.id/wp-content/uploads/2024/05/25600_Logo-IKIP-warna.png" alt="Logo IKIP Siliwangi" class="h-full w-auto object-contain">
             </div>
         </div>
         <div class="text-center group">
             <p class="text-[9px] font-bold text-outline-variant mb-2 tracking-widest uppercase">Developer</p>
-            <div class="h-10 flex items-center justify-center grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                <div class="flex items-center gap-2 bg-on-surface-variant/5 px-3 py-1.5 rounded-lg border border-outline-variant/20">
-                    <span class="material-symbols-outlined text-primary text-xl">terminal</span>
-                    <span class="font-headline font-bold text-xs tracking-tight text-on-surface">MATEK</span>
-                </div>
+            <div class="h-12 flex items-center justify-center grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+                <img src="https://murniabadi.co.id/gambar/logomatek.png" alt="Logo Matek" class="h-full w-auto object-contain">
             </div>
         </div>
     </div>
