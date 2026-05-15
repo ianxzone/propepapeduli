@@ -3,7 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tentang ProPePa - Visi Indonesia Emas 2045</title>
+    <title>Tentang - {{ $site_settings['site_name'] ?? 'ProPePa PEDULI' }}</title>
+    
+    @if(isset($site_settings['site_favicon']))
+    <link rel="icon" type="image/x-icon" href="{{ $site_settings['site_favicon'] }}">
+    @endif
     @vite('resources/css/app.css')
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
