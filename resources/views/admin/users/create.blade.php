@@ -44,6 +44,7 @@
                             class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
                         <option value="student" {{ old('role') == 'student' ? 'selected' : '' }}>Siswa</option>
                         <option value="teacher" {{ old('role') == 'teacher' ? 'selected' : '' }}>Guru</option>
+                        <option value="dosen" {{ old('role') == 'dosen' ? 'selected' : '' }}>Dosen</option>
                         <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
                     @error('role') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
@@ -73,7 +74,7 @@
 <script>
     function toggleTeacherFields(role) {
         const classField = document.getElementById('class_field');
-        if (role === 'admin') {
+        if (role === 'admin' || role === 'dosen') {
             classField.style.opacity = '0.5';
             classField.style.pointerEvents = 'none';
         } else {

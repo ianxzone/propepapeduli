@@ -6,10 +6,19 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-2">
-            <a href="{{ route('admin.media.index') }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ !$type ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Semua</a>
-            <a href="{{ route('admin.media.index', ['type' => 'image']) }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ $type == 'image' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Gambar</a>
-            <a href="{{ route('admin.media.index', ['type' => 'document']) }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ $type == 'document' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Dokumen</a>
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+            <a href="{{ route('admin.media.index') }}" class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap {{ !$type ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Semua</a>
+            <a href="{{ route('admin.media.index', ['type' => 'image']) }}" class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap {{ $type == 'image' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Gambar</a>
+            <a href="{{ route('admin.media.index', ['type' => 'document']) }}" class="px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap {{ $type == 'document' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Dokumen</a>
+            
+            <div class="ml-4 relative flex-1 min-w-[200px]">
+                <form action="{{ route('admin.media.index') }}" method="GET" class="relative">
+                    @if($type) <input type="hidden" name="type" value="{{ $type }}"> @endif
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama file..." 
+                           class="w-full pl-9 pr-4 py-2 bg-white border border-outline-variant/50 rounded-xl text-sm focus:border-primary focus:ring-0">
+                </form>
+            </div>
         </div>
         
         <div class="flex items-center gap-4">

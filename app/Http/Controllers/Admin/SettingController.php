@@ -21,10 +21,17 @@ class SettingController extends Controller
             'site_description' => 'nullable|string|max:255',
             'site_logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
             'site_favicon' => 'nullable|image|mimes:png,ico,svg|max:1024',
+            'enable_rate_limiting' => 'nullable|boolean',
+            'enable_security_headers' => 'nullable|boolean',
+            'max_login_attempts' => 'nullable|integer|min:1|max:20',
         ]);
 
         $data = $request->except('_token');
         
+        // Handle checkboxes for booleans
+        $data['enable_rate_limiting'] = $request->has('enable_rate_limiting') ? '1' : '0';
+        $data['enable_security_headers'] = $request->has('enable_security_headers') ? '1' : '0';
+
         // Handle Logo Upload
         if ($request->hasFile('site_logo')) {
             $path = $request->file('site_logo')->store('branding', 'public');
@@ -54,6 +61,9 @@ class SettingController extends Controller
         }
         if (in_array($key, ['timezone', 'locale'])) {
             return 'localization';
+        }
+        if (in_array($key, ['enable_rate_limiting', 'enable_security_headers', 'max_login_attempts'])) {
+            return 'security';
         }
         return 'general';
     }

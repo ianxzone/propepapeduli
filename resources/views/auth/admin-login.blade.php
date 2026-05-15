@@ -15,7 +15,6 @@
             <div class="bg-white/10 p-4 rounded-3xl backdrop-blur-md mb-4 border border-white/10">
                 <span class="material-symbols-outlined text-5xl text-primary-fixed" style="font-variation-settings: 'FILL' 1;">shield_person</span>
             </div>
-            <h1 class="font-headline text-headline-lg text-white tracking-tight mt-4">ProPePa PEDULI</h1>
             <p class="font-label text-label-lg text-surface-variant mt-2 uppercase tracking-widest">Admin Control Panel</p>
         </div>
 

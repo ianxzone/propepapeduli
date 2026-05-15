@@ -104,6 +104,13 @@ class ModuleController extends Controller
             'U' => ['task' => ''],
             'L' => ['task' => ''],
             'I' => ['questions' => ''],
+            'essay' => [
+                'question_emotional' => '', 
+                'question_perspective' => '', 
+                'question_care' => '', 
+                'question_responsibility' => '', 
+                'teacher_instruction' => ''
+            ],
         ];
         return view('admin.modules.content', compact('module', 'content'));
     }

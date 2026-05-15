@@ -61,6 +61,18 @@ class StudentController extends Controller
         return view('admin.students.edit', compact('student', 'classes'));
     }
 
+    public function show(User $student)
+    {
+        if ($student->role !== 'student') abort(404);
+        
+        $journals = \App\Models\Journal::where('user_id', $student->id)
+                                    ->with('module')
+                                    ->orderBy('created_at', 'desc')
+                                    ->get();
+
+        return view('admin.students.show', compact('student', 'journals'));
+    }
+
     public function update(Request $request, User $student)
     {
         if ($student->role !== 'student') abort(404);

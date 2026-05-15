@@ -18,9 +18,10 @@ class ModuleController extends Controller
         'U' => 'Ungkapkan',
         'L' => 'Lakukan',
         'I' => 'Introspeksi',
+        'S' => 'Soal_Essay',
     ];
 
-    protected $stepSequence = ['P', 'E', 'D', 'U', 'L', 'I'];
+    protected $stepSequence = ['P', 'E', 'D', 'U', 'L', 'I', 'S'];
 
     public function nextStep(Request $request, Module $module, $currentStepKey)
     {
@@ -35,6 +36,10 @@ class ModuleController extends Controller
             'content' => 'nullable|string',
             'reflection' => 'nullable|string',
             'emotion' => 'nullable|string',
+            'essay_emotional' => 'nullable|string',
+            'essay_perspective' => 'nullable|string',
+            'essay_care' => 'nullable|string',
+            'essay_responsibility' => 'nullable|string',
         ]);
 
         $imagePath = null;
@@ -51,6 +56,18 @@ class ModuleController extends Controller
         ];
 
         $content = $request->input('content', $request->input('reflection', ''));
+        
+        // Handle Multiple Essays for step 'S'
+        if ($currentStepKey === 'S') {
+            $essays = [
+                'emotional' => $request->input('essay_emotional'),
+                'perspective' => $request->input('essay_perspective'),
+                'care' => $request->input('essay_care'),
+                'responsibility' => $request->input('essay_responsibility'),
+            ];
+            $content = json_encode($essays);
+        }
+
         if (empty($content) && isset($defaultContents[$currentStepKey])) {
             $content = $defaultContents[$currentStepKey];
         }
@@ -65,6 +82,17 @@ class ModuleController extends Controller
             ]
         );
 
+        // Notify Teacher
+        \App\Models\Notification::create([
+            'user_id' => $user->id,
+            'module_id' => $module->id,
+            'step' => $currentStepKey,
+            'type' => 'step_completed',
+            'title' => 'Input Jurnal Baru',
+            'message' => $user->name . ' telah menyelesaikan fase ' . ($this->steps[$currentStepKey] ?? $currentStepKey) . ' di modul ' . $module->title,
+            'target_class_id' => $user->class_id,
+        ]);
+
         // Find next step in sequence
         $currentIndex = array_search($currentStepKey, $this->stepSequence);
         $nextIndex = $currentIndex + 1;
@@ -78,7 +106,36 @@ class ModuleController extends Controller
         } else {
             // Module completed
             $progress->update(['is_completed' => true]);
-            return redirect()->route('student.dashboard')->with('success', 'Selamat! Kamu telah menyelesaikan modul ini.');
+
+            // Award Points for Completion
+            $completionPoints = 50;
+            $user->increment('points', $completionPoints);
+            \App\Models\PointsLog::create([
+                'user_id' => $user->id,
+                'points' => $completionPoints,
+                'activity_type' => 'Penyelesaian Modul: ' . $module->title
+            ]);
+
+            // Notify Teacher about module completion
+            \App\Models\Notification::create([
+                'user_id' => $user->id,
+                'module_id' => $module->id,
+                'type' => 'module_completed',
+                'title' => 'Modul Selesai',
+                'message' => $user->name . ' telah menyelesaikan seluruh materi di modul ' . $module->title,
+                'target_class_id' => $user->class_id,
+            ]);
+
+            // Notify Student about Badge
+            \App\Models\Notification::create([
+                'user_id' => $user->id,
+                'module_id' => $module->id,
+                'type' => 'badge_earned',
+                'title' => 'Lencana Baru!',
+                'message' => 'Selamat! Kamu mendapatkan lencana "' . $module->badge_name . '" karena telah menyelesaikan modul ' . $module->title,
+            ]);
+
+            return redirect()->route('student.dashboard')->with('success', 'Selamat! Kamu telah menyelesaikan modul ini dan mendapatkan lencana ' . $module->badge_name);
         }
     }
 

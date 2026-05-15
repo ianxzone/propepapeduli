@@ -31,11 +31,13 @@
         <div class="max-w-7xl mx-auto glass rounded-2xl border border-white/40 shadow-lg px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <x-logo variant="pill" />
-                <span class="font-headline font-bold text-xl text-primary tracking-tight">ProPePa PEDULI</span>
+                <span class="font-headline font-bold text-xl text-primary tracking-tight ml-2">PEDULI</span>
             </div>
             <div class="hidden md:flex items-center gap-8">
-                <a href="#siklus" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Siklus PEDULI</a>
-                <a href="#fitur" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Fitur</a>
+                <a href="/" class="text-sm font-bold text-primary transition-colors">Beranda</a>
+                <a href="{{ route('about') }}" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Tentang</a>
+                <a href="{{ url('/#siklus') }}" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Siklus</a>
+                <a href="{{ url('/#modul') }}" class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors">Modul</a>
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('login') }}" class="text-sm font-bold text-primary px-4 py-2 rounded-xl hover:bg-primary/5 transition-all">Masuk Siswa</a>
@@ -50,17 +52,12 @@
             <div class="swiper-wrapper">
                 <!-- Slide 1 -->
                 <div class="swiper-slide hero-slide">
-                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1600" alt="Education 1">
+                    <img src="https://cdn.pixabay.com/photo/2021/05/09/14/55/children-6241180_1280.jpg" alt="Education 1">
                     <div class="hero-overlay"></div>
                 </div>
                 <!-- Slide 2 -->
                 <div class="swiper-slide hero-slide">
-                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1600" alt="Education 2">
-                    <div class="hero-overlay"></div>
-                </div>
-                <!-- Slide 3 -->
-                <div class="swiper-slide hero-slide">
-                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1600" alt="Education 3">
+                    <img src="https://cdn.pixabay.com/photo/2018/09/28/06/11/kids-3708586_1280.jpg" alt="Education 2">
                     <div class="hero-overlay"></div>
                 </div>
             </div>
@@ -171,7 +168,7 @@
     </section>
 
     <!-- Features -->
-    <section id="fitur" class="py-24 px-6 bg-surface-container-lowest">
+    <section id="modul" class="py-24 px-6 bg-surface-container-lowest">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Feature 1 -->
             <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 space-y-6">
@@ -217,52 +214,72 @@
             <div class="relative px-12">
                 <div class="swiper team-swiper">
                     <div class="swiper-wrapper">
+                        @forelse($teams as $member)
+                        <div class="swiper-slide h-auto">
+                            <div onclick="window.location.href='{{ route('team.show', $member->id) }}'" 
+                                 class="bg-white p-6 rounded-[3rem] shadow-sm border border-outline-variant/20 text-center flex flex-col h-full cursor-pointer hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group">
+                                <div class="relative mb-6 aspect-square overflow-hidden rounded-[2.5rem]">
+                                    <img src="{{ $member->image ?: 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&size=200&background=F9DEDC&color=410002' }}" 
+                                         alt="{{ $member->name }}" 
+                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                </div>
+                                <div class="flex-1 flex flex-col justify-center gap-2">
+                                    <h4 class="font-headline font-bold text-xl text-on-surface leading-tight px-2">{{ $member->name }}</h4>
+                                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">{{ $member->position }}</p>
+                                </div>
+                                
+                                <div class="mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span class="text-[9px] font-bold text-primary uppercase tracking-widest flex items-center justify-center gap-1">
+                                        Lihat Profil <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        @empty
+                        <!-- Default Static Data if Database is Empty -->
                         <!-- Member 1 -->
-                        <div class="swiper-slide">
-                            <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 text-center space-y-6 group hover:shadow-xl hover:shadow-primary/5 transition-all">
-                                <div class="relative w-48 h-48 mx-auto">
-                                    <div class="absolute inset-0 bg-primary/10 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-transform"></div>
+                        <div class="swiper-slide h-auto">
+                            <div class="bg-white p-6 rounded-[3rem] shadow-sm border border-outline-variant/20 text-center flex flex-col h-full group">
+                                <div class="relative mb-6 aspect-square overflow-hidden rounded-[2.5rem]">
                                     <img src="https://propepapeduli.id/assets/img/team/farid.png" alt="Faridillah Fahmi N" 
-                                         class="relative z-10 w-full h-full object-cover rounded-[2rem] shadow-lg grayscale group-hover:grayscale-0 transition-all"
+                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                          onerror="this.src='https://ui-avatars.com/api/?name=Faridillah+Fahmi+N&size=200&background=F9DEDC&color=410002'">
                                 </div>
-                                <div class="space-y-2">
-                                    <h4 class="font-headline font-bold text-xl text-on-surface">Faridillah Fahmi N, M.Pd</h4>
-                                    <p class="text-xs font-bold text-primary uppercase tracking-widest">Peneliti Utama Disertasi</p>
-                                    <p class="text-xs text-on-surface-variant italic leading-relaxed">Perancang Kerangka Konseptual ProPePa.</p>
+                                <div class="flex-1 flex flex-col justify-center gap-2">
+                                    <h4 class="font-headline font-bold text-xl text-on-surface leading-tight px-2">Faridillah Fahmi Nurfurqon, M.Pd</h4>
+                                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">Peneliti Utama Disertasi</p>
                                 </div>
                             </div>
                         </div>
                         <!-- Member 2 -->
-                        <div class="swiper-slide">
-                            <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 text-center space-y-6 group hover:shadow-xl hover:shadow-primary/5 transition-all">
-                                <div class="relative w-48 h-48 mx-auto">
-                                    <div class="absolute inset-0 bg-primary/10 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-transform"></div>
+                        <div class="swiper-slide h-auto">
+                            <div class="bg-white p-6 rounded-[3rem] shadow-sm border border-outline-variant/20 text-center flex flex-col h-full group">
+                                <div class="relative mb-6 aspect-square overflow-hidden rounded-[2.5rem]">
                                     <img src="https://propepapeduli.id/assets/img/team/bunyamin.png" alt="Prof. Dr. Bunyamin Maftuh" 
-                                         class="relative z-10 w-full h-full object-cover rounded-[2rem] shadow-lg grayscale group-hover:grayscale-0 transition-all"
+                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                          onerror="this.src='https://ui-avatars.com/api/?name=Bunyamin+Maftuh&size=200&background=F9DEDC&color=410002'">
                                 </div>
-                                <div class="space-y-2">
-                                    <h4 class="font-headline font-bold text-xl text-on-surface">Prof. Dr. Bunyamin Maftuh, M.Pd., M.A.</h4>
-                                    <p class="text-xs font-bold text-primary uppercase tracking-widest">Promotor</p>
+                                <div class="flex-1 flex flex-col justify-center gap-2">
+                                    <h4 class="font-headline font-bold text-xl text-on-surface leading-tight px-2">Prof. Dr. Bunyamin Maftuh, M.Pd., M.A.</h4>
+                                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">Promotor</p>
                                 </div>
                             </div>
                         </div>
                         <!-- Member 3 -->
-                        <div class="swiper-slide">
-                            <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 text-center space-y-6 group hover:shadow-xl hover:shadow-primary/5 transition-all">
-                                <div class="relative w-48 h-48 mx-auto">
-                                    <div class="absolute inset-0 bg-primary/10 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-transform"></div>
-                                    <img src="https://propepapeduli.id/assets/img/team/mubiar.png" alt="Prof. Dr. H. Mubiar Agustin" 
-                                         class="relative z-10 w-full h-full object-cover rounded-[2rem] shadow-lg grayscale group-hover:grayscale-0 transition-all"
+                        <div class="swiper-slide h-auto">
+                            <div class="bg-white p-6 rounded-[3rem] shadow-sm border border-outline-variant/20 text-center flex flex-col h-full group">
+                                <div class="relative mb-6 aspect-square overflow-hidden rounded-[2.5rem]">
+                                    <img src="https://propepapeduli.id/assets/img/team/mubiar.png" alt="Prof. Dr. Mubiar Agustin" 
+                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                          onerror="this.src='https://ui-avatars.com/api/?name=Mubiar+Agustin&size=200&background=F9DEDC&color=410002'">
                                 </div>
-                                <div class="space-y-2">
-                                    <h4 class="font-headline font-bold text-xl text-on-surface">Prof. Dr. H. Mubiar Agustin, M.Pd.</h4>
-                                    <p class="text-xs font-bold text-primary uppercase tracking-widest">Co-Promotor</p>
+                                <div class="flex-1 flex flex-col justify-center gap-2">
+                                    <h4 class="font-headline font-bold text-xl text-on-surface leading-tight px-2">Prof. Dr. Mubiar Agustin, M.Pd.</h4>
+                                    <p class="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">Co-Promotor</p>
                                 </div>
                             </div>
                         </div>
+                        @endforelse
                     </div>
                 </div>
                 <!-- Navigation Arrows -->
@@ -282,7 +299,7 @@
             <div class="text-center md:text-left space-y-4">
                 <div class="flex items-center gap-3 justify-center md:justify-start">
                     <x-logo variant="pill" />
-                    <span class="font-headline font-bold text-2xl tracking-tight">ProPePa PEDULI</span>
+                    <span class="font-headline font-bold text-2xl tracking-tight ml-2">PEDULI</span>
                 </div>
                 <p class="text-white/50 text-sm max-w-sm">
                     Platform inovatif untuk mendukung implementasi Kurikulum Merdeka dan Proyek Penguatan Profil Pelajar Pancasila.
@@ -299,10 +316,9 @@
         </div>
     </footer>
 
-    <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        const swiper = new Swiper('.hero-swiper', {
+        new Swiper('.hero-swiper', {
             loop: true,
             effect: 'fade',
             speed: 1000,
@@ -316,18 +332,20 @@
             },
         });
 
-        const teamSwiper = new Swiper('.team-swiper', {
+        new Swiper('.team-swiper', {
             slidesPerView: 1,
-            spaceBetween: 24,
-            loop: true,
-            navigation: {
-                nextEl: '.team-next',
-                prevEl: '.team-prev',
+            spaceBetween: 30,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
             },
             breakpoints: {
                 640: { slidesPerView: 2 },
                 1024: { slidesPerView: 3 },
             },
+            autoplay: {
+                delay: 5000,
+            }
         });
     </script>
 </body>

@@ -89,6 +89,9 @@
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
+                                <a href="{{ route('admin.students.show', $student) }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-surface-container text-on-surface-variant hover:bg-blue-600 hover:text-white transition-all" title="Lihat Progres">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </a>
                                 <a href="{{ route('admin.students.edit', $student) }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-surface-container text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all">
                                     <span class="material-symbols-outlined text-[20px]">edit</span>
                                 </a>

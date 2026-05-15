@@ -15,18 +15,21 @@ class DashboardController extends Controller
         $modules = Module::where('is_active', true)->get()->map(function($module) use ($user) {
             $progress = $module->progress()->where('user_id', $user->id)->first();
             
-            // Map step to index (1-6)
-            $stepMap = ['P' => 1, 'E' => 2, 'D' => 3, 'U' => 4, 'L' => 5, 'I' => 6];
-            $module->current_step_index = $progress ? $stepMap[$progress->current_step] : 0;
+            // Map step to index (1-7)
+            $stepMap = ['P' => 1, 'E' => 2, 'D' => 3, 'U' => 4, 'L' => 5, 'I' => 6, 'S' => 7];
+            $module->current_step_index = $progress ? ($stepMap[$progress->current_step] ?? 0) : 0;
             $module->is_completed = $progress ? $progress->is_completed : false;
             
             return $module;
         });
 
         $completedModules = $modules->filter->is_completed;
+        $inProgressModules = $modules->filter(function($m) {
+            return $m->current_step_index > 0 && !$m->is_completed;
+        });
         $totalPoints = $user->points;
         
-        return view('student.dashboard', compact('user', 'modules', 'completedModules', 'totalPoints'));
+        return view('student.dashboard', compact('user', 'modules', 'completedModules', 'inProgressModules', 'totalPoints'));
     }
 
     public function leaderboard()

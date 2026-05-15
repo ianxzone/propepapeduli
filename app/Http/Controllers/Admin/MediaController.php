@@ -13,10 +13,15 @@ class MediaController extends Controller
     public function index(Request $request)
     {
         $type = $request->query('type');
+        $search = $request->query('search');
         $query = Media::latest();
 
         if ($type) {
             $query->where('type', $type);
+        }
+
+        if ($search) {
+            $query->where('original_name', 'like', '%' . $search . '%');
         }
 
         if ($request->ajax() || $request->query('ajax')) {

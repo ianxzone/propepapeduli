@@ -100,25 +100,32 @@
         @endpush
         @endif
 
-        <!-- Emotion Interaction Section -->
-        <section class="bg-white p-6 rounded-3xl border border-outline-variant/30 shadow-soft space-y-6">
-            <h3 class="font-headline text-label-lg text-primary text-center uppercase tracking-widest">Bagaimana perasaanmu?</h3>
-            <div class="flex justify-between items-center px-2">
-                @foreach(['😢', '☹️', '😐', '🙂', '😄'] as $index => $emoji)
-                    <button type="button" 
-                            onclick="selectEmotion(this, '{{ $emoji }}')"
-                            class="emotion-btn w-14 h-14 rounded-2xl bg-surface-container-low flex items-center justify-center text-3xl border border-outline-variant/30 hover:border-primary hover:bg-primary/5 transition-all active:scale-90">
-                        {{ $emoji }}
-                    </button>
-                @endforeach
-            </div>
-        </section>
-
         <!-- Action Button -->
         <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" id="next-form" class="space-y-6">
             @csrf
             <input type="hidden" name="emotion" id="selected_emotion" value="">
             
+            <!-- Emotion Interaction Section -->
+            <section class="bg-white p-6 rounded-3xl border border-outline-variant/30 shadow-soft space-y-6">
+                <h3 class="font-headline text-label-lg text-primary text-center uppercase tracking-widest">Bagaimana perasaanmu?</h3>
+                <div class="flex justify-between items-center px-2">
+                    @foreach(['😢', '☹️', '😐', '🙂', '😄'] as $index => $emoji)
+                        <button type="button" 
+                                onclick="selectEmotion(this, '{{ $emoji }}')"
+                                class="emotion-btn w-14 h-14 rounded-2xl bg-surface-container-low flex items-center justify-center text-3xl border border-outline-variant/30 hover:border-primary hover:bg-primary/5 transition-all active:scale-90">
+                            {{ $emoji }}
+                        </button>
+                    @endforeach
+                </div>
+
+                <div class="pt-4 border-t border-outline-variant/20">
+                    <label for="eksplorasi-content" class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-3">Deskripsikan perasaanmu tentang perspektif di atas:</label>
+                    <textarea id="eksplorasi-content" name="content" rows="4" required
+                              class="w-full bg-surface-container-lowest border border-outline-variant/50 rounded-2xl p-4 text-sm focus:border-primary focus:ring-0 transition-all"
+                              placeholder="Apa yang kamu rasakan setelah melihat kacamata orang lain?"></textarea>
+                </div>
+            </section>
+
             <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-outline-variant/30 shadow-sm">
                 <input type="checkbox" id="confirm-explore" required class="w-6 h-6 rounded-lg text-primary focus:ring-primary border-outline-variant/50">
                 <label for="confirm-explore" class="text-sm font-bold text-on-surface select-none cursor-pointer">

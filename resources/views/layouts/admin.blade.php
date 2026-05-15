@@ -15,7 +15,6 @@
     <aside class="w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-20">
         <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
             <x-logo variant="pill" />
-            <span class="ml-3 font-headline font-bold text-lg text-primary-fixed">ProPePa PEDULI</span>
         </div>
         
         <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
@@ -51,6 +50,10 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.users.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">manage_accounts</span>
                 <span>Manajemen User</span>
             </a>
+            <a href="{{ route('admin.teams.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.teams.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.teams.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">groups</span>
+                <span>Manajemen Tim</span>
+            </a>
             <a href="{{ route('admin.media.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.media.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.media.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">perm_media</span>
                 <span>Pustaka Media</span>
@@ -63,6 +66,14 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('teacher.groups.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">groups</span>
                 <span>Kelola Kelompok</span>
             </a>
+            <a href="{{ route('admin.backups.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.backups.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.backups.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">database</span>
+                <span>Backup Data</span>
+            </a>
+            <a href="{{ route('admin.activity-logs.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.activity-logs.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.activity-logs.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">history</span>
+                <span>Log Aktivitas</span>
+            </a>
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.settings.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">settings</span>
                 <span>Pengaturan Sistem</span>
@@ -70,6 +81,10 @@
         </div>
         
         <div class="p-4 border-t border-white/10 shrink-0">
+            <a href="{{ route('admin.about-app') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.about-app') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.about-app') ? "font-variation-settings: 'FILL' 1;" : "" }}">info</span>
+                <span>Tentang Aplikasi</span>
+            </a>
             <form action="{{ route('admin.logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full transition-colors text-error-container hover:bg-error/20">

@@ -154,6 +154,13 @@
         <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-6">
             @csrf
             
+            <section class="bg-white p-6 rounded-3xl border border-outline-variant/30 shadow-soft space-y-4">
+                <label for="pelajari-content" class="block font-headline text-headline-sm text-primary">Apa yang kamu pelajari dari materi di atas?</label>
+                <textarea id="pelajari-content" name="content" rows="3" required
+                          class="w-full bg-surface-container-low border border-outline-variant/50 rounded-2xl p-4 text-sm focus:border-primary focus:ring-0 transition-all"
+                          placeholder="Tuliskan poin penting yang kamu dapatkan..."></textarea>
+            </section>
+
             <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-outline-variant/30 shadow-sm">
                 <input type="checkbox" id="confirm-learn" required class="w-6 h-6 rounded-lg text-primary focus:ring-primary border-outline-variant/50">
                 <label for="confirm-learn" class="text-sm font-bold text-on-surface select-none cursor-pointer">

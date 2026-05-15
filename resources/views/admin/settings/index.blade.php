@@ -5,6 +5,17 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-on-surface">Pengaturan Sistem</h2>
+            <p class="text-sm text-on-surface-variant">Kelola konfigurasi platform dan keamanan.</p>
+        </div>
+        <a href="{{ route('admin.setup.wizard') }}" class="flex items-center gap-2 bg-secondary text-white px-6 py-3 rounded-2xl font-bold shadow-soft hover:bg-secondary/90 transition-all">
+            <span class="material-symbols-outlined">magic_button</span>
+            Setup Wizard
+        </a>
+    </div>
+
     <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
         
@@ -84,10 +95,53 @@
             </div>
         </div>
 
-        <!-- Contact Settings -->
+        <!-- Security Settings -->
         <div class="bg-white rounded-[2rem] border border-outline-variant/30 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-outline-variant/30 bg-surface-container-low flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl bg-error/10 flex items-center justify-center text-error">
+                    <span class="material-symbols-outlined">security</span>
+                </div>
+                <div>
+                    <h2 class="font-headline text-headline-sm text-on-surface">Keamanan & Proteksi</h2>
+                    <p class="text-xs text-on-surface-variant">Atur proteksi login dan header keamanan.</p>
+                </div>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant/20">
+                    <div>
+                        <h4 class="font-bold text-sm text-on-surface">Rate Limiting (Anti Brute-force)</h4>
+                        <p class="text-[10px] text-on-surface-variant">Batasi percobaan login yang salah untuk mencegah peretasan.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="enable_rate_limiting" value="1" {{ \App\Models\Setting::get('enable_rate_limiting', '1') == '1' ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant/20">
+                    <div>
+                        <h4 class="font-bold text-sm text-on-surface">Header Keamanan (CSP, XSS, Frame)</h4>
+                        <p class="text-[10px] text-on-surface-variant">Aktifkan header proteksi tambahan pada browser pengunjung.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="enable_security_headers" value="1" {{ \App\Models\Setting::get('enable_security_headers', '1') == '1' ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Maksimal Percobaan Login</label>
+                    <input type="number" name="max_login_attempts" value="{{ \App\Models\Setting::get('max_login_attempts', '5') }}" 
+                           class="w-full max-w-[200px] rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
+                    <p class="text-[10px] text-on-surface-variant mt-2 italic">Jumlah kesalahan login sebelum akun dikunci sementara.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Settings -->
+        <div class="bg-white rounded-[2rem] border border-outline-variant/30 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-outline-variant/30 bg-surface-container-low flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-on-surface-variant/10 flex items-center justify-center text-on-surface-variant">
                     <span class="material-symbols-outlined">contact_support</span>
                 </div>
                 <div>

@@ -8,7 +8,7 @@
         <div>
             <div class="flex items-center gap-3">
                 <h2 class="font-headline text-headline-md text-on-surface">Monitor Forum Diskusi</h2>
-                @if(Auth::user()->role === 'admin')
+                @if(in_array(Auth::user()->role, ['admin', 'dosen']))
                     <form action="{{ route('teacher.forum.index') }}" method="GET" id="class-selector-form-forum">
                         <select name="class_id" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-full px-4 py-1 text-xs font-bold text-primary focus:ring-2 focus:ring-primary">
                             <option value="">Pilih Kelas...</option>

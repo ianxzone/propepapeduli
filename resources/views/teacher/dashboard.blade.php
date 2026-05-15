@@ -10,7 +10,7 @@
             <div>
                 <div class="flex items-center gap-3">
                     <h1 class="font-headline text-headline-md text-on-surface">Beranda Guru</h1>
-                    @if(Auth::user()->role === 'admin')
+                    @if(in_array(Auth::user()->role, ['admin', 'dosen']))
                         <form action="{{ route('teacher.dashboard') }}" method="GET" id="class-selector-form">
                             <select name="class_id" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-full px-4 py-1 text-xs font-bold text-primary focus:ring-2 focus:ring-primary">
                                 <option value="">Pilih Kelas...</option>
@@ -23,10 +23,16 @@
                 </div>
                 <p class="text-on-surface-variant text-sm italic">Halo, {{ Auth::user()->name }}! Pantau progres belajar siswa Anda di sini.</p>
             </div>
-            <a href="{{ route('teacher.export') }}" class="flex items-center gap-2 bg-white text-primary border border-primary/20 px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-primary/5 transition-all self-start">
-                <span class="material-symbols-outlined">download</span>
-                <span>Export Laporan</span>
-            </a>
+            <div class="flex flex-wrap gap-2 self-start">
+                <a href="{{ route('teacher.export', ['class_id' => $class->id]) }}" class="flex items-center gap-2 bg-white text-primary border border-primary/20 px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>Laporan Siswa</span>
+                </a>
+                <a href="{{ route('teacher.export.assessments', ['class_id' => $class->id]) }}" class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-blue-700 transition-all">
+                    <span class="material-symbols-outlined">fact_check</span>
+                    <span>Export Penilaian Empati</span>
+                </a>
+            </div>
         </div>
         
         <!-- Welcome & Stats -->
@@ -171,14 +177,15 @@
     gradient.addColorStop(0, '#6750a4');
     gradient.addColorStop(1, 'rgba(103, 80, 164, 0.2)');
 
-    const phaseLabels = ['Pelajari (P)', 'Eksplorasi (E)', 'Diskusi (D)', 'Ungkapkan (U)', 'Lakukan (L)', 'Introspeksi (I)'];
+    const phaseLabels = ['Pelajari (P)', 'Eksplorasi (E)', 'Diskusi (D)', 'Ungkapkan (U)', 'Lakukan (L)', 'Introspeksi (I)', 'Evaluasi (S)'];
     const phaseData = [
         {{ $phaseStats['P'] }}, 
         {{ $phaseStats['E'] }}, 
         {{ $phaseStats['D'] }}, 
         {{ $phaseStats['U'] }}, 
         {{ $phaseStats['L'] }}, 
-        {{ $phaseStats['I'] }}
+        {{ $phaseStats['I'] }},
+        {{ $phaseStats['S'] }}
     ];
 
     new Chart(ctx, {

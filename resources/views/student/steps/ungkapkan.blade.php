@@ -89,12 +89,19 @@
                               style="background-image: repeating-linear-gradient(transparent, transparent 31px, #e2bfb9 32px); background-attachment: local;"></textarea>
                     
                     <div class="flex flex-col items-center gap-3 pt-4">
-                        <button type="button" id="mic-btn" class="flex items-center gap-2 bg-surface-container-low text-primary px-6 py-3 rounded-full border border-outline-variant/30 active:scale-95 transition-all relative overflow-hidden group">
+                        <div id="waveform" class="flex items-end justify-center gap-1 h-8 mb-2 hidden">
+                            <div class="w-1 bg-primary rounded-full animate-bounce h-4" style="animation-duration: 0.5s"></div>
+                            <div class="w-1 bg-primary rounded-full animate-bounce h-6" style="animation-duration: 0.7s"></div>
+                            <div class="w-1 bg-primary rounded-full animate-bounce h-3" style="animation-duration: 0.4s"></div>
+                            <div class="w-1 bg-primary rounded-full animate-bounce h-7" style="animation-duration: 0.6s"></div>
+                            <div class="w-1 bg-primary rounded-full animate-bounce h-4" style="animation-duration: 0.5s"></div>
+                        </div>
+                        <button type="button" id="mic-btn" class="flex items-center gap-3 bg-surface-container-low text-primary px-8 py-4 rounded-full border-2 border-outline-variant/30 active:scale-95 transition-all relative overflow-hidden group shadow-sm">
                             <div id="mic-pulse" class="absolute inset-0 bg-primary/10 scale-0 rounded-full transition-transform duration-500"></div>
-                            <span class="material-symbols-outlined text-xl relative z-10" id="mic-icon" style="font-variation-settings: 'FILL' 1;">mic</span>
-                            <span class="text-sm font-bold relative z-10" id="mic-text">Rekam Suara</span>
+                            <span class="material-symbols-outlined text-2xl relative z-10" id="mic-icon" style="font-variation-settings: 'FILL' 1;">mic</span>
+                            <span class="text-sm font-bold relative z-10" id="mic-text">Dikte Suara</span>
                         </button>
-                        <p id="mic-status" class="text-[10px] text-on-surface-variant font-medium hidden">Mendengarkan... Silakan bicara.</p>
+                        <p id="mic-status" class="text-[10px] text-on-surface-variant font-bold tracking-wider uppercase hidden">Sedang mendengarkan...</p>
                     </div>
                 </div>
             </section>
@@ -138,6 +145,7 @@
                 micIcon.innerText = 'graphic_eq';
                 micText.innerText = 'Berhenti';
                 micStatus.classList.remove('hidden');
+                document.getElementById('waveform').classList.remove('hidden');
                 micPulse.classList.add('scale-150', 'animate-pulse');
                 micBtn.classList.add('border-primary', 'bg-primary/10');
                 
@@ -164,8 +172,9 @@
             recognition.onend = function() {
                 isRecording = false;
                 micIcon.innerText = 'mic';
-                micText.innerText = 'Rekam Suara';
+                micText.innerText = 'Dikte Suara';
                 micStatus.classList.add('hidden');
+                document.getElementById('waveform').classList.add('hidden');
                 micPulse.classList.remove('scale-150', 'animate-pulse');
                 micBtn.classList.remove('border-primary', 'bg-primary/10');
             };

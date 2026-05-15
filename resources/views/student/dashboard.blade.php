@@ -26,6 +26,36 @@
             <p class="text-body-md text-on-surface-variant mt-1">Ayo lanjut belajar hari ini.</p>
         </section>
 
+        <!-- Continue Learning Section (Proactive) -->
+        @if($inProgressModules->count() > 0)
+        <section class="space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div class="flex items-center gap-2 text-secondary">
+                <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+                <h3 class="font-headline text-sm font-bold uppercase tracking-widest">Lanjutkan Belajarmu</h3>
+            </div>
+            
+            <div class="flex gap-4 overflow-x-auto no-scrollbar -mx-container-padding px-container-padding pb-2">
+                @foreach($inProgressModules as $module)
+                <a href="{{ route('student.module.show', $module->id) }}" class="flex-shrink-0 w-72 bg-secondary/5 border-2 border-secondary/20 rounded-[2rem] p-5 flex items-center gap-4 group active:scale-95 transition-all">
+                    <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-sm shrink-0">
+                        <img src="{{ $module->thumbnail }}" class="w-full h-full object-cover rounded-xl" alt="">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-headline text-sm font-bold text-on-surface truncate">{{ $module->title }}</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="flex-1 h-1.5 bg-secondary/10 rounded-full overflow-hidden">
+                                <div class="bg-secondary h-full" style="width: {{ ($module->current_step_index / 7) * 100 }}%"></div>
+                            </div>
+                            <span class="text-[9px] font-bold text-secondary">{{ $module->current_step_index }}/7</span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform">chevron_right</span>
+                </a>
+                @endforeach
+            </div>
+        </section>
+        @endif
+
         <!-- Module Progress List -->
         <section class="space-y-4">
             <div class="flex items-center justify-between">
@@ -47,18 +77,18 @@
                 <div class="p-6 space-y-4">
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-on-surface-variant font-medium">Progres Belajar</span>
-                        <span class="text-primary font-bold">{{ $module->current_step_index }}/6 Tahap</span>
+                        <span class="text-primary font-bold">{{ $module->current_step_index }}/7 Tahap</span>
                     </div>
                     <div class="w-full bg-surface h-3 rounded-full overflow-hidden border border-outline-variant/10">
                         <div class="bg-primary h-full rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(87,0,0,0.2)]" 
-                             style="width: {{ ($module->current_step_index / 6) * 100 }}%"></div>
+                             style="width: {{ ($module->current_step_index / 7) * 100 }}%"></div>
                     </div>
                     
                     <!-- Steps Indicator -->
                     <div class="flex justify-between items-center pt-2">
                         @php
-                            $stepLabels = ['P', 'E', 'D', 'U', 'L', 'I'];
-                            $stepMap = ['P' => 1, 'E' => 2, 'D' => 3, 'U' => 4, 'L' => 5, 'I' => 6];
+                            $stepLabels = ['P', 'E', 'D', 'U', 'L', 'I', 'S'];
+                            $stepMap = ['P' => 1, 'E' => 2, 'D' => 3, 'U' => 4, 'L' => 5, 'I' => 6, 'S' => 7];
                         @endphp
                         @foreach($stepLabels as $label)
                             @php 

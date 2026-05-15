@@ -52,23 +52,24 @@
             </div>
         </section>
 
-        <!-- Reflection Section -->
-        <section class="bg-white p-8 rounded-[2rem] border border-outline-variant/30 shadow-soft space-y-4">
-            <label class="block font-headline text-headline-md text-primary" for="reflection">
-                {{ $module->content['I']['questions'] ?? 'Apa yang paling kamu pelajari hari ini?' }}
-            </label>
-            <textarea id="reflection" name="content" rows="4" required
-                      class="w-full rounded-2xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 bg-surface-container-low p-4 text-sm text-on-surface placeholder:text-outline-variant transition-all" 
-                      placeholder="Tuliskan pengalaman seru kamu di sini..."></textarea>
-        </section>
-
         <!-- Final CTA -->
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST">
+        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-8">
             @csrf
+            
+            <!-- Reflection Section -->
+            <section class="bg-white p-8 rounded-[2rem] border border-outline-variant/30 shadow-soft space-y-4 text-left">
+                <label class="block font-headline text-headline-md text-primary" for="reflection">
+                    {{ $module->content['I']['questions'] ?? 'Apa yang paling kamu pelajari hari ini?' }}
+                </label>
+                <textarea id="reflection" name="content" rows="4" required
+                          class="w-full rounded-2xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 bg-surface-container-low p-4 text-sm text-on-surface placeholder:text-outline-variant transition-all" 
+                          placeholder="Tuliskan pengalaman seru kamu di sini..."></textarea>
+            </section>
+
             <button type="submit" 
                     class="w-full h-16 bg-primary text-white rounded-2xl font-headline text-button-text flex items-center justify-center gap-3 shadow-[0_4px_0_0_#410000] active:translate-y-[2px] active:shadow-[0_2px_0_0_#410000] hover:bg-primary-container transition-all">
-                <span>Selesai & Kembali ke Beranda</span>
-                <span class="material-symbols-outlined">home</span>
+                <span>Lanjut ke Evaluasi Akhir</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
             </button>
         </form>
     </main>

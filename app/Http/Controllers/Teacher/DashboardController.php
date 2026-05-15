@@ -17,13 +17,13 @@ class DashboardController extends Controller
     {
         $teacher = Auth::user();
         
-        // Ensure only teachers or admins access this
-        if (!in_array($teacher->role, ['teacher', 'admin'])) {
+        // Ensure only teachers, admins, or dosen access this
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) {
             return redirect()->route('student.dashboard');
         }
 
         $classId = $request->input('class_id', $teacher->class_id);
-        if (!$classId && $teacher->role === 'admin') {
+        if (!$classId && in_array($teacher->role, ['admin', 'dosen'])) {
             $classId = SchoolClass::first()?->id;
         }
 
@@ -50,14 +50,14 @@ class DashboardController extends Controller
 
         // Stats for Chart: Completion per phase across the class
         $phaseStats = [
-            'P' => 0, 'E' => 0, 'D' => 0, 'U' => 0, 'L' => 0, 'I' => 0
+            'P' => 0, 'E' => 0, 'D' => 0, 'U' => 0, 'L' => 0, 'I' => 0, 'S' => 0
         ];
 
         foreach ($students as $student) {
             $progresses = $student->progress;
             foreach ($progresses as $prog) {
                 // We count how many students have reached/passed each phase
-                $phases = ['P', 'E', 'D', 'U', 'L', 'I'];
+                $phases = ['P', 'E', 'D', 'U', 'L', 'I', 'S'];
                 $currentIndex = array_search($prog->current_step, $phases);
                 for ($i = 0; $i <= $currentIndex; $i++) {
                     $phaseStats[$phases[$i]]++;
@@ -65,14 +65,34 @@ class DashboardController extends Controller
             }
         }
 
-        return view('teacher.dashboard', compact('teacher', 'class', 'classes', 'students', 'modules', 'averagePoints', 'totalStudents', 'phaseStats'));
+        return view('teacher.dashboard', compact('class', 'classes', 'students', 'modules', 'totalStudents', 'averagePoints', 'phaseStats'));
+    }
+
+    public function students(Request $request)
+    {
+        $teacher = Auth::user();
+        $classId = $request->input('class_id', $teacher->class_id);
+        if (!$classId && in_array($teacher->role, ['admin', 'dosen'])) $classId = SchoolClass::first()?->id;
+
+        $class = SchoolClass::with('school')->find($classId);
+        $classes = SchoolClass::all();
+
+        $students = User::where('role', 'student')
+                        ->where('class_id', $classId)
+                        ->when($request->search, function($q) use ($request) {
+                            $q->where('name', 'like', '%' . $request->search . '%');
+                        })
+                        ->orderBy('name')
+                        ->paginate(20);
+
+        return view('teacher.students.index', compact('students', 'class', 'classes'));
     }
 
     public function journals(Request $request)
     {
         $teacher = Auth::user();
         $classId = $request->input('class_id', $teacher->class_id);
-        if (!$classId && $teacher->role === 'admin') $classId = SchoolClass::first()?->id;
+        if (!$classId && in_array($teacher->role, ['admin', 'dosen'])) $classId = SchoolClass::first()?->id;
 
         $class = SchoolClass::find($classId);
         $classes = SchoolClass::all();
@@ -85,27 +105,35 @@ class DashboardController extends Controller
         return view('teacher.journals.index', compact('journals', 'class', 'classes'));
     }
 
-    public function studentDetail(User $student)
+    public function studentDetail(Request $request, User $student)
     {
         $teacher = Auth::user();
-        if (!in_array($teacher->role, ['teacher', 'admin']) || ($teacher->role === 'teacher' && $student->class_id !== $teacher->class_id)) {
-            abort(403);
-        }
-
-        $modules = Module::where('is_active', true)->get();
-        $journals = $student->journals()->with('module')->orderBy('created_at', 'desc')->get();
+        if ($student->role !== 'student') abort(404);
         
-        return view('teacher.student-detail', compact('student', 'modules', 'journals'));
+        $selectedModuleId = $request->input('module_id');
+        $modules = Module::where('is_active', true)->get();
+        
+        $journalsQuery = Journal::where('user_id', $student->id)->with('module');
+        if ($selectedModuleId) {
+            $journalsQuery->where('module_id', $selectedModuleId);
+        }
+        $journals = $journalsQuery->orderBy('created_at', 'desc')->get();
+
+        return view('teacher.student-detail', compact('student', 'journals', 'modules', 'selectedModuleId'));
     }
 
     public function saveFeedback(Request $request, Journal $journal)
     {
         $teacher = Auth::user();
-        if (!in_array($teacher->role, ['teacher', 'admin'])) abort(403);
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) abort(403);
 
         $request->validate([
             'teacher_feedback' => 'nullable|string',
-            'teacher_points' => 'required|integer|min:0|max:100',
+            'teacher_points' => 'required|integer',
+            'score_emotional' => 'nullable|integer|between:1,4',
+            'score_perspective' => 'nullable|integer|between:1,4',
+            'score_care' => 'nullable|integer|between:1,4',
+            'score_responsibility' => 'nullable|integer|between:1,4',
         ]);
 
         $oldPoints = $journal->teacher_points;
@@ -113,6 +141,10 @@ class DashboardController extends Controller
         $journal->update([
             'teacher_feedback' => $request->teacher_feedback,
             'teacher_points' => $request->teacher_points,
+            'score_emotional' => $request->score_emotional,
+            'score_perspective' => $request->score_perspective,
+            'score_care' => $request->score_care,
+            'score_responsibility' => $request->score_responsibility,
         ]);
 
         // Update student total points based on difference
@@ -133,7 +165,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $classId = $request->input('class_id', $user->class_id);
-        if (!$classId && $user->role === 'admin') $classId = SchoolClass::first()?->id;
+        if (!$classId && in_array($user->role, ['admin', 'dosen'])) $classId = SchoolClass::first()?->id;
         
         $class = SchoolClass::find($classId);
         $classes = SchoolClass::all();
@@ -171,17 +203,79 @@ class DashboardController extends Controller
         return view('teacher.forum.index', compact('messages', 'modules', 'groups', 'selectedModuleId', 'selectedGroupId', 'class', 'classes', 'selectedModule', 'groupMap'));
     }
 
-    public function export()
+    public function reports(Request $request)
+    {
+        $user = Auth::user();
+        $classId = $request->input('class_id', $user->class_id);
+        if (!$classId && in_array($user->role, ['admin', 'dosen'])) $classId = SchoolClass::first()?->id;
+
+        $class = SchoolClass::find($classId);
+        $classes = SchoolClass::all();
+
+        $assessments = Journal::whereHas('user', function($q) use ($classId) {
+            $q->where('class_id', $classId);
+        })->where('step', 'S')->with('user', 'module')->orderBy('created_at', 'desc')->get();
+
+        return view('teacher.reports.index', compact('class', 'classes', 'assessments'));
+    }
+
+    public function exportAssessments(Request $request)
     {
         $teacher = Auth::user();
-        $class = SchoolClass::find($teacher->class_id);
+        $classId = $request->input('class_id', $teacher->class_id);
+        $class = SchoolClass::find($classId);
+        
+        $fileName = 'Laporan_Penilaian_Empati_' . str_replace(' ', '_', $class->name) . '_' . date('Ymd') . '.csv';
+        
+        $journals = Journal::whereHas('user', function($q) use ($classId) {
+            $q->where('class_id', $classId);
+        })->where('step', 'S')->with('user', 'module')->get();
+
+        $headers = array(
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        );
+
+        $columns = array('Nama Siswa', 'Modul', 'Jawaban Essay', 'Emosional (1-4)', 'Perspektif (1-4)', 'Kepedulian (1-4)', 'Tanggung Jawab (1-4)', 'Total Nilai (0-100)', 'Umpan Balik Guru');
+
+        $callback = function() use($journals, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($journals as $journal) {
+                fputcsv($file, array(
+                    $journal->user->name,
+                    $journal->module->title,
+                    $journal->content,
+                    $journal->score_emotional ?? '-',
+                    $journal->score_perspective ?? '-',
+                    $journal->score_care ?? '-',
+                    $journal->score_responsibility ?? '-',
+                    $journal->teacher_points,
+                    $journal->teacher_feedback ?? '-'
+                ));
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function export(Request $request)
+    {
+        $teacher = Auth::user();
+        $classId = $request->input('class_id', $teacher->class_id);
+        $class = SchoolClass::find($classId);
+        
+        $fileName = 'Laporan_Siswa_' . str_replace(' ', '_', $class->name) . '_' . date('Ymd') . '.csv';
         $students = User::where('role', 'student')
-                        ->where('class_id', $teacher->class_id)
-                        ->orderBy('name')
+                        ->where('class_id', $classId)
                         ->get();
 
-        $fileName = 'Laporan_Siswa_' . str_replace(' ', '_', $class->name) . '_' . date('Y-m-d') . '.csv';
-        
         $headers = array(
             "Content-type"        => "text/csv",
             "Content-Disposition" => "attachment; filename=$fileName",

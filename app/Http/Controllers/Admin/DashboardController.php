@@ -11,7 +11,7 @@ class DashboardController extends Controller
     public function index()
     {
         $admin = Auth::user();
-        if ($admin->role !== 'admin') {
+        if (!in_array($admin->role, ['admin', 'dosen'])) {
             abort(403);
         }
 

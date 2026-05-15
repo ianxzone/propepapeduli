@@ -208,6 +208,7 @@
             </div>
             
             @push('scripts')
+            <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
             <script>
                 let currentArgType = 'reason';
                 const roleIcons = {
@@ -253,12 +254,18 @@
                                 <span class="text-[9px] font-bold uppercase tracking-wider">${isReason ? 'Alasan' : 'Sanggahan'}</span>
                                 <div class="flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[10px] opacity-70">${roleIcons[cardData.role || 'warga']}</span>
-                                    <button onclick="startLinking('${cardData.id}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hubungkan ke argumen lain">
+                                    <button onclick="startLinking('${cardData.id}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hubungkan">
                                         <span class="material-symbols-outlined text-[8px]">account_tree</span>
+                                    </button>
+                                    <button onclick="editCard('${cardData.id}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Ubah">
+                                        <span class="material-symbols-outlined text-[8px]">edit</span>
+                                    </button>
+                                    <button onclick="deleteCard('${cardData.id}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hapus">
+                                        <span class="material-symbols-outlined text-[8px]">close</span>
                                     </button>
                                 </div>
                             </div>
-                            <div class="p-3 text-[10px] leading-tight font-medium text-on-surface" onclick="handleCardClick('${cardData.id}')">
+                            <div class="p-3 text-[10px] leading-tight font-medium text-on-surface card-text" onclick="handleCardClick('${cardData.id}')">
                                 ${cardData.text}
                             </div>
                         `;
@@ -340,12 +347,18 @@
                             <span class="text-[9px] font-bold uppercase tracking-wider">${isReason ? 'Alasan' : 'Sanggahan'}</span>
                             <div class="flex items-center gap-1">
                                 <span class="material-symbols-outlined text-[10px] opacity-70">${roleIcons[role]}</span>
-                                <button onclick="startLinking('${cardId}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hubungkan ke argumen lain">
+                                <button onclick="startLinking('${cardId}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hubungkan">
                                     <span class="material-symbols-outlined text-[8px]">account_tree</span>
+                                </button>
+                                <button onclick="editCard('${cardId}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Ubah">
+                                    <span class="material-symbols-outlined text-[8px]">edit</span>
+                                </button>
+                                <button onclick="deleteCard('${cardId}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hapus">
+                                    <span class="material-symbols-outlined text-[8px]">close</span>
                                 </button>
                             </div>
                         </div>
-                        <div class="p-3 text-[10px] leading-tight font-medium text-on-surface" onclick="handleCardClick('${cardId}')">
+                        <div class="p-3 text-[10px] leading-tight font-medium text-on-surface card-text" onclick="handleCardClick('${cardId}')">
                             ${text}
                         </div>
                     `;
@@ -409,6 +422,34 @@
                     }
                 }
 
+                function deleteCard(id, e) {
+                    if(e) e.stopPropagation();
+                    if(!confirm('Hapus argumen ini?')) return;
+                    
+                    const card = document.getElementById(id);
+                    if(card) card.remove();
+                    
+                    // Remove connections where this card is either parent or child
+                    connections = connections.filter(c => c.from !== id && c.to !== id);
+                    updateLines();
+                    
+                    // Suggest saving after change
+                    console.log("Card deleted. User needs to click 'Simpan Peta' to persist.");
+                }
+
+                function editCard(id, e) {
+                    if(e) e.stopPropagation();
+                    const card = document.getElementById(id);
+                    const textEl = card.querySelector('.card-text');
+                    const oldText = textEl.innerText.trim();
+                    const newText = prompt('Ubah argumen:', oldText);
+                    
+                    if(newText && newText !== oldText && newText.trim() !== '') {
+                        textEl.innerText = newText;
+                        console.log("Card edited. User needs to click 'Simpan Peta' to persist.");
+                    }
+                }
+
                 function updateLines() {
                     const svg = document.getElementById('map-svg');
                     svg.innerHTML = '';
@@ -466,7 +507,39 @@
                 }
 
                 function exportMapImage() {
-                    alert("📸 Fitur Ekspor sedang diproses...\n\nSistem akan mengambil screenshot kanvas ini dan menyimpannya sebagai file PNG berkualitas tinggi agar bisa dilampirkan dalam portofolio.");
+                    const canvas = document.getElementById('mapping-canvas');
+                    const btn = document.querySelector('button[onclick="exportMapImage()"]');
+                    const originalHTML = btn.innerHTML;
+                    
+                    btn.disabled = true;
+                    btn.innerHTML = '<span class="animate-spin material-symbols-outlined text-sm">progress_activity</span> Memproses...';
+
+                    // Temporarily hide control panel
+                    const controls = canvas.querySelector('.absolute.bottom-4.right-4');
+                    controls.style.display = 'none';
+
+                    html2canvas(canvas, {
+                        backgroundColor: '#f8fafc',
+                        scale: 2, // Higher quality
+                        logging: false,
+                        useCORS: true
+                    }).then(capturedCanvas => {
+                        const link = document.createElement('a');
+                        link.download = 'Peta-Argumen-{{ $module->id }}-' + Date.now() + '.png';
+                        link.href = capturedCanvas.toDataURL('image/png');
+                        link.click();
+                        
+                        // Restore
+                        controls.style.display = 'flex';
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                    }).catch(err => {
+                        console.error('Export error:', err);
+                        alert("Gagal mengekspor gambar. Silakan coba lagi.");
+                        controls.style.display = 'flex';
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                    });
                 }
 
                 function saveMapToDatabase() {

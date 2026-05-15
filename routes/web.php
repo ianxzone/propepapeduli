@@ -9,8 +9,18 @@ use App\Http\Controllers\Student\ModuleController as StudentModule;
 use App\Http\Controllers\Teacher\DashboardController as TeacherDashboard;
 
 Route::get('/', function () {
-    return view('welcome');
+    $teams = \App\Models\Team::where('is_active', true)->orderBy('order')->get();
+    return view('welcome', compact('teams'));
 });
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
+Route::get('/team/{team}', function (\App\Models\Team $team) {
+    if (!$team->is_active) abort(404);
+    return view('team-detail', compact('team'));
+})->name('team.show');
 
 // Student Auth
 Route::get('/login', [StudentAuthController::class, 'showLogin'])->name('login'); // Also serves as 'student.login'
@@ -45,6 +55,7 @@ Route::post('/admin/logout', [App\Http\Controllers\Auth\AdminAuthController::cla
 // Teacher Area
 Route::middleware(['auth'])->prefix('guru')->name('teacher.')->group(function () {
     Route::get('/dashboard', [TeacherDashboard::class, 'index'])->name('dashboard');
+    Route::get('/students', [TeacherDashboard::class, 'students'])->name('students.index');
     Route::get('/student/{student}', [TeacherDashboard::class, 'studentDetail'])->name('student.detail');
     Route::get('/journals', [TeacherDashboard::class, 'journals'])->name('journals.index');
     Route::post('/journal/{journal}/feedback', [TeacherDashboard::class, 'saveFeedback'])->name('journal.feedback');
@@ -53,12 +64,15 @@ Route::middleware(['auth'])->prefix('guru')->name('teacher.')->group(function ()
     Route::post('/groups', [TeacherDashboard::class, 'storeGroup'])->name('groups.store');
     Route::delete('/groups/{group}', [TeacherDashboard::class, 'deleteGroup'])->name('groups.delete');
     Route::post('/groups/{group}/assign', [TeacherDashboard::class, 'assignStudents'])->name('groups.assign');
+    Route::get('/reports', [TeacherDashboard::class, 'reports'])->name('reports.index');
     Route::get('/export', [TeacherDashboard::class, 'export'])->name('export');
+    Route::get('/export-assessments', [TeacherDashboard::class, 'exportAssessments'])->name('export.assessments');
+    Route::get('/notifications', [App\Http\Controllers\Teacher\NotificationController::class, 'index'])->name('notifications');
     Route::post('/logout', [TeacherAuthController::class, 'logout'])->name('logout');
 });
 
 // Admin Area
-Route::middleware('auth')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin_dosen'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
     Route::resource('modules', App\Http\Controllers\Admin\ModuleController::class, ['as' => 'admin']);
     Route::get('modules/{module}/content', [App\Http\Controllers\Admin\ModuleController::class, 'content'])->name('admin.modules.content');
@@ -66,7 +80,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::resource('schools', App\Http\Controllers\Admin\SchoolController::class, ['as' => 'admin'])->except(['show']);
     Route::resource('classes', App\Http\Controllers\Admin\ClassController::class, ['as' => 'admin'])->except(['show']);
     Route::resource('teachers', App\Http\Controllers\Admin\TeacherController::class, ['as' => 'admin'])->except(['show']);
-    Route::resource('students', App\Http\Controllers\Admin\StudentController::class, ['as' => 'admin'])->except(['show']);
+    Route::resource('students', App\Http\Controllers\Admin\StudentController::class, ['as' => 'admin']);
     
     // NEW: User Management
     Route::resource('users', App\Http\Controllers\Admin\UserController::class, ['as' => 'admin'])->except(['show']);
@@ -74,7 +88,29 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     // NEW: Media Library
     Route::resource('media', App\Http\Controllers\Admin\MediaController::class, ['as' => 'admin'])->except(['show', 'create', 'edit']);
     
+    // NEW: Team Management
+    Route::resource('teams', App\Http\Controllers\Admin\TeamController::class, ['as' => 'admin'])->except(['show']);
+    
     // NEW: General Settings
     Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update');
+
+    // NEW: Activity Logs
+    Route::get('/activity-logs', [App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('admin.activity-logs.index');
+    Route::delete('/activity-logs/clear', [App\Http\Controllers\Admin\ActivityLogController::class, 'clear'])->name('admin.activity-logs.clear');
+
+    // NEW: Backups
+    Route::get('/backups', [App\Http\Controllers\Admin\BackupController::class, 'index'])->name('admin.backups.index');
+    Route::post('/backups', [App\Http\Controllers\Admin\BackupController::class, 'create'])->name('admin.backups.create');
+    Route::get('/backups/download/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'download'])->name('admin.backups.download');
+    Route::delete('/backups/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'delete'])->name('admin.backups.delete');
+
+    // NEW: About App
+    Route::get('/about-app', function () {
+        return view('admin.about_app');
+    })->name('admin.about-app');
+
+    // NEW: Setup Wizard
+    Route::get('/setup-wizard', [App\Http\Controllers\Admin\SetupWizardController::class, 'index'])->name('admin.setup.wizard');
+    Route::post('/setup-wizard', [App\Http\Controllers\Admin\SetupWizardController::class, 'save'])->name('admin.setup.save');
 });

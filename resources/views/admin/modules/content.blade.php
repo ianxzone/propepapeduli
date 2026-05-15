@@ -249,7 +249,6 @@
                 </div>
             </div>
         </div>
-
         <!-- I: Introspeksi -->
         <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 shadow-sm space-y-6">
             <div class="flex items-center gap-3 text-teal-600 border-b border-outline-variant/30 pb-4">
@@ -265,6 +264,50 @@
                     <label class="block font-label text-sm text-on-surface mb-2 font-bold">Pertanyaan Refleksi Akhir</label>
                     <textarea name="content[I][questions]" rows="4" class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                               placeholder="Tuliskan pertanyaan untuk membantu siswa merenungkan apa yang telah dipelajari...">{{ $content['I']['questions'] ?? '' }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Essay: Soal Essay (Rubrik Empati) -->
+        <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 shadow-sm space-y-6 border-l-8 border-l-blue-500">
+            <div class="flex items-center gap-3 text-blue-600 border-b border-outline-variant/30 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center font-bold text-lg shadow-sm">S</div>
+                <h3 class="font-headline text-xl font-bold">Soal Essay (Rubrik Empati)</h3>
+            </div>
+            <div class="space-y-4">
+                <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 flex gap-3">
+                    <span class="material-symbols-outlined text-blue-600">info</span>
+                    <p class="text-xs text-blue-800 leading-relaxed font-medium">
+                        Pertanyaan ini akan muncul setelah siswa menyelesaikan seluruh fase PEDULI. 
+                        Tentukan pertanyaan spesifik untuk setiap dimensi empati di bawah ini.
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <label class="block font-label text-sm text-on-surface mb-2 font-bold">Instruksi Guru (Opsional)</label>
+                    <textarea name="content[essay][teacher_instruction]" class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-xl">{{ $content['essay']['teacher_instruction'] ?? '' }}</textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block font-label text-sm text-on-surface mb-2 font-bold">1. Kesadaran Emosional (Pertanyaan)</label>
+                        <textarea name="content[essay][question_emotional]" rows="3" class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                  placeholder="Contoh: Apa yang kamu rasakan mengenai isu ini?">{{ $content['essay']['question_emotional'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block font-label text-sm text-on-surface mb-2 font-bold">2. Pengambilan Perspektif (Pertanyaan)</label>
+                        <textarea name="content[essay][question_perspective]" rows="3" class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                  placeholder="Contoh: Bagaimana sudut pandang orang lain yang terlibat?">{{ $content['essay']['question_perspective'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block font-label text-sm text-on-surface mb-2 font-bold">3. Kepedulian Empatik (Pertanyaan)</label>
+                        <textarea name="content[essay][question_care]" rows="3" class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                  placeholder="Contoh: Apa bentuk kepedulian yang muncul dalam dirimu?">{{ $content['essay']['question_care'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label class="block font-label text-sm text-on-surface mb-2 font-bold">4. Tanggung Jawab Sosial (Pertanyaan)</label>
+                        <textarea name="content[essay][question_responsibility]" rows="3" class="w-full p-4 bg-surface-container-lowest border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                  placeholder="Contoh: Apa tanggung jawab yang akan kamu ambil?">{{ $content['essay']['question_responsibility'] ?? '' }}</textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -288,7 +331,13 @@
         </div>
         <div class="flex-1 overflow-hidden flex flex-col">
             <!-- Library Tab -->
-            <div id="picker_library_content" class="flex-1 overflow-y-auto p-6">
+            <div id="picker_library_content" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <div class="relative max-w-md">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                    <input type="text" id="pickerSearch" onkeyup="loadLibrary()" placeholder="Cari nama file..." 
+                           class="w-full pl-9 pr-4 py-2 bg-surface-container-lowest border border-outline-variant/50 rounded-xl text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                </div>
+
                 <div id="pickerGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     <!-- Media items will be loaded here -->
                 </div>
@@ -410,11 +459,16 @@
     function loadLibrary() {
         const grid = document.getElementById('pickerGrid');
         const loading = document.getElementById('pickerLoading');
+        const search = document.getElementById('pickerSearch').value;
         grid.innerHTML = '';
         loading.classList.remove('hidden');
 
         const ts = new Date().getTime();
-        fetch(`/admin/media?ajax=1&t=${ts}${currentTypeFilter ? '&type=' + currentTypeFilter : ''}`, {
+        let url = `/admin/media?ajax=1&t=${ts}`;
+        if (currentTypeFilter) url += `&type=${currentTypeFilter}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+
+        fetch(url, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
             .then(res => res.json())

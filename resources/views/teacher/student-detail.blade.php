@@ -31,35 +31,51 @@
 
         <!-- Modul Progress Summary -->
         <section>
-            <h3 class="font-headline text-headline-md text-on-surface mb-4">Progres Modul</h3>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-headline text-headline-md text-on-surface">Progres Modul</h3>
+                @if($selectedModuleId)
+                    <a href="{{ route('teacher.student.detail', $student->id) }}" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span>
+                        Tampilkan Semua Modul
+                    </a>
+                @endif
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @foreach($modules as $module)
                     @php
                         $progress = $student->progress()->where('module_id', $module->id)->first();
-                        $stepMap = ['P' => 1, 'E' => 2, 'D' => 3, 'U' => 4, 'L' => 5, 'I' => 6];
-                        $currentIndex = $progress ? $stepMap[$progress->current_step] : 0;
-                        if($progress && $progress->is_completed) $currentIndex = 6;
+                        $stepMap = ['P' => 1, 'E' => 2, 'D' => 3, 'U' => 4, 'L' => 5, 'I' => 6, 'S' => 7];
+                        $currentIndex = $progress ? ($stepMap[$progress->current_step] ?? 0) : 0;
+                        if($progress && $progress->is_completed) $currentIndex = 7;
+                        $isSelected = $selectedModuleId == $module->id;
                     @endphp
-                    <div class="bg-white rounded-2xl p-5 border border-outline-variant/30 shadow-sm flex items-center gap-4">
+                    <a href="{{ route('teacher.student.detail', ['student' => $student->id, 'module_id' => $module->id]) }}" 
+                       class="bg-white rounded-2xl p-5 border {{ $isSelected ? 'border-primary ring-2 ring-primary/10' : 'border-outline-variant/30' }} shadow-sm flex items-center gap-4 transition-all hover:shadow-md hover:scale-[1.02]">
                         <img src="{{ $module->thumbnail }}" alt="{{ $module->title }}" class="w-16 h-16 rounded-xl object-cover shrink-0">
                         <div class="flex-1">
                             <h4 class="font-bold text-on-surface text-sm">{{ $module->title }}</h4>
                             <div class="flex items-center justify-between text-xs mt-2 mb-1">
-                                <span class="text-on-surface-variant">{{ $currentIndex }}/6 Tahap</span>
-                                <span class="text-primary font-bold">{{ round(($currentIndex/6)*100) }}%</span>
+                                <span class="text-on-surface-variant">{{ $currentIndex }}/7 Tahap</span>
+                                <span class="text-primary font-bold">{{ round(($currentIndex/7)*100) }}%</span>
                             </div>
                             <div class="w-full bg-surface h-1.5 rounded-full overflow-hidden">
-                                <div class="bg-primary h-full rounded-full" style="width: {{ ($currentIndex/6)*100 }}%"></div>
+                                <div class="bg-primary h-full rounded-full" style="width: {{ ($currentIndex/7)*100 }}%"></div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 @endforeach
             </div>
         </section>
 
         <!-- Journals & Feedback -->
         <section>
-            <h3 class="font-headline text-headline-md text-on-surface mb-4">Jurnal & Refleksi Siswa</h3>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-headline text-headline-md text-on-surface">Jurnal & Refleksi Siswa</h3>
+                @if($selectedModuleId)
+                    @php $selectedModule = $modules->where('id', $selectedModuleId)->first(); @endphp
+                    <span class="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-bold">Filter: {{ $selectedModule->title }}</span>
+                @endif
+            </div>
             
             @if(session('success'))
                 <div class="bg-[#d4edda] text-[#155724] p-4 rounded-xl text-sm font-bold mb-4">
@@ -76,50 +92,146 @@
                             <div class="text-[10px] text-on-surface-variant mt-1">{{ $journal->created_at->format('d M Y, H:i') }}</div>
                         </div>
 
-                        <div class="flex items-center gap-3 mb-4">
-                            @if($journal->step == 'U')
-                                <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-2xl">edit_square</span>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                @php
+                                    $stepConfig = [
+                                        'P' => ['icon' => 'menu_book', 'color' => 'bg-amber-500/10 text-amber-600', 'label' => 'Tahap Pelajari (P)'],
+                                        'E' => ['icon' => 'explore', 'color' => 'bg-teal-500/10 text-teal-600', 'label' => 'Tahap Eksplorasi (E)'],
+                                        'D' => ['icon' => 'forum', 'color' => 'bg-purple-500/10 text-purple-600', 'label' => 'Tahap Diskusi (D)'],
+                                        'U' => ['icon' => 'edit_square', 'color' => 'bg-primary/10 text-primary', 'label' => 'Tahap Ungkapkan (U)'],
+                                        'L' => ['icon' => 'rocket_launch', 'color' => 'bg-secondary-container/20 text-secondary', 'label' => 'Aksi Nyata (Lakukan - L)'],
+                                        'I' => ['icon' => 'psychology', 'color' => 'bg-surface-container-high text-on-surface-variant', 'label' => 'Refleksi (Introspeksi - I)'],
+                                        'S' => ['icon' => 'assignment', 'color' => 'bg-blue-500/10 text-blue-600', 'label' => 'Evaluasi (Essay - S)'],
+                                    ];
+                                    $cfg = $stepConfig[$journal->step] ?? ['icon' => 'info', 'color' => 'bg-gray-100', 'label' => 'Tahap ' . $journal->step];
+                                @endphp
+                                <div class="w-12 h-12 rounded-full {{ $cfg['color'] }} flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-2xl">{{ $cfg['icon'] }}</span>
                                 </div>
                                 <div>
-                                    <h4 class="font-headline font-bold text-on-surface">Jurnal Empati (Ungkapkan)</h4>
-                                    <p class="text-sm text-on-surface-variant flex items-center gap-1">
-                                        Perasaan: <span class="font-bold text-on-surface">{{ $journal->emotion_emoji }}</span>
-                                    </p>
+                                    <h4 class="font-headline font-bold text-on-surface">{{ $cfg['label'] }}</h4>
+                                    @if($journal->emotion_emoji)
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span class="text-sm text-on-surface-variant">Perasaan:</span>
+                                            <span class="text-xl leading-none">{{ $journal->emotion_emoji }}</span>
+                                        </div>
+                                    @endif
                                 </div>
-                            @elseif($journal->step == 'L')
-                                <div class="w-12 h-12 rounded-full bg-secondary-container/20 text-secondary flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-2xl">rocket_launch</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline font-bold text-on-surface">Aksi Nyata (Lakukan)</h4>
-                                </div>
-                            @else
-                                <div class="w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-2xl">psychology</span>
-                                </div>
-                                <div>
-                                    <h4 class="font-headline font-bold text-on-surface">Refleksi Akhir (Introspeksi)</h4>
-                                </div>
-                            @endif
+                            </div>
                         </div>
 
-                        <!-- Student's Image Proof -->
-                        @if($journal->image)
-                            <div class="mb-6 rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm">
-                                <img src="{{ asset($journal->image) }}" alt="Dokumentasi Aksi" class="w-full h-auto object-cover max-h-96">
+                        <!-- Step specific extras -->
+                        @if($journal->step == 'D' && $student->group_id)
+                            <div class="mb-4 ml-15">
+                                <a href="{{ route('teacher.forum.index', ['group_id' => $student->group_id, 'module_id' => $journal->module_id]) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 text-purple-700 text-xs font-bold hover:bg-purple-100 transition-colors">
+                                    <span class="material-symbols-outlined text-sm">forum</span>
+                                    <span>Lihat Peta Argumen Kelompok</span>
+                                    <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                </a>
                             </div>
                         @endif
 
-                        <!-- Student's Writing -->
-                        <div class="bg-surface-container-low p-5 rounded-2xl mb-6 border border-outline-variant/20 relative">
-                            <span class="material-symbols-outlined absolute top-4 left-4 text-outline-variant/30 text-4xl">format_quote</span>
-                            <p class="text-body-md text-on-surface italic relative z-10 pl-8">{{ $journal->content ?? 'Siswa belum menuliskan apa-apa.' }}</p>
-                        </div>
+                        <!-- Student's Image Proof -->
+                        @if($journal->image)
+                            <div class="mb-6 ml-15 rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm bg-surface-container-lowest p-2">
+                                <p class="text-[10px] font-bold text-outline-variant uppercase mb-2 ml-2">Lampiran Dokumentasi</p>
+                                <img src="{{ str_starts_with($journal->image, 'http') ? $journal->image : asset($journal->image) }}" 
+                                     alt="Dokumentasi" 
+                                     class="w-full h-auto object-cover max-h-[500px] rounded-xl cursor-zoom-in"
+                                     onclick="window.open(this.src, '_blank')">
+                            </div>
+                        @endif
+
+                        <!-- Student's Content / Reflection -->
+                        @if($journal->content)
+                            <div class="ml-15 space-y-4">
+                                @if($journal->step === 'S' && str_starts_with($journal->content, '{'))
+                                    @php $essays = json_decode($journal->content, true); @endphp
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        @foreach([
+                                            'emotional' => ['label' => 'Kesadaran Emosional', 'icon' => 'mood', 'color' => 'text-amber-600'],
+                                            'perspective' => ['label' => 'Pengambilan Perspektif', 'icon' => 'visibility', 'color' => 'text-blue-600'],
+                                            'care' => ['label' => 'Kepedulian Empatik', 'icon' => 'favorite', 'color' => 'text-pink-600'],
+                                            'responsibility' => ['label' => 'Tanggung Jawab Empatik', 'icon' => 'task_alt', 'color' => 'text-green-600'],
+                                        ] as $key => $dim)
+                                            <div class="bg-surface-container-low p-4 rounded-2xl border border-outline-variant/20">
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <span class="material-symbols-outlined text-sm {{ $dim['color'] }}">{{ $dim['icon'] }}</span>
+                                                    <span class="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">{{ $dim['label'] }}</span>
+                                                </div>
+                                                <div class="text-xs text-on-surface leading-relaxed whitespace-pre-line">
+                                                    {{ $essays[$key] ?? 'Tidak ada jawaban.' }}
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="bg-surface-container-low p-6 rounded-2xl border border-outline-variant/20 relative">
+                                        <span class="material-symbols-outlined absolute top-4 left-4 text-outline-variant/20 text-4xl" style="font-variation-settings: 'FILL' 1;">format_quote</span>
+                                        <div class="text-on-surface leading-relaxed relative z-10 pl-8 whitespace-pre-line">
+                                            {{ $journal->content }}
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @else
+                            <div class="ml-15 mb-6 text-on-surface-variant italic text-sm">
+                                Tidak ada catatan teks untuk fase ini.
+                            </div>
+                        @endif
 
                         <!-- Teacher Feedback Form -->
                         <form action="{{ route('teacher.journal.feedback', $journal->id) }}" method="POST" class="space-y-4 pt-4 border-t border-outline-variant/30">
                             @csrf
+                            
+                            @if($journal->step == 'S')
+                            <div class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100 mb-4 space-y-6">
+                                <h5 class="font-bold text-blue-800 text-sm flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">fact_check</span>
+                                    Rubrik Penilaian Empati (Skala 1-4)
+                                </h5>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-2">
+                                        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kesadaran Emosional</label>
+                                        <select name="score_emotional" class="w-full rounded-xl border border-outline-variant/50 p-3 text-xs bg-white focus:ring-2 focus:ring-blue-200">
+                                            <option value="1" {{ $journal->score_emotional == 1 ? 'selected' : '' }}>1 - Perlu Bimbingan</option>
+                                            <option value="2" {{ $journal->score_emotional == 2 ? 'selected' : '' }}>2 - Cukup</option>
+                                            <option value="3" {{ $journal->score_emotional == 3 ? 'selected' : '' }}>3 - Baik</option>
+                                            <option value="4" {{ $journal->score_emotional == 4 ? 'selected' : '' }}>4 - Sangat Baik</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Pengambilan Perspektif</label>
+                                        <select name="score_perspective" class="w-full rounded-xl border border-outline-variant/50 p-3 text-xs bg-white focus:ring-2 focus:ring-blue-200">
+                                            <option value="1" {{ $journal->score_perspective == 1 ? 'selected' : '' }}>1 - Perlu Bimbingan</option>
+                                            <option value="2" {{ $journal->score_perspective == 2 ? 'selected' : '' }}>2 - Cukup</option>
+                                            <option value="3" {{ $journal->score_perspective == 3 ? 'selected' : '' }}>3 - Baik</option>
+                                            <option value="4" {{ $journal->score_perspective == 4 ? 'selected' : '' }}>4 - Sangat Baik</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Kepedulian Aktif</label>
+                                        <select name="score_care" class="w-full rounded-xl border border-outline-variant/50 p-3 text-xs bg-white focus:ring-2 focus:ring-blue-200">
+                                            <option value="1" {{ $journal->score_care == 1 ? 'selected' : '' }}>1 - Perlu Bimbingan</option>
+                                            <option value="2" {{ $journal->score_care == 2 ? 'selected' : '' }}>2 - Cukup</option>
+                                            <option value="3" {{ $journal->score_care == 3 ? 'selected' : '' }}>3 - Baik</option>
+                                            <option value="4" {{ $journal->score_care == 4 ? 'selected' : '' }}>4 - Sangat Baik</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-wider">Tanggung Jawab Sosial</label>
+                                        <select name="score_responsibility" class="w-full rounded-xl border border-outline-variant/50 p-3 text-xs bg-white focus:ring-2 focus:ring-blue-200">
+                                            <option value="1" {{ $journal->score_responsibility == 1 ? 'selected' : '' }}>1 - Perlu Bimbingan</option>
+                                            <option value="2" {{ $journal->score_responsibility == 2 ? 'selected' : '' }}>2 - Cukup</option>
+                                            <option value="3" {{ $journal->score_responsibility == 3 ? 'selected' : '' }}>3 - Baik</option>
+                                            <option value="4" {{ $journal->score_responsibility == 4 ? 'selected' : '' }}>4 - Sangat Baik</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                             <div>
                                 <label class="block font-bold text-sm text-on-surface mb-2">Umpan Balik Guru</label>
                                 <textarea name="teacher_feedback" rows="3" 
