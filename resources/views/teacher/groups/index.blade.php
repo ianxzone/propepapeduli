@@ -105,71 +105,75 @@
 </div>
 
 <!-- Modal: Add Group -->
-<div id="modal-add-group" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-        <div class="p-8 space-y-6">
-            <h3 class="font-headline text-headline-sm text-primary">Buat Kelompok Baru</h3>
-            <form action="{{ route('teacher.groups.store') }}" method="POST" class="space-y-4">
-                @csrf
-                @if($class)
-                    <input type="hidden" name="class_id" value="{{ $class->id }}">
-                @endif
-                <div>
-                    <label class="text-xs font-bold text-outline uppercase tracking-widest mb-2 block">Nama Kelompok</label>
-                    <input type="text" name="name" required placeholder="Contoh: Kelompok Merpati" class="w-full h-12 px-4 rounded-xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 transition-all text-sm">
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="document.getElementById('modal-add-group').classList.add('hidden')" class="flex-1 h-12 rounded-xl border border-outline-variant font-bold text-on-surface-variant hover:bg-surface-container transition-all">Batal</button>
-                    <button type="submit" class="flex-1 h-12 rounded-xl bg-primary text-white font-bold shadow-md hover:bg-primary-container transition-all">Simpan</button>
-                </div>
-            </form>
+<div id="modal-add-group" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
+            <div class="p-8 space-y-6">
+                <h3 class="font-headline text-headline-sm text-primary">Buat Kelompok Baru</h3>
+                <form action="{{ route('teacher.groups.store') }}" method="POST" class="space-y-4">
+                    @csrf
+                    @if($class)
+                        <input type="hidden" name="class_id" value="{{ $class->id }}">
+                    @endif
+                    <div>
+                        <label class="text-xs font-bold text-outline uppercase tracking-widest mb-2 block">Nama Kelompok</label>
+                        <input type="text" name="name" required placeholder="Contoh: Kelompok Merpati" class="w-full h-12 px-4 rounded-xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 transition-all text-sm">
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="document.getElementById('modal-add-group').classList.add('hidden')" class="flex-1 h-12 rounded-xl border border-outline-variant font-bold text-on-surface-variant hover:bg-surface-container transition-all">Batal</button>
+                        <button type="submit" class="flex-1 h-12 rounded-xl bg-primary text-white font-bold shadow-md hover:bg-primary-container transition-all">Simpan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Modal: Assign Students -->
-<div id="modal-assign" class="fixed inset-0 z-[100] hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
-        <div class="p-8 space-y-6">
-            <div class="flex items-center justify-between">
-                <h3 class="font-headline text-headline-sm text-primary">Kelola Anggota: <span id="group-name-label" class="text-on-surface"></span></h3>
-                <button onclick="document.getElementById('modal-assign').classList.add('hidden')" class="text-outline hover:text-on-surface">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-            
-            <form id="assign-form" method="POST" class="space-y-6">
-                @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[400px] overflow-y-auto p-2 no-scrollbar border border-outline-variant/20 rounded-2xl bg-surface-container-low">
-                    @foreach($students as $student)
-                    <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-outline-variant/30 cursor-pointer hover:border-primary transition-all">
-                        <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" 
-                               class="w-5 h-5 rounded text-primary focus:ring-primary border-outline-variant/50"
-                               @if($student->group_id) data-current-group="{{ $student->group_id }}" @endif>
-                        <div class="flex-1">
-                            <p class="text-sm font-bold text-on-surface">{{ $student->name }}</p>
-                            @if($student->group_id)
-                                <p class="text-[10px] text-secondary font-bold uppercase tracking-widest">Saat ini: {{ $student->group->name }}</p>
-                            @else
-                                <p class="text-[10px] text-outline-variant font-bold uppercase tracking-widest italic">Belum berkelompok</p>
-                            @endif
-                        </div>
-                    </label>
-                    @endforeach
+<div id="modal-assign" class="fixed inset-0 z-[100] hidden overflow-y-auto">
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="this.parentElement.classList.add('hidden')"></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-in zoom-in duration-200">
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-headline text-headline-sm text-primary">Kelola Anggota: <span id="group-name-label" class="text-on-surface"></span></h3>
+                    <button onclick="document.getElementById('modal-assign').classList.add('hidden')" class="text-outline hover:text-on-surface">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
                 </div>
                 
-                <div class="bg-primary/5 p-4 rounded-xl border border-primary/10 flex gap-3">
-                    <span class="material-symbols-outlined text-primary text-sm">info</span>
-                    <p class="text-[10px] text-on-surface-variant italic">Memasukkan siswa ke kelompok ini akan secara otomatis mengeluarkan mereka dari kelompok sebelumnya.</p>
-                </div>
+                <form id="assign-form" method="POST" class="space-y-6">
+                    @csrf
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[50vh] overflow-y-auto p-2 border border-outline-variant/20 rounded-2xl bg-surface-container-low">
+                        @foreach($students as $student)
+                        <label class="flex items-center gap-3 p-3 bg-white rounded-xl border border-outline-variant/30 cursor-pointer hover:border-primary transition-all">
+                            <input type="checkbox" name="student_ids[]" value="{{ $student->id }}" 
+                                   class="w-5 h-5 rounded text-primary focus:ring-primary border-outline-variant/50"
+                                   @if($student->group_id) data-current-group="{{ $student->group_id }}" @endif>
+                            <div class="flex-1">
+                                <p class="text-sm font-bold text-on-surface">{{ $student->name }}</p>
+                                @if($student->group_id)
+                                    <p class="text-[10px] text-secondary font-bold uppercase tracking-widest">Saat ini: {{ $student->group->name }}</p>
+                                @else
+                                    <p class="text-[10px] text-outline-variant font-bold uppercase tracking-widest italic">Belum berkelompok</p>
+                                @endif
+                            </div>
+                        </label>
+                        @endforeach
+                    </div>
+                    
+                    <div class="bg-primary/5 p-4 rounded-xl border border-primary/10 flex gap-3">
+                        <span class="material-symbols-outlined text-primary text-sm">info</span>
+                        <p class="text-[10px] text-on-surface-variant italic">Memasukkan siswa ke kelompok ini akan secara otomatis mengeluarkan mereka dari kelompok sebelumnya.</p>
+                    </div>
 
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="document.getElementById('modal-assign').classList.add('hidden')" class="px-6 h-12 rounded-xl border border-outline-variant font-bold text-on-surface-variant hover:bg-surface-container transition-all">Batal</button>
-                    <button type="submit" class="px-8 h-12 rounded-xl bg-primary text-white font-bold shadow-md hover:bg-primary-container transition-all">Simpan Perubahan</button>
-                </div>
-            </form>
+                    <div class="flex justify-end gap-3 pt-2">
+                        <button type="button" onclick="document.getElementById('modal-assign').classList.add('hidden')" class="px-6 h-12 rounded-xl border border-outline-variant font-bold text-on-surface-variant hover:bg-surface-container transition-all">Batal</button>
+                        <button type="submit" class="px-8 h-12 rounded-xl bg-primary text-white font-bold shadow-md hover:bg-primary-container transition-all">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

@@ -116,13 +116,25 @@
         <!-- Content Area -->
         <main class="flex-1 overflow-y-auto p-6 bg-surface-container-low">
             @if(session('success'))
-                <div class="bg-[#d4edda] text-[#155724] border border-[#c3e6cb] px-4 py-3 rounded-xl mb-6 shadow-sm">
-                    {{ session('success') }}
+                <div class="flex items-center gap-4 bg-green-600 text-white px-6 py-4 rounded-2xl mb-8 shadow-lg animate-in slide-in-from-top duration-300">
+                    <span class="material-symbols-outlined text-2xl">check_circle</span>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">{{ session('success') }}</p>
+                    </div>
+                    <button onclick="this.parentElement.remove()" class="text-white/80 hover:text-white">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
                 </div>
             @endif
             @if(session('error'))
-                <div class="bg-error-container text-on-error-container border border-error/20 px-4 py-3 rounded-xl mb-6 shadow-sm">
-                    {{ session('error') }}
+                <div class="flex items-center gap-4 bg-red-600 text-white px-6 py-4 rounded-2xl mb-8 shadow-lg animate-in slide-in-from-top duration-300">
+                    <span class="material-symbols-outlined text-2xl">error</span>
+                    <div class="flex-1">
+                        <p class="font-bold text-sm">{{ session('error') }}</p>
+                    </div>
+                    <button onclick="this.parentElement.remove()" class="text-white/80 hover:text-white">
+                        <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
                 </div>
             @endif
             
