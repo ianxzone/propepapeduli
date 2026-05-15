@@ -24,17 +24,18 @@ class StudentAuthController extends Controller
 
         $throttleKey = 'student-login|' . $request->ip();
 
-        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 10)) {
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            $minutes = ceil($seconds / 60);
             return back()->withErrors([
-                'class_code' => "Terlalu banyak percobaan. Silakan coba lagi dalam $seconds detik.",
+                'class_code' => "Terlalu banyak percobaan. Silakan coba lagi dalam $minutes menit.",
             ]);
         }
 
         $class = SchoolClass::where('class_code', $request->class_code)->first();
 
         if (!$class) {
-            \Illuminate\Support\Facades\RateLimiter::hit($throttleKey);
+            \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 300);
             return back()->withErrors(['class_code' => 'Kode kelas tidak ditemukan.']);
         }
 

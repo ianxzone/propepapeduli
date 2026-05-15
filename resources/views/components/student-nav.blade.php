@@ -5,7 +5,7 @@
         <span class="material-symbols-outlined" style="{{ $active === 'home' ? "font-variation-settings: 'FILL' 1;" : "" }}">home</span>
         <span class="text-[10px] font-bold">Beranda</span>
     </a>
-    <a href="#" class="flex flex-col items-center gap-1 {{ $active === 'modul' ? 'text-primary' : 'text-outline' }}">
+    <a href="{{ url('/dashboard#modul') }}" class="flex flex-col items-center gap-1 {{ $active === 'modul' ? 'text-primary' : 'text-outline' }}">
         <span class="material-symbols-outlined" style="{{ $active === 'modul' ? "font-variation-settings: 'FILL' 1;" : "" }}">menu_book</span>
         <span class="text-[10px] font-bold">Modul</span>
     </a>

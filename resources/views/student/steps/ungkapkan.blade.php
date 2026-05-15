@@ -211,28 +211,7 @@
     </script>
     @endpush
 
-    <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg border-t border-outline-variant/30 px-6 py-3 flex justify-between items-center z-50">
-        <a href="{{ route('student.dashboard') }}" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">home</span>
-            <span class="text-[10px] font-bold">Beranda</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">menu_book</span>
-            <span class="text-[10px] font-bold">Modul</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">forum</span>
-            <span class="text-[10px] font-bold">Diskusi</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-primary">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">edit_square</span>
-            <span class="text-[10px] font-bold">Jurnal</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">person</span>
-            <span class="text-[10px] font-bold">Profil</span>
-        </a>
-    </nav>
+    <!-- Bottom Navigation Bar -->
+    <x-student-nav active="jurnal" />
 </div>
 @endsection

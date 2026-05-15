@@ -686,12 +686,12 @@
                         div.className = 'flex items-start gap-3 flex-row-reverse animate-in fade-in slide-in-from-right-4 duration-300';
                         div.innerHTML = `
                             <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white font-bold shrink-0 border border-primary">
-                                \${msg.user.name.charAt(0)}
+                                ${msg.user.name.charAt(0)}
                             </div>
                             <div class="space-y-1 max-w-[85%] flex flex-col items-end">
                                 <span class="text-xs font-bold text-primary mr-1">Kamu</span>
                                 <div class="bg-primary p-4 rounded-3xl rounded-tr-none shadow-md">
-                                    <p class="text-sm text-white">\${msg.content}</p>
+                                    <p class="text-sm text-white">${msg.content}</p>
                                 </div>
                             </div>
                         `;
@@ -712,28 +712,7 @@
         </script>
     </main>
 
-    <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg border-t border-outline-variant/30 px-6 py-3 flex justify-between items-center z-50">
-        <a href="{{ route('student.dashboard') }}" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">home</span>
-            <span class="text-[10px] font-bold">Beranda</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-primary">
-            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">menu_book</span>
-            <span class="text-[10px] font-bold">Modul</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">forum</span>
-            <span class="text-[10px] font-bold">Diskusi</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">edit_square</span>
-            <span class="text-[10px] font-bold">Jurnal</span>
-        </a>
-        <a href="#" class="flex flex-col items-center gap-1 text-outline">
-            <span class="material-symbols-outlined">person</span>
-            <span class="text-[10px] font-bold">Profil</span>
-        </a>
-    </nav>
+    <!-- Bottom Navigation Bar -->
+    <x-student-nav active="modul" />
 </div>
 @endsection

@@ -57,7 +57,7 @@
         @endif
 
         <!-- Module Progress List -->
-        <section class="space-y-4">
+        <section id="modul" class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="font-headline text-lg text-on-surface">Modul Belajarmu</h3>
                 <a href="#" class="text-primary font-label text-sm">Lihat Semua</a>
