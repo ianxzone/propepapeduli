@@ -35,9 +35,9 @@
                     <label class="font-label text-label-lg text-primary ml-1" for="class_code">Kode Kelas</label>
                     <div class="relative group">
                         <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">key</span>
-                        <input type="number" id="class_code" name="class_code" required
-                               class="w-full h-16 pl-14 pr-4 bg-surface border-2 border-transparent focus:border-primary focus:ring-0 rounded-2xl text-2xl font-bold tracking-[0.5em] text-center text-primary placeholder:text-outline-variant placeholder:tracking-normal transition-all"
-                               placeholder="Contoh: 123456" inputmode="numeric">
+                        <input type="text" id="class_code" name="class_code" required
+                               class="w-full h-16 pl-14 pr-4 bg-surface border-2 border-transparent focus:border-primary focus:ring-0 rounded-2xl text-2xl font-bold tracking-[0.2em] text-center text-primary placeholder:text-outline-variant placeholder:tracking-normal transition-all"
+                               placeholder="Contoh: 5A-2024">
                     </div>
                 </div>
 
