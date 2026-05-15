@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $team->name }} - ProPePa PEDULI</title>
+    <title>{{ $team->name }} - {{ $site_settings['site_name'] ?? 'ProPePa PEDULI' }}</title>
     
+    @if(isset($site_settings['site_favicon']))
+    <link rel="icon" type="image/x-icon" href="{{ $site_settings['site_favicon'] }}">
+    @endif
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

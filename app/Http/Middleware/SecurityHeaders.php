@@ -26,7 +26,23 @@ class SecurityHeaders
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
         // Tighten Content Security Policy
-        $response->headers->set('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://www.youtube.com https://s.ytimg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.youtube.com; connect-src 'self';");
+        $csp = "default-src 'self'; ";
+        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://www.youtube.com https://s.ytimg.com; ";
+        $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com; ";
+        $csp .= "img-src 'self' data: https: http:; ";
+        $csp .= "font-src 'self' https://fonts.gstatic.com; ";
+        $csp .= "frame-src 'self' https://www.youtube.com; ";
+        $csp .= "connect-src 'self';";
+
+        // Allow local dev assets if in local environment
+        if (app()->environment('local')) {
+            $csp = str_replace("default-src 'self';", "default-src 'self' http: https:;", $csp);
+            $csp = str_replace("script-src 'self'", "script-src 'self' http: https:", $csp);
+            $csp = str_replace("style-src 'self'", "style-src 'self' http: https:", $csp);
+            $csp = str_replace("connect-src 'self';", "connect-src 'self' ws: wss: http: https:;", $csp);
+        }
+
+        $response->headers->set('Content-Security-Policy', $csp);
 
         return $response;
     }
