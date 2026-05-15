@@ -130,5 +130,27 @@
         </main>
     </div>
     @stack('scripts')
+
+    <!-- Global Modal Cleanup & Navigation Fix -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.addEventListener('popstate', () => closeModalOverlays());
+            const sidebarLinks = document.querySelectorAll('aside a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => closeModalOverlays());
+            });
+
+            function closeModalOverlays() {
+                const modals = document.querySelectorAll('[id*="modal-"]');
+                modals.forEach(modal => modal.classList.add('hidden'));
+                const overlays = document.querySelectorAll('.modal-backdrop, .fixed.inset-0.bg-black');
+                overlays.forEach(overlay => overlay.classList.add('hidden'));
+            }
+        });
+        document.addEventListener('livewire:navigating', () => {
+            const modals = document.querySelectorAll('[id*="modal-"]');
+            modals.forEach(modal => modal.classList.add('hidden'));
+        });
+    </script>
 </body>
 </html>

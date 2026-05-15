@@ -141,5 +141,41 @@
             @yield('content')
         </main>
     </div>
+
+    <!-- Global Modal Cleanup & Navigation Fix -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Tutup modal jika user menekan tombol Back/Forward di browser
+            window.addEventListener('popstate', () => closeModalOverlays());
+
+            // Tutup modal jika link sidebar diklik (mencegah overlay nyangkut di cache/SPA mode)
+            const sidebarLinks = document.querySelectorAll('aside a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    closeModalOverlays();
+                });
+            });
+
+            function closeModalOverlays() {
+                // Cari semua elemen yang id-nya mengandung 'modal'
+                const modals = document.querySelectorAll('[id*="modal-"]');
+                modals.forEach(modal => {
+                    modal.classList.add('hidden');
+                });
+                
+                // Jika ada overlay backdrop manual dari library lain
+                const overlays = document.querySelectorAll('.modal-backdrop, .fixed.inset-0.bg-black');
+                overlays.forEach(overlay => {
+                    overlay.classList.add('hidden');
+                });
+            }
+        });
+        
+        // Dukungan untuk Livewire wire:navigate (jika diaktifkan di masa depan)
+        document.addEventListener('livewire:navigating', () => {
+            const modals = document.querySelectorAll('[id*="modal-"]');
+            modals.forEach(modal => modal.classList.add('hidden'));
+        });
+    </script>
 </body>
 </html>
