@@ -206,6 +206,36 @@
         </div>
     </section>
 
+    <!-- Strategic Partners -->
+    <section class="py-20 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col items-center gap-12">
+                <div class="text-center space-y-2">
+                    <p class="text-[10px] font-bold text-primary uppercase tracking-[0.3em]">Kolaborasi Strategis</p>
+                    <h3 class="font-headline text-2xl font-bold text-on-surface">Didukung Oleh Lembaga Terpercaya</h3>
+                </div>
+                
+                <div class="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-70">
+                    <!-- UPI -->
+                    <div class="group transition-all duration-300 hover:opacity-100 hover:scale-110">
+                        <img src="https://upload.wikimedia.org/wikipedia/id/thumb/0/09/Logo_Almamater_UPI.svg/250px-Logo_Almamater_UPI.svg.png" 
+                             alt="Logo UPI" class="h-20 w-auto object-contain grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                    <!-- IKIP Siliwangi -->
+                    <div class="group transition-all duration-300 hover:opacity-100 hover:scale-110">
+                        <img src="https://ikipsiliwangi.ac.id/wp-content/uploads/2024/05/25600_Logo-IKIP-warna.png" 
+                             alt="Logo IKIP Siliwangi" class="h-20 w-auto object-contain grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                    <!-- MATEK -->
+                    <div class="group transition-all duration-300 hover:opacity-100 hover:scale-110">
+                        <img src="https://murniabadi.co.id/gambar/logomatek.png" 
+                             alt="Logo Matek" class="h-16 w-auto object-contain grayscale group-hover:grayscale-0 transition-all">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Team Section -->
     <section id="team" class="py-24 px-6 bg-white overflow-hidden">
         <div class="max-w-7xl mx-auto">
