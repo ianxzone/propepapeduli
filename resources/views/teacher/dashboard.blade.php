@@ -24,8 +24,8 @@
                 <p class="text-on-surface-variant text-sm italic">Halo, {{ Auth::user()->name }}! Pantau progres belajar siswa Anda di sini.</p>
             </div>
             <div class="flex flex-wrap gap-2 self-start">
-                <a href="{{ route('teacher.export', ['class_id' => $class->id]) }}" class="flex items-center gap-2 bg-white text-primary border border-primary/20 px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-primary/5 transition-all">
-                    <span class="material-symbols-outlined">person</span>
+                <a href="{{ route('teacher.reports.index') }}" class="flex items-center gap-2 bg-white text-primary border border-primary/20 px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined">assessment</span>
                     <span>Laporan Siswa</span>
                 </a>
                 <a href="{{ route('teacher.export.assessments', ['class_id' => $class->id]) }}" class="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-blue-700 transition-all">
