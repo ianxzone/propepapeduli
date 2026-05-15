@@ -31,6 +31,7 @@ class ClassController extends Controller
         SchoolClass::create([
             'name' => $request->name,
             'school_id' => $request->school_id,
+            'class_code' => strtoupper(\Illuminate\Support\Str::random(6)),
         ]);
 
         return redirect()->route('admin.classes.index')->with('success', 'Kelas berhasil dibuat.');

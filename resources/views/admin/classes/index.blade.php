@@ -43,7 +43,7 @@
                             <td class="p-4 text-sm text-on-surface-variant">{{ $class->school->name }}</td>
                             <td class="p-4 text-center">
                                 <span class="font-mono font-black text-primary bg-primary/10 px-3 py-1 rounded-lg">
-                                    {{ $class->code }}
+                                    {{ $class->class_code }}
                                 </span>
                             </td>
                             <td class="p-4 text-center">

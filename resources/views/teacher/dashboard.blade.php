@@ -49,7 +49,7 @@
                     <div class="text-right">
                         <p class="text-[10px] text-primary-fixed uppercase font-bold tracking-widest opacity-80">Kode Kelas</p>
                         <p class="font-headline text-2xl font-black text-white bg-white/20 px-4 py-1.5 rounded-xl border border-white/30 shadow-inner">
-                            {{ $class->code }}
+                            {{ $class->class_code }}
                         </p>
                     </div>
                 </div>
