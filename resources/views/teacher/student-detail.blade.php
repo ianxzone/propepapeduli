@@ -128,8 +128,8 @@
                             </div>
                             <div class="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
                                 <div class="flex items-center gap-3">
-                                    <label class="font-bold text-sm text-on-surface">Poin Bonus (+):</label>
-                                    <input type="number" name="teacher_points" min="0" max="50" value="{{ $journal->teacher_points }}" 
+                                    <label class="font-bold text-sm text-on-surface">Nilai Fase (0-100):</label>
+                                    <input type="number" name="teacher_points" min="0" max="100" value="{{ $journal->teacher_points }}" 
                                            class="w-24 rounded-lg border border-outline-variant/50 p-2 text-center text-sm font-bold focus:border-secondary focus:ring-0">
                                 </div>
                                 <button type="submit" class="bg-primary text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:bg-primary/90 transition-colors shadow-sm active:scale-95">

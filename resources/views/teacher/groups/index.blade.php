@@ -8,13 +8,27 @@
     <!-- Header Action -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="font-headline text-headline-md text-on-surface">Kelompok Kelas {{ $class->name }}</h1>
+            <div class="flex items-center gap-3">
+                <h1 class="font-headline text-headline-md text-on-surface">Kelompok Kelas {{ $class?->name ?? '---' }}</h1>
+                @if(Auth::user()->role === 'admin')
+                    <form action="{{ route('teacher.groups.index') }}" method="GET" id="class-selector-form">
+                        <select name="class_id" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-full px-4 py-1 text-xs font-bold text-primary focus:ring-2 focus:ring-primary">
+                            <option value="">Pilih Kelas...</option>
+                            @foreach($classes as $c)
+                                <option value="{{ $c->id }}" {{ ($class?->id == $c->id) ? 'selected' : '' }}>{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                @endif
+            </div>
             <p class="text-sm text-on-surface-variant">Tentukan kelompok diskusi agar siswa bisa berkolaborasi dalam tim kecil.</p>
         </div>
+        @if($class)
         <button onclick="document.getElementById('modal-add-group').classList.remove('hidden')" class="bg-primary text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-sm hover:bg-primary-container transition-all">
             <span class="material-symbols-outlined">group_add</span>
             Buat Kelompok Baru
         </button>
+        @endif
     </div>
 
     <!-- Groups Grid -->
@@ -98,6 +112,9 @@
             <h3 class="font-headline text-headline-sm text-primary">Buat Kelompok Baru</h3>
             <form action="{{ route('teacher.groups.store') }}" method="POST" class="space-y-4">
                 @csrf
+                @if($class)
+                    <input type="hidden" name="class_id" value="{{ $class->id }}">
+                @endif
                 <div>
                     <label class="text-xs font-bold text-outline uppercase tracking-widest mb-2 block">Nama Kelompok</label>
                     <input type="text" name="name" required placeholder="Contoh: Kelompok Merpati" class="w-full h-12 px-4 rounded-xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 transition-all text-sm">

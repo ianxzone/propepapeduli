@@ -55,6 +55,14 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.media.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">perm_media</span>
                 <span>Pustaka Media</span>
             </a>
+            <a href="{{ route('teacher.forum.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('teacher.forum.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('teacher.forum.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">forum</span>
+                <span>Monitor Forum</span>
+            </a>
+            <a href="{{ route('teacher.groups.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('teacher.groups.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('teacher.groups.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">groups</span>
+                <span>Kelola Kelompok</span>
+            </a>
             <a href="{{ route('admin.settings.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.settings.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.settings.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">settings</span>
                 <span>Pengaturan Sistem</span>

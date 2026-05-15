@@ -29,24 +29,41 @@ class ModuleController extends Controller
 
         if (!$progress) return back();
 
-        // Save Journal if any content or emotion is provided
-        if ($request->filled('content') || $request->filled('emotion') || $request->hasFile('image')) {
-            $imagePath = null;
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('journals', 'public');
-                $imagePath = '/storage/' . $path;
-            }
+        // Validation
+        $request->validate([
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'content' => 'nullable|string',
+            'reflection' => 'nullable|string',
+            'emotion' => 'nullable|string',
+        ]);
 
-            \App\Models\Journal::create([
-                'user_id' => $user->id,
-                'module_id' => $module->id,
-                'step' => $currentStepKey,
-                'content' => $request->input('content', ''),
-                'emotion_emoji' => $request->input('emotion'),
-                'image' => $imagePath,
-                'is_private' => false,
-            ]);
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('journals', 'public');
+            $imagePath = '/storage/' . $path;
         }
+
+        // Create/Update Journal for every phase completion
+        $defaultContents = [
+            'P' => 'Siswa telah mempelajari materi.',
+            'E' => 'Siswa telah mengeksplorasi perspektif.',
+            'D' => 'Siswa telah berpartisipasi dalam diskusi.',
+        ];
+
+        $content = $request->input('content', $request->input('reflection', ''));
+        if (empty($content) && isset($defaultContents[$currentStepKey])) {
+            $content = $defaultContents[$currentStepKey];
+        }
+
+        \App\Models\Journal::updateOrCreate(
+            ['user_id' => $user->id, 'module_id' => $module->id, 'step' => $currentStepKey],
+            [
+                'content' => $content,
+                'emotion_emoji' => $request->input('emotion'),
+                'image' => $imagePath ?? (\App\Models\Journal::where('user_id', $user->id)->where('module_id', $module->id)->where('step', $currentStepKey)->first()?->image),
+                'is_private' => false,
+            ]
+        );
 
         // Find next step in sequence
         $currentIndex = array_search($currentStepKey, $this->stepSequence);
@@ -56,17 +73,8 @@ class ModuleController extends Controller
             $nextStepKey = $this->stepSequence[$nextIndex];
             $progress->update(['current_step' => $nextStepKey]);
 
-            // Reward Points
-            $points = 20;
-            $user->increment('points', $points);
-            PointsLog::create([
-                'user_id' => $user->id,
-                'points' => $points,
-                'activity_type' => "Selesai Fase " . ($this->steps[$currentStepKey] ?? $currentStepKey),
-            ]);
-
             return redirect()->route('student.module.step', [$module->id, $nextStepKey])
-                             ->with('success', 'Hebat! Kamu dapat ' . $points . ' poin.');
+                             ->with('success', 'Fase ' . ($this->steps[$currentStepKey] ?? $currentStepKey) . ' selesai. Menunggu penilaian guru.');
         } else {
             // Module completed
             $progress->update(['is_completed' => true]);
@@ -122,8 +130,15 @@ class ModuleController extends Controller
             $messages = $query->with('user')
                 ->oldest()
                 ->get();
+            
+            $groupMap = null;
+            if ($user->group_id) {
+                $groupMap = \App\Models\GroupMap::where('group_id', $user->group_id)
+                    ->where('module_id', $module->id)
+                    ->first();
+            }
         }
         
-        return view("student.steps." . strtolower($stepName), compact('module', 'progress', 'step', 'messages'));
+        return view("student.steps." . strtolower($stepName), compact('module', 'progress', 'step', 'messages', 'groupMap'));
     }
 }

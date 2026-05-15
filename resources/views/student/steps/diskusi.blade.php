@@ -20,6 +20,17 @@
     </header>
 
     <main class="px-container-padding pt-6 space-y-8 min-h-[calc(100vh-160px)] flex flex-col">
+        <!-- Validation Errors -->
+        @if($errors->any())
+            <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm font-bold animate-in fade-in slide-in-from-top-2">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Step Indicator & Title -->
         <div class="space-y-4">
             <div class="flex items-center gap-2 text-primary">
@@ -206,8 +217,78 @@
                     'aktivis': 'eco'
                 };
 
-                let connections = [];
+                let connections = {!! $groupMap ? json_encode($groupMap->content['connections'] ?? []) : '[]' !!};
                 let linkingFrom = null;
+
+                function renderMap(data) {
+                    if (!data || !data.cards) return;
+                    const container = document.getElementById('map-cards-container');
+                    
+                    // Don't update if someone is dragging a card
+                    if (isDraggingGlobal) return;
+
+                    // Store existing IDs to avoid re-rendering everything
+                    const currentCards = Array.from(container.children);
+                    
+                    data.cards.forEach(cardData => {
+                        let card = document.getElementById(cardData.id);
+                        if (!card) {
+                            card = document.createElement('div');
+                            card.id = cardData.id;
+                            setupDraggable(card);
+                            container.appendChild(card);
+                        }
+                        
+                        card.dataset.type = cardData.type;
+                        const isReason = cardData.type === 'reason';
+                        const themeClass = isReason ? 'border-green-200' : 'border-red-200';
+                        const headerClass = isReason ? 'bg-green-500' : 'bg-red-500';
+                        
+                        card.className = `absolute pointer-events-auto rounded-xl border-2 shadow-md w-48 bg-white ${themeClass} cursor-move group overflow-hidden`;
+                        card.style.left = cardData.left;
+                        card.style.top = cardData.top;
+                        
+                        card.innerHTML = `
+                            <div class="${headerClass} text-white px-3 py-1.5 flex items-center justify-between">
+                                <span class="text-[9px] font-bold uppercase tracking-wider">${isReason ? 'Alasan' : 'Sanggahan'}</span>
+                                <div class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[10px] opacity-70">${roleIcons[cardData.role || 'warga']}</span>
+                                    <button onclick="startLinking('${cardData.id}', event)" class="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" title="Hubungkan ke argumen lain">
+                                        <span class="material-symbols-outlined text-[8px]">account_tree</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="p-3 text-[10px] leading-tight font-medium text-on-surface" onclick="handleCardClick('${cardData.id}')">
+                                ${cardData.text}
+                            </div>
+                        `;
+                    });
+
+                    connections = data.connections || [];
+                    updateLines();
+                }
+
+                let isDraggingGlobal = false;
+                let syncInterval = null;
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    @if($groupMap && isset($groupMap->content['cards']))
+                        renderMap({!! json_encode($groupMap->content) !!});
+                    @endif
+
+                    // Start Auto-Sync Polling
+                    syncInterval = setInterval(() => {
+                        if (isDraggingGlobal) return;
+                        
+                        fetch("{{ route('student.discussion.map.get') }}?module_id={{ $module->id }}")
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success && data.map) {
+                                    renderMap(data.map.content);
+                                }
+                            });
+                    }, 15000); // 15 seconds
+                });
 
                 function setArgType(type) {
                     currentArgType = type;
@@ -284,6 +365,7 @@
                     el.addEventListener('mousedown', e => {
                         if(e.target.closest('button')) return;
                         isDragging = true;
+                        isDraggingGlobal = true;
                         startX = e.clientX; startY = e.clientY;
                         initialX = el.offsetLeft; initialY = el.offsetTop;
                         el.style.zIndex = 100;
@@ -298,6 +380,7 @@
                     });
                     document.addEventListener('mouseup', () => {
                         isDragging = false;
+                        isDraggingGlobal = false;
                         el.style.zIndex = '';
                     });
                 }
@@ -387,10 +470,55 @@
                 }
 
                 function saveMapToDatabase() {
-                    const cardCount = document.getElementById('map-cards-container').children.length;
-                    if(cardCount === 0) return alert("Belum ada argumen untuk disimpan!");
+                    const container = document.getElementById('map-cards-container');
+                    const cards = Array.from(container.children).map(card => {
+                        return {
+                            id: card.id,
+                            type: card.dataset.type,
+                            left: card.style.left,
+                            top: card.style.top,
+                            text: card.querySelector('.p-3').innerText.trim(),
+                            role: Object.keys(roleIcons).find(k => card.innerHTML.includes(roleIcons[k]))
+                        };
+                    });
                     
-                    alert("💾 Menyimpan Peta ke Database...\n\nData posisi kartu dan koneksi garis sedang disimpan. Guru akan bisa melihat hasil peta ini di Dashboard Admin secara real-time.");
+                    const data = {
+                        module_id: {{ $module->id }},
+                        content: {
+                            cards: cards,
+                            connections: connections
+                        }
+                    };
+
+                    const saveBtn = document.querySelector('button[onclick="saveMapToDatabase()"]');
+                    const originalHTML = saveBtn.innerHTML;
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<span class="animate-spin material-symbols-outlined text-sm">progress_activity</span> Menyimpan...';
+
+                    fetch("{{ route('student.discussion.map.save') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert("✅ Peta argumen berhasil disimpan!");
+                        } else {
+                            alert("❌ Gagal menyimpan: " + result.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("❌ Terjadi kesalahan jaringan.");
+                    })
+                    .finally(() => {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = originalHTML;
+                    });
                 }
 
                 window.addEventListener('resize', updateLines);

@@ -17,8 +17,8 @@ class DashboardController extends Controller
     {
         $teacher = Auth::user();
         
-        // Ensure only teachers access this
-        if ($teacher->role !== 'teacher') {
+        // Ensure only teachers or admins access this
+        if (!in_array($teacher->role, ['teacher', 'admin'])) {
             return redirect()->route('student.dashboard');
         }
 
@@ -78,7 +78,7 @@ class DashboardController extends Controller
     public function studentDetail(User $student)
     {
         $teacher = Auth::user();
-        if ($teacher->role !== 'teacher' || $student->class_id !== $teacher->class_id) {
+        if (!in_array($teacher->role, ['teacher', 'admin']) || ($teacher->role === 'teacher' && $student->class_id !== $teacher->class_id)) {
             abort(403);
         }
 
@@ -91,48 +91,66 @@ class DashboardController extends Controller
     public function saveFeedback(Request $request, Journal $journal)
     {
         $teacher = Auth::user();
-        if ($teacher->role !== 'teacher') abort(403);
+        if (!in_array($teacher->role, ['teacher', 'admin'])) abort(403);
 
         $request->validate([
             'teacher_feedback' => 'nullable|string',
-            'teacher_points' => 'required|integer|min:0|max:50',
+            'teacher_points' => 'required|integer|min:0|max:100',
         ]);
+
+        $oldPoints = $journal->teacher_points;
 
         $journal->update([
             'teacher_feedback' => $request->teacher_feedback,
             'teacher_points' => $request->teacher_points,
         ]);
 
-        // Reward the student
-        if ($request->teacher_points > 0) {
-            $journal->user->increment('points', $request->teacher_points);
+        // Update student total points based on difference
+        $diff = $request->teacher_points - $oldPoints;
+        if ($diff != 0) {
+            $journal->user->increment('points', $diff);
             \App\Models\PointsLog::create([
                 'user_id' => $journal->user->id,
-                'points' => $request->teacher_points,
-                'activity_type' => "Bonus Jurnal oleh Guru",
+                'points' => $diff,
+                'activity_type' => "Penilaian Fase " . $journal->step . " (" . $journal->module->title . ")",
             ]);
         }
 
-        return back()->with('success', 'Umpan balik berhasil disimpan.');
+        return back()->with('success', 'Umpan balik dan nilai berhasil disimpan.');
     }
 
     public function forum(Request $request)
     {
-        $teacher = Auth::user();
-        $class = SchoolClass::find($teacher->class_id);
+        $user = Auth::user();
+        $classId = $request->input('class_id', $user->class_id);
+        if (!$classId && $user->role === 'admin') $classId = SchoolClass::first()?->id;
+        
+        $class = SchoolClass::find($classId);
+        $classes = SchoolClass::all();
         $modules = Module::where('is_active', true)->get();
-        $groups = StudentGroup::where('class_id', $teacher->class_id)->get();
+        $groups = StudentGroup::where('class_id', $classId)->get();
         
         $selectedModuleId = $request->input('module_id', $modules->first()?->id);
+        $selectedModule = Module::find($selectedModuleId);
         $selectedGroupId = $request->input('group_id');
         
         $messages = [];
-        if ($selectedModuleId) {
+        $groupMap = null;
+
+        if ($selectedModuleId && $classId) {
             $query = \App\Models\Message::where('module_id', $selectedModuleId)
-                ->where('class_id', $teacher->class_id);
+                ->where('class_id', $classId);
             
             if ($selectedGroupId) {
                 $query->where('group_id', $selectedGroupId);
+                
+                // Fetch Map for this group if it's a map module
+                $discussionType = $selectedModule->content['D']['type'] ?? 'chat';
+                if ($discussionType === 'map') {
+                    $groupMap = \App\Models\GroupMap::where('group_id', $selectedGroupId)
+                        ->where('module_id', $selectedModuleId)
+                        ->first();
+                }
             }
 
             $messages = $query->with(['user', 'group'])
@@ -140,7 +158,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        return view('teacher.forum.index', compact('messages', 'modules', 'groups', 'selectedModuleId', 'selectedGroupId', 'class'));
+        return view('teacher.forum.index', compact('messages', 'modules', 'groups', 'selectedModuleId', 'selectedGroupId', 'class', 'classes', 'selectedModule', 'groupMap'));
     }
 
     public function export()
@@ -184,21 +202,25 @@ class DashboardController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-    public function groups()
+    public function groups(Request $request)
     {
-        $teacher = Auth::user();
-        $class = SchoolClass::find($teacher->class_id);
-        $groups = StudentGroup::where('teacher_id', $teacher->id)
-                             ->where('class_id', $teacher->class_id)
+        $user = Auth::user();
+        $classId = $request->input('class_id', $user->class_id);
+        if (!$classId && $user->role === 'admin') $classId = SchoolClass::first()?->id;
+
+        $class = SchoolClass::find($classId);
+        $classes = SchoolClass::all();
+
+        $groups = StudentGroup::where('class_id', $classId)
                              ->with('students')
                              ->get();
         
         $students = User::where('role', 'student')
-                        ->where('class_id', $teacher->class_id)
+                        ->where('class_id', $classId)
                         ->orderBy('name')
                         ->get();
 
-        return view('teacher.groups.index', compact('groups', 'students', 'class'));
+        return view('teacher.groups.index', compact('groups', 'students', 'class', 'classes'));
     }
 
     public function storeGroup(Request $request)
@@ -209,7 +231,7 @@ class DashboardController extends Controller
         StudentGroup::create([
             'name' => $request->name,
             'teacher_id' => $teacher->id,
-            'class_id' => $teacher->class_id,
+            'class_id' => $request->input('class_id', $teacher->class_id),
         ]);
 
         return back()->with('success', 'Kelompok berhasil dibuat.');
@@ -218,7 +240,7 @@ class DashboardController extends Controller
     public function deleteGroup(StudentGroup $group)
     {
         $teacher = Auth::user();
-        if ($group->teacher_id !== $teacher->id) abort(403);
+        if ($group->teacher_id !== $teacher->id && $teacher->role !== 'admin') abort(403);
         
         // Unassign students first (set group_id to null is handled by migration onDelete set null)
         $group->delete();
@@ -229,7 +251,7 @@ class DashboardController extends Controller
     public function assignStudents(Request $request, StudentGroup $group)
     {
         $teacher = Auth::user();
-        if ($group->teacher_id !== $teacher->id) abort(403);
+        if ($group->teacher_id !== $teacher->id && $teacher->role !== 'admin') abort(403);
 
         $request->validate([
             'student_ids' => 'required|array',

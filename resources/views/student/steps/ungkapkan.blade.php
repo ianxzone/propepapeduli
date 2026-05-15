@@ -20,6 +20,17 @@
     </header>
 
     <main class="px-container-padding pt-6 space-y-8">
+        <!-- Validation Errors -->
+        @if($errors->any())
+            <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm font-bold animate-in fade-in slide-in-from-top-2">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Step Indicator & Title -->
         <div class="text-center space-y-4">
             <div class="inline-block bg-primary text-white rounded-full px-4 py-1 font-label text-[10px] uppercase tracking-widest font-bold shadow-md">
@@ -161,11 +172,17 @@
 
             recognition.onerror = function(event) {
                 console.error('Speech recognition error:', event.error);
+                let message = 'Terjadi kesalahan pada pengenalan suara.';
+                
                 if(event.error === 'not-allowed') {
-                    alert('Mohon izinkan akses mikrofon untuk menggunakan fitur ini.');
+                    message = 'Izin mikrofon ditolak. Silakan aktifkan izin mikrofon di pengaturan browser Anda untuk menggunakan fitur ini.';
                 } else if(event.error === 'network') {
-                    alert('Koneksi internet bermasalah. Rekam suara memerlukan internet.');
+                    message = 'Koneksi internet bermasalah. Rekam suara memerlukan internet aktif.';
+                } else if(event.error === 'no-speech') {
+                    message = 'Tidak ada suara terdeteksi. Silakan coba lagi.';
                 }
+                
+                alert(message);
                 recognition.stop();
             };
 

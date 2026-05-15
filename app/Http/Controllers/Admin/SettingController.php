@@ -16,6 +16,13 @@ class SettingController extends Controller
 
     public function update(Request $request)
     {
+        $request->validate([
+            'site_name' => 'nullable|string|max:100',
+            'site_description' => 'nullable|string|max:255',
+            'site_logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
+            'site_favicon' => 'nullable|image|mimes:png,ico,svg|max:1024',
+        ]);
+
         $data = $request->except('_token');
         
         // Handle Logo Upload

@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/modules/{module}/step/{step}', [StudentModule::class, 'showStep'])->name('student.module.step');
     Route::post('/modules/{module}/step/{step}/next', [StudentModule::class, 'nextStep'])->name('student.module.next');
     Route::post('/discussion/messages', [App\Http\Controllers\Student\DiscussionController::class, 'store'])->name('student.discussion.store');
+    Route::post('/discussion/map', [App\Http\Controllers\Student\DiscussionController::class, 'saveMap'])->name('student.discussion.map.save');
+    Route::get('/discussion/map', [App\Http\Controllers\Student\DiscussionController::class, 'getMap'])->name('student.discussion.map.get');
 });
 
 // Admin Auth

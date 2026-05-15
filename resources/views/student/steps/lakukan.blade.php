@@ -20,6 +20,17 @@
     </header>
 
     <main class="px-container-padding pt-6 space-y-8">
+        <!-- Validation Errors -->
+        @if($errors->any())
+            <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-sm font-bold animate-in fade-in slide-in-from-top-2">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Step Indicator & Title -->
         <div class="space-y-4">
             <div class="flex items-center gap-2 text-primary">
