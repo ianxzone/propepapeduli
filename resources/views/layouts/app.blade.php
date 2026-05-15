@@ -3,12 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'ProPePa LMS')</title>
+    <title>@yield('title', ($site_settings['site_name'] ?? 'ProPePa LMS'))</title>
     
-    <!-- Fonts -->
     <!-- Favicon -->
-    @if(\App\Models\Setting::get('site_favicon'))
-        <link rel="icon" type="image/png" href="{{ asset(\App\Models\Setting::get('site_favicon')) }}">
+    @if(isset($site_settings['site_favicon']))
+        <link rel="icon" type="image/x-icon" href="{{ $site_settings['site_favicon'] }}">
     @endif
 
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
