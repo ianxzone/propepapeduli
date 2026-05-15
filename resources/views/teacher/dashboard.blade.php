@@ -8,7 +8,19 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
             <div>
-                <h1 class="font-headline text-headline-md text-on-surface">Beranda Guru</h1>
+                <div class="flex items-center gap-3">
+                    <h1 class="font-headline text-headline-md text-on-surface">Beranda Guru</h1>
+                    @if(Auth::user()->role === 'admin')
+                        <form action="{{ route('teacher.dashboard') }}" method="GET" id="class-selector-form">
+                            <select name="class_id" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-full px-4 py-1 text-xs font-bold text-primary focus:ring-2 focus:ring-primary">
+                                <option value="">Pilih Kelas...</option>
+                                @foreach($classes as $c)
+                                    <option value="{{ $c->id }}" {{ ($class?->id == $c->id) ? 'selected' : '' }}>{{ $c->name }}</option>
+                                @endforeach
+                            </select>
+                        </form>
+                    @endif
+                </div>
                 <p class="text-on-surface-variant text-sm italic">Halo, {{ Auth::user()->name }}! Pantau progres belajar siswa Anda di sini.</p>
             </div>
             <a href="{{ route('teacher.export') }}" class="flex items-center gap-2 bg-white text-primary border border-primary/20 px-5 py-2.5 rounded-2xl font-bold shadow-sm hover:bg-primary/5 transition-all self-start">

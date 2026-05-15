@@ -117,6 +117,8 @@ class ModuleController extends Controller
         $stepName = $this->steps[$step] ?? 'Pelajari';
 
         $messages = [];
+        $groupMap = null;
+
         if ($step === 'D') {
             $query = \App\Models\Message::where('module_id', $module->id)
                 ->where('class_id', $user->class_id);
@@ -131,7 +133,6 @@ class ModuleController extends Controller
                 ->oldest()
                 ->get();
             
-            $groupMap = null;
             if ($user->group_id) {
                 $groupMap = \App\Models\GroupMap::where('group_id', $user->group_id)
                     ->where('module_id', $module->id)

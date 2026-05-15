@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $teacher = Auth::user();
         
@@ -22,10 +22,16 @@ class DashboardController extends Controller
             return redirect()->route('student.dashboard');
         }
 
-        $class = SchoolClass::with('school')->find($teacher->class_id);
+        $classId = $request->input('class_id', $teacher->class_id);
+        if (!$classId && $teacher->role === 'admin') {
+            $classId = SchoolClass::first()?->id;
+        }
+
+        $class = SchoolClass::with('school')->find($classId);
+        $classes = SchoolClass::all();
         
         if (!$class) {
-            return redirect()->route('login')->with('error', 'Akun guru Anda tidak terhubung dengan kelas manapun.');
+            return redirect()->route('login')->with('error', 'Kelas tidak ditemukan.');
         }
         
         // Get all active modules
@@ -33,7 +39,7 @@ class DashboardController extends Controller
         
         // Get all students in this class
         $students = User::where('role', 'student')
-                        ->where('class_id', $class->id)
+                        ->where('class_id', $classId)
                         ->orderBy('name')
                         ->get();
 
@@ -59,20 +65,24 @@ class DashboardController extends Controller
             }
         }
 
-        return view('teacher.dashboard', compact('teacher', 'class', 'students', 'modules', 'averagePoints', 'totalStudents', 'phaseStats'));
+        return view('teacher.dashboard', compact('teacher', 'class', 'classes', 'students', 'modules', 'averagePoints', 'totalStudents', 'phaseStats'));
     }
 
-    public function journals()
+    public function journals(Request $request)
     {
         $teacher = Auth::user();
-        $class = SchoolClass::find($teacher->class_id);
+        $classId = $request->input('class_id', $teacher->class_id);
+        if (!$classId && $teacher->role === 'admin') $classId = SchoolClass::first()?->id;
+
+        $class = SchoolClass::find($classId);
+        $classes = SchoolClass::all();
         
         // Get all journals from students in this class
-        $journals = Journal::whereIn('user_id', function($query) use ($teacher) {
-            $query->select('id')->from('users')->where('class_id', $teacher->class_id);
+        $journals = Journal::whereIn('user_id', function($query) use ($classId) {
+            $query->select('id')->from('users')->where('class_id', $classId);
         })->with(['user', 'module'])->orderBy('created_at', 'desc')->paginate(10);
 
-        return view('teacher.journals.index', compact('journals', 'class'));
+        return view('teacher.journals.index', compact('journals', 'class', 'classes'));
     }
 
     public function studentDetail(User $student)

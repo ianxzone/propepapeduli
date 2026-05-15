@@ -6,8 +6,20 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h2 class="font-headline text-headline-md text-on-surface">Penilaian Jurnal</h2>
-            <p class="text-on-surface-variant text-sm">Lihat dan beri umpan balik pada jurnal harian siswa {{ $class->name }}.</p>
+            <div class="flex items-center gap-3">
+                <h2 class="font-headline text-headline-md text-on-surface">Penilaian Jurnal</h2>
+                @if(Auth::user()->role === 'admin')
+                    <form action="{{ route('teacher.journals.index') }}" method="GET" id="class-selector-form">
+                        <select name="class_id" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-full px-4 py-1 text-xs font-bold text-primary focus:ring-2 focus:ring-primary">
+                            <option value="">Pilih Kelas...</option>
+                            @foreach($classes as $c)
+                                <option value="{{ $c->id }}" {{ ($class?->id == $c->id) ? 'selected' : '' }}>{{ $c->name }}</option>
+                            @endforeach
+                        </select>
+                    </form>
+                @endif
+            </div>
+            <p class="text-on-surface-variant text-sm">Lihat dan beri umpan balik pada jurnal harian siswa {{ $class?->name ?? '---' }}.</p>
         </div>
     </div>
 
