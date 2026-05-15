@@ -41,7 +41,7 @@ class DummyDataSeeder extends Seeder
             'name' => 'Budi Santoso',
             'email' => 'guru@propepa.id',
             'password' => Hash::make('password'),
-            'role' => 'teacher',
+            'role' => 'dosen',
             'class_id' => $class5A->id
         ]);
 
@@ -49,7 +49,7 @@ class DummyDataSeeder extends Seeder
             'name' => 'Siti Aminah',
             'email' => 'siti@propepa.id',
             'password' => Hash::make('password'),
-            'role' => 'teacher',
+            'role' => 'dosen',
             'class_id' => $class5B->id
         ]);
 
@@ -65,7 +65,7 @@ class DummyDataSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'superadmin@propepa.id',
             'password' => Hash::make('password'),
-            'role' => 'super_admin'
+            'role' => 'admin'
         ]);
 
         // 4. Create Students
