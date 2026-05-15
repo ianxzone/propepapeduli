@@ -41,9 +41,15 @@
                 <div class="absolute top-[-20%] right-[-10%] w-40 h-40 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
                 <h2 class="font-headline text-headline-md mb-2">Kelas Anda</h2>
                 <p class="text-primary-fixed-dim">{{ $class->name }} &bull; {{ $class->school->name }}</p>
-                <div class="mt-6">
-                    <p class="text-sm text-primary-fixed">Total Siswa</p>
-                    <p class="font-headline text-4xl font-bold">{{ $totalStudents }} <span class="text-base font-normal opacity-80">Siswa</span></p>
+                <div class="mt-6 flex justify-between items-end">
+                    <div>
+                        <p class="text-sm text-primary-fixed">Total Siswa</p>
+                        <p class="font-headline text-4xl font-bold">{{ $totalStudents }} <span class="text-base font-normal opacity-80">Siswa</span></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-primary-fixed uppercase font-bold tracking-widest">Kode Kelas</p>
+                        <p class="font-headline text-2xl font-black bg-white/20 px-3 py-1 rounded-lg">{{ $class->code }}</p>
+                    </div>
                 </div>
             </div>
 
