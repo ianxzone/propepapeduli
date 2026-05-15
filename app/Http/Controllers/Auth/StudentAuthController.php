@@ -22,12 +22,23 @@ class StudentAuthController extends Controller
             'class_code' => 'required',
         ]);
 
+        $throttleKey = 'student-login|' . $request->ip();
+
+        if (\Illuminate\Support\Facades\RateLimiter::tooManyAttempts($throttleKey, 10)) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'class_code' => "Terlalu banyak percobaan. Silakan coba lagi dalam $seconds detik.",
+            ]);
+        }
+
         $class = SchoolClass::where('class_code', $request->class_code)->first();
 
         if (!$class) {
+            \Illuminate\Support\Facades\RateLimiter::hit($throttleKey);
             return back()->withErrors(['class_code' => 'Kode kelas tidak ditemukan.']);
         }
 
+        \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
         session(['pending_class_id' => $class->id]);
 
         return redirect()->route('student.select.name');
