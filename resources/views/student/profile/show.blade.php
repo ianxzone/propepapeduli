@@ -24,7 +24,12 @@
                 </div>
             </div>
             <h1 class="mt-4 font-headline text-headline-md text-white">{{ $user->name }}</h1>
-            <p class="text-white/80 text-sm font-bold uppercase tracking-widest">{{ $user->class->name }} &bull; {{ $user->class->school->name }}</p>
+            <p class="text-white/80 text-sm font-bold uppercase tracking-widest">
+                {{ $user->class?->name ?? 'Siswa Mandiri' }}
+                @if($user->class?->school)
+                    &bull; {{ $user->class->school->name }}
+                @endif
+            </p>
         </div>
     </header>
 
@@ -100,7 +105,7 @@
         </section>
 
         <!-- Logout Button -->
-        <form action="{{ route('logout') }}" method="POST">
+        <form action="{{ route('student.logout') }}" method="POST">
             @csrf
             <button type="submit" class="w-full h-14 rounded-2xl border-2 border-error/20 text-error font-bold flex items-center justify-center gap-2 hover:bg-error/5 transition-all">
                 <span class="material-symbols-outlined">logout</span>

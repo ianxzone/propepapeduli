@@ -84,7 +84,12 @@
                         </div>
                         <div>
                             <p class="font-bold text-on-surface">{{ $student->name }}</p>
-                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $student->class->name }} &bull; {{ $student->class->school->name }}</p>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                                {{ $student->class?->name ?? 'Siswa Mandiri' }}
+                                @if($student->class?->school)
+                                    &bull; {{ $student->class->school->name }}
+                                @endif
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5 text-primary">
@@ -118,7 +123,22 @@
                             <p class="text-sm font-bold text-on-surface">{{ $journal->user->name }}</p>
                             <span class="text-[10px] text-on-surface-variant italic">{{ $journal->created_at->diffForHumans() }}</span>
                         </div>
-                        <p class="text-xs text-on-surface-variant mt-0.5">Menyelesaikan Fase <strong>{{ $journal->step }}</strong> pada modul <strong>{{ $journal->module->title }}</strong></p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">
+                            Menyelesaikan Fase 
+                            <strong class="text-primary">
+                                @php
+                                    $stepNames = ['P' => 'Pelajari', 'E' => 'Eksplorasi', 'D' => 'Diskusi', 'U' => 'Ungkapkan', 'L' => 'Lakukan', 'I' => 'Introspeksi'];
+                                    echo $stepNames[$journal->step] ?? $journal->step;
+                                @endphp
+                            </strong> 
+                            pada modul <strong>{{ $journal->module->title }}</strong>
+                            @if($journal->image)
+                                <span class="ml-1 inline-flex items-center gap-0.5 text-secondary font-bold">
+                                    <span class="material-symbols-outlined text-[14px]">image</span>
+                                    +Foto
+                                </span>
+                            @endif
+                        </p>
                     </div>
                 </div>
                 @empty

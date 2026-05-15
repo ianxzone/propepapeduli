@@ -32,6 +32,9 @@ class ProfileController extends Controller
             ->where('points', '>', $user->points)
             ->count() + 1;
 
+        // Get points logs
+        $logs = PointsLog::where('user_id', $user->id)->latest()->take(10)->get();
+
         return view('student.profile.show', compact('user', 'totalPoints', 'totalModules', 'completedModules', 'logs', 'earnedBadges', 'rank'));
     }
 }

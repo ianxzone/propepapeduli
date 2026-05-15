@@ -21,7 +21,6 @@ Route::post('/select-name', [StudentAuthController::class, 'selectName'])->name(
 // Teacher Auth
 Route::get('/guru/login', [TeacherAuthController::class, 'showLogin'])->name('teacher.login');
 Route::post('/guru/login', [TeacherAuthController::class, 'login'])->name('teacher.login.submit');
-Route::post('/guru/logout', [TeacherAuthController::class, 'logout'])->name('teacher.logout');
 
 // Student Area
 Route::middleware('auth')->group(function () {
@@ -29,7 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [StudentDashboard::class, 'leaderboard'])->name('student.leaderboard');
     Route::get('/journals', [App\Http\Controllers\Student\JournalController::class, 'index'])->name('student.journals.index');
     Route::get('/profile', [App\Http\Controllers\Student\ProfileController::class, 'show'])->name('student.profile');
-    Route::post('/logout', [TeacherAuthController::class, 'logout'])->name('student.logout');
+    Route::post('/logout', [StudentAuthController::class, 'logout'])->name('student.logout');
     Route::get('/modules/{module}', [StudentModule::class, 'show'])->name('student.module.show');
     Route::get('/modules/{module}/step/{step}', [StudentModule::class, 'showStep'])->name('student.module.step');
     Route::post('/modules/{module}/step/{step}/next', [StudentModule::class, 'nextStep'])->name('student.module.next');
@@ -48,6 +47,10 @@ Route::middleware(['auth'])->prefix('guru')->name('teacher.')->group(function ()
     Route::get('/journals', [TeacherDashboard::class, 'journals'])->name('journals.index');
     Route::post('/journal/{journal}/feedback', [TeacherDashboard::class, 'saveFeedback'])->name('journal.feedback');
     Route::get('/forum', [TeacherDashboard::class, 'forum'])->name('forum.index');
+    Route::get('/groups', [TeacherDashboard::class, 'groups'])->name('groups.index');
+    Route::post('/groups', [TeacherDashboard::class, 'storeGroup'])->name('groups.store');
+    Route::delete('/groups/{group}', [TeacherDashboard::class, 'deleteGroup'])->name('groups.delete');
+    Route::post('/groups/{group}/assign', [TeacherDashboard::class, 'assignStudents'])->name('groups.assign');
     Route::get('/export', [TeacherDashboard::class, 'export'])->name('export');
     Route::post('/logout', [TeacherAuthController::class, 'logout'])->name('logout');
 });
@@ -65,6 +68,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     
     // NEW: User Management
     Route::resource('users', App\Http\Controllers\Admin\UserController::class, ['as' => 'admin'])->except(['show']);
+    
+    // NEW: Media Library
+    Route::resource('media', App\Http\Controllers\Admin\MediaController::class, ['as' => 'admin'])->except(['show', 'create', 'edit']);
     
     // NEW: General Settings
     Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');

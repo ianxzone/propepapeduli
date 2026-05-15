@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Journal extends Model
 {
-    protected $fillable = ['user_id', 'module_id', 'step', 'content', 'emotion_emoji', 'is_private', 'teacher_feedback', 'teacher_points'];
+    protected $fillable = ['user_id', 'module_id', 'step', 'content', 'emotion_emoji', 'image', 'is_private', 'teacher_feedback', 'teacher_points'];
 
     public function user()
     {

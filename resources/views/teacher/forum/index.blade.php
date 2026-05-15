@@ -10,14 +10,26 @@
             <p class="text-on-surface-variant text-sm">Pantau interaksi siswa di setiap modul pada {{ $class->name }}.</p>
         </div>
         
-        <!-- Module Selector -->
-        <form action="{{ route('teacher.forum.index') }}" method="GET" class="flex items-center gap-2">
-            <label class="text-sm font-bold text-on-surface-variant whitespace-nowrap">Pilih Modul:</label>
-            <select name="module_id" onchange="this.form.submit()" class="bg-white border border-outline-variant/50 rounded-xl px-4 py-2 text-sm font-bold focus:border-primary focus:ring-0">
-                @foreach($modules as $module)
-                    <option value="{{ $module->id }}" {{ $selectedModuleId == $module->id ? 'selected' : '' }}>{{ $module->title }}</option>
-                @endforeach
-            </select>
+        <!-- Selectors -->
+        <form action="{{ route('teacher.forum.index') }}" method="GET" class="flex flex-wrap items-center gap-4">
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-bold text-outline uppercase tracking-widest whitespace-nowrap">Modul:</label>
+                <select name="module_id" onchange="this.form.submit()" class="bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-xs font-bold focus:border-primary focus:ring-0">
+                    @foreach($modules as $module)
+                        <option value="{{ $module->id }}" {{ $selectedModuleId == $module->id ? 'selected' : '' }}>{{ $module->title }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-bold text-outline uppercase tracking-widest whitespace-nowrap">Kelompok:</label>
+                <select name="group_id" onchange="this.form.submit()" class="bg-white border border-outline-variant/30 rounded-xl px-4 py-2 text-xs font-bold focus:border-primary focus:ring-0">
+                    <option value="">Semua Kelompok</option>
+                    @foreach($groups as $group)
+                        <option value="{{ $group->id }}" {{ $selectedGroupId == $group->id ? 'selected' : '' }}>{{ $group->name }}</option>
+                    @endforeach
+                </select>
+            </div>
         </form>
     </div>
 
@@ -40,10 +52,13 @@
                     <div class="flex-1">
                         <div class="flex items-baseline gap-2 mb-1">
                             <span class="font-bold text-sm text-on-surface">{{ $msg->user->name }}</span>
+                            @if($msg->group)
+                                <span class="bg-secondary/10 text-secondary text-[8px] font-bold px-2 py-0.5 rounded-full border border-secondary/20">{{ $msg->group->name }}</span>
+                            @endif
                             <span class="text-[10px] text-on-surface-variant">{{ $msg->created_at->format('H:i') }}</span>
                         </div>
                         <div class="bg-white border border-outline-variant/20 p-4 rounded-2xl rounded-tl-none shadow-sm inline-block max-w-[80%]">
-                            <p class="text-sm text-on-surface leading-relaxed">{{ $msg->message }}</p>
+                            <p class="text-sm text-on-surface leading-relaxed">{{ $msg->content }}</p>
                         </div>
                     </div>
                 </div>

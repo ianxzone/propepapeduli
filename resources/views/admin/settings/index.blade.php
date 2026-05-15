@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <form action="{{ route('admin.settings.update') }}" method="POST" class="space-y-8">
+    <form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
         @csrf
         
         <!-- Branding Settings -->
@@ -29,6 +29,27 @@
                     <label class="block font-bold text-sm text-on-surface mb-2">Deskripsi Aplikasi</label>
                     <textarea name="site_description" rows="3" 
                               class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">{{ \App\Models\Setting::get('site_description') }}</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    <div>
+                        <label class="block font-bold text-sm text-on-surface mb-2">Logo Aplikasi</label>
+                        <div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50">
+                            @if(\App\Models\Setting::get('site_logo'))
+                                <img src="{{ asset(\App\Models\Setting::get('site_logo')) }}" alt="Logo" class="h-12 w-auto object-contain bg-white rounded-lg p-1 border">
+                            @endif
+                            <input type="file" name="site_logo" accept="image/*" class="text-xs text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-sm text-on-surface mb-2">Favicon (PNG/ICO)</label>
+                        <div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/50">
+                            @if(\App\Models\Setting::get('site_favicon'))
+                                <img src="{{ asset(\App\Models\Setting::get('site_favicon')) }}" alt="Favicon" class="w-8 h-8 object-contain bg-white rounded-lg p-1 border">
+                            @endif
+                            <input type="file" name="site_favicon" accept="image/*" class="text-xs text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -30,6 +30,10 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('teacher.forum.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">forum</span>
                 <span>Forum Diskusi</span>
             </a>
+            <a href="{{ route('teacher.groups.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('teacher.groups.*') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('teacher.groups.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">groups</span>
+                <span>Kelola Kelompok</span>
+            </a>
             <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface">
                 <span class="material-symbols-outlined text-[20px]">settings</span>
                 <span>Pengaturan</span>

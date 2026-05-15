@@ -30,13 +30,20 @@ class ModuleController extends Controller
         if (!$progress) return back();
 
         // Save Journal if any content or emotion is provided
-        if ($request->filled('content') || $request->filled('emotion')) {
+        if ($request->filled('content') || $request->filled('emotion') || $request->hasFile('image')) {
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('journals', 'public');
+                $imagePath = '/storage/' . $path;
+            }
+
             \App\Models\Journal::create([
                 'user_id' => $user->id,
                 'module_id' => $module->id,
                 'step' => $currentStepKey,
                 'content' => $request->input('content', ''),
                 'emotion_emoji' => $request->input('emotion'),
+                'image' => $imagePath,
                 'is_private' => false,
             ]);
         }
@@ -103,9 +110,16 @@ class ModuleController extends Controller
 
         $messages = [];
         if ($step === 'D') {
-            $messages = \App\Models\Message::where('module_id', $module->id)
-                ->where('class_id', $user->class_id)
-                ->with('user')
+            $query = \App\Models\Message::where('module_id', $module->id)
+                ->where('class_id', $user->class_id);
+            
+            if ($user->group_id) {
+                $query->where('group_id', $user->group_id);
+            } else {
+                $query->whereNull('group_id');
+            }
+
+            $messages = $query->with('user')
                 ->oldest()
                 ->get();
         }

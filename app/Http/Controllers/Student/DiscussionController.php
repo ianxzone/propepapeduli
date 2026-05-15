@@ -23,6 +23,7 @@ class DiscussionController extends Controller
             'user_id' => $user->id,
             'module_id' => $request->module_id,
             'class_id' => $user->class_id,
+            'group_id' => $user->group_id,
             'content' => $request->content,
         ]);
 

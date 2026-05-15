@@ -14,4 +14,9 @@ class SchoolClass extends Model
     {
         return $this->belongsTo(School::class);
     }
+
+    public function students()
+    {
+        return $this->hasMany(User::class, 'class_id')->where('role', 'student');
+    }
 }

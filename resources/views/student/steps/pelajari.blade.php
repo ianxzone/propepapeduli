@@ -27,88 +27,140 @@
                 <span class="font-label text-xs uppercase tracking-widest font-bold">Fase 1: Pelajari (P)</span>
             </div>
             <h1 class="font-headline text-headline-lg text-on-surface leading-tight">{{ $module->title }}</h1>
-            <p class="text-body-md text-on-surface-variant">Tonton video di bawah ini untuk memahami materi.</p>
+            
+            @if(!empty($module->content['P']['teacher_instruction']))
+            <div class="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex gap-3 mt-4">
+                <span class="material-symbols-outlined text-primary">record_voice_over</span>
+                <div class="prose prose-sm prose-primary max-w-none text-on-surface leading-relaxed">
+                    {!! $module->content['P']['teacher_instruction'] !!}
+                </div>
+            </div>
+            @else
+            <p class="text-body-md text-on-surface-variant">Tonton video atau pelajari materi di bawah ini untuk memahami topik ini.</p>
+            @endif
         </div>
 
-        <!-- Video Player Section -->
-        <section>
-            @php
-                $videoUrl = $module->content['P']['video_url'] ?? '';
-                $videoId = '';
-                if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $videoUrl, $match)) {
-                    $videoId = $match[1];
-                }
-            @endphp
+        @php
+            $videoUrl = $module->content['P']['video_url'] ?? '';
+            $videoId = '';
+            if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $videoUrl, $match)) {
+                $videoId = $match[1];
+            }
+        @endphp
 
-            @if($videoId)
+        <!-- Video Player Section -->
+        @if($videoId)
+        <section>
             <div class="relative w-full rounded-3xl overflow-hidden shadow-lg bg-black aspect-video border-4 border-white">
                 <iframe class="w-full h-full" src="https://www.youtube.com/embed/{{ $videoId }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
-            @else
-            <div class="relative w-full rounded-3xl overflow-hidden shadow-lg bg-black aspect-video group border-4 border-white">
-                <img src="{{ $module->thumbnail }}" 
-                     alt="Video Thumbnail" class="w-full h-full object-cover opacity-80">
-                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <div class="bg-white/20 backdrop-blur-md px-6 py-3 rounded-full text-white font-bold">
-                        Video Materi Belum Tersedia
-                    </div>
-                </div>
-            </div>
-            @endif
             
+            @if(!empty($module->content['P']['text']))
             <div class="mt-4 space-y-3">
                 <div class="flex items-center gap-3 bg-surface-container-low p-4 rounded-2xl border border-outline-variant/30">
                     <div class="w-10 h-10 bg-secondary-container/20 rounded-full flex items-center justify-center text-secondary">
                         <span class="material-symbols-outlined text-xl">lightbulb</span>
                     </div>
-                    <p class="text-sm text-on-surface font-medium italic">
-                        {{ $module->content['P']['text'] ?? 'Perhatikan materi dalam video untuk memahami topik ini dengan baik.' }}
-                    </p>
+                    <div class="text-sm text-on-surface font-medium italic line-clamp-2">
+                        {{ strip_tags($module->content['P']['text']) }}
+                    </div>
                 </div>
+            </div>
+            @endif
+        </section>
+        @endif
+
+        <!-- Image Story Section (Cerita Bergambar) -->
+        @php
+            $storyImages = array_filter(array_map('trim', explode("\n", $module->content['P']['story_images'] ?? '')));
+        @endphp
+
+        @if(count($storyImages) > 0)
+        <section class="space-y-4">
+            <div class="flex items-center gap-2 text-secondary">
+                <span class="material-symbols-outlined text-xl">auto_stories</span>
+                <h2 class="font-headline text-headline-sm font-bold">Cerita Bergambar</h2>
+            </div>
+            <div class="swiper story-swiper rounded-3xl border-4 border-white shadow-lg overflow-hidden bg-surface-container-low">
+                <div class="swiper-wrapper">
+                    @foreach($storyImages as $img)
+                    <div class="swiper-slide">
+                        <img src="{{ $img }}" class="w-full aspect-[4/3] object-cover" alt="Cerita Bergambar">
+                    </div>
+                    @endforeach
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next !text-white !w-10 !h-10 bg-black/20 backdrop-blur-md rounded-full after:!text-sm"></div>
+                <div class="swiper-button-prev !text-white !w-10 !h-10 bg-black/20 backdrop-blur-md rounded-full after:!text-sm"></div>
+            </div>
+        </section>
+        @endif
+
+        <!-- Factual Data & Materials -->
+        @if(!empty($module->content['P']['text']) || !empty($module->content['P']['file_url']))
+        <section class="space-y-4">
+            <div class="flex items-center gap-2 text-primary">
+                <span class="material-symbols-outlined text-xl">fact_check</span>
+                <h2 class="font-headline text-headline-sm font-bold">Data Faktual & Materi</h2>
+            </div>
+            
+            <div class="bg-white p-6 rounded-[2rem] border border-outline-variant/30 shadow-sm space-y-4">
+                @if(!empty($module->content['P']['text']))
+                <div class="prose prose-primary max-w-none text-on-surface-variant leading-relaxed
+                            prose-headings:font-headline prose-headings:text-on-surface
+                            prose-p:text-sm prose-li:text-sm prose-strong:text-primary">
+                    {!! $module->content['P']['text'] !!}
+                </div>
+                @endif
 
                 @if(!empty($module->content['P']['file_url']))
-                <a href="{{ $module->content['P']['file_url'] }}" target="_blank" 
-                   class="flex items-center justify-between bg-primary/5 p-4 rounded-2xl border border-primary/10 group hover:bg-primary transition-all">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-primary/10 group-hover:bg-white/20 rounded-xl flex items-center justify-center text-primary group-hover:text-white transition-colors">
-                            <span class="material-symbols-outlined text-xl">description</span>
+                <div class="space-y-3">
+                    @php
+                        $isPdf = str_ends_with(strtolower($module->content['P']['file_url']), '.pdf');
+                    @endphp
+
+                    @if($isPdf)
+                    <div class="relative w-full aspect-[3/4] md:aspect-video rounded-3xl overflow-hidden border border-outline-variant/30 shadow-sm bg-surface-container-low group">
+                        <embed src="{{ $module->content['P']['file_url'] }}" type="application/pdf" class="w-full h-full">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center p-6 text-center pointer-events-none group-has-[:blocked]:flex">
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">find_in_page</span>
+                            <p class="text-xs text-on-surface-variant font-medium">Jika PDF tidak muncul, silakan klik tombol unduh di bawah.</p>
                         </div>
-                        <span class="text-sm font-bold text-on-surface group-hover:text-white transition-colors">Lihat Materi Tambahan (PDF/Slide)</span>
                     </div>
-                    <span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">open_in_new</span>
-                </a>
+                    @endif
+
+                    <a href="{{ $module->content['P']['file_url'] }}" target="_blank" 
+                       class="flex items-center justify-between bg-secondary-container/10 p-4 rounded-2xl border border-secondary-container/20 group hover:bg-secondary transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-secondary/10 group-hover:bg-white/20 rounded-xl flex items-center justify-center text-secondary group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined text-xl">file_download</span>
+                            </div>
+                            <div>
+                                <span class="block text-sm font-bold text-on-surface group-hover:text-white transition-colors">
+                                    {{ $isPdf ? 'Buka / Unduh PDF' : 'Unduh Dokumen Lengkap' }}
+                                </span>
+                                <span class="block text-[10px] text-on-surface-variant group-hover:text-white/80 uppercase font-bold">PDF / Materi Pendukung</span>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-secondary group-hover:text-white transition-colors">download</span>
+                    </a>
+                </div>
                 @endif
             </div>
         </section>
-
-        <!-- Informational Section -->
-        <section class="space-y-4">
-            <h2 class="font-headline text-headline-md text-on-surface">Apa yang akan kamu pelajari?</h2>
-            <div class="grid grid-cols-1 gap-4">
-                <div class="bg-white p-5 rounded-3xl border border-outline-variant/30 shadow-sm flex items-start gap-4">
-                    <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">science</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline text-on-surface font-bold">Konsep Dasar</h3>
-                        <p class="text-sm text-on-surface-variant mt-1">Memahami latar belakang dan pentingnya topik ini bagi lingkungan.</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-3xl border border-outline-variant/30 shadow-sm flex items-start gap-4">
-                    <div class="w-12 h-12 bg-secondary-container/10 text-secondary rounded-2xl flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">volunteer_activism</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline text-on-surface font-bold">Nilai Pancasila</h3>
-                        <p class="text-sm text-on-surface-variant mt-1">Bagaimana topik ini berhubungan dengan karakter kita sebagai pelajar Pancasila.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        @endif
 
         <!-- Action Button -->
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST">
+        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-6">
             @csrf
+            
+            <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-outline-variant/30 shadow-sm">
+                <input type="checkbox" id="confirm-learn" required class="w-6 h-6 rounded-lg text-primary focus:ring-primary border-outline-variant/50">
+                <label for="confirm-learn" class="text-sm font-bold text-on-surface select-none cursor-pointer">
+                    Saya telah mempelajari materi di atas dengan seksama.
+                </label>
+            </div>
+
             <button type="submit" 
                     class="w-full h-16 bg-primary text-white rounded-2xl font-headline text-button-text flex items-center justify-center gap-3 shadow-[0_4px_0_0_#410000] active:translate-y-[2px] active:shadow-[0_2px_0_0_#410000] hover:bg-primary-container transition-all">
                 <span>Lanjut ke Eksplorasi</span>
@@ -141,4 +193,29 @@
         </a>
     </nav>
 </div>
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<style>
+    .story-swiper .swiper-pagination-bullet-active {
+        background: white !important;
+    }
+</style>
+@endpush
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    new Swiper('.story-swiper', {
+        loop: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+</script>
+@endpush
 @endsection

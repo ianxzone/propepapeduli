@@ -53,7 +53,7 @@
                             <p class="text-sm font-bold {{ $isUser ? 'text-primary' : 'text-on-surface' }}">
                                 {{ $student->name }} {{ $isUser ? '(Kamu)' : '' }}
                             </p>
-                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $student->class->name }}</p>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $student->class?->name ?? 'Siswa Mandiri' }}</p>
                         </div>
                     </div>
                     

@@ -26,6 +26,16 @@
                 <span class="material-symbols-outlined mr-2 text-xl" style="font-variation-settings: 'FILL' 1;">stars</span>
                 <span class="font-label text-xs uppercase tracking-widest font-bold">Fase Akhir: Introspeksi (I)</span>
             </div>
+            
+            @if(!empty($module->content['I']['teacher_instruction']))
+            <div class="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex gap-3 text-left">
+                <span class="material-symbols-outlined text-primary">record_voice_over</span>
+                <div class="prose prose-sm prose-primary max-w-none text-on-surface leading-relaxed">
+                    {!! $module->content['I']['teacher_instruction'] !!}
+                </div>
+            </div>
+            @endif
+
             <h1 class="font-headline text-headline-lg text-primary leading-tight">Hebat, Kamu Berhasil!</h1>
             <p class="text-body-lg text-on-surface-variant px-4">Mari kita lihat kembali perjalanan belajarmu hari ini.</p>
         </section>
@@ -47,7 +57,7 @@
             <label class="block font-headline text-headline-md text-primary" for="reflection">
                 {{ $module->content['I']['questions'] ?? 'Apa yang paling kamu pelajari hari ini?' }}
             </label>
-            <textarea id="reflection" name="content" rows="4" 
+            <textarea id="reflection" name="content" rows="4" required
                       class="w-full rounded-2xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 bg-surface-container-low p-4 text-sm text-on-surface placeholder:text-outline-variant transition-all" 
                       placeholder="Tuliskan pengalaman seru kamu di sini..."></textarea>
         </section>

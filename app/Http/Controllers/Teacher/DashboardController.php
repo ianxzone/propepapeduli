@@ -7,6 +7,7 @@ use App\Models\SchoolClass;
 use App\Models\User;
 use App\Models\Module;
 use App\Models\Journal;
+use App\Models\StudentGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -120,19 +121,26 @@ class DashboardController extends Controller
         $teacher = Auth::user();
         $class = SchoolClass::find($teacher->class_id);
         $modules = Module::where('is_active', true)->get();
+        $groups = StudentGroup::where('class_id', $teacher->class_id)->get();
         
         $selectedModuleId = $request->input('module_id', $modules->first()?->id);
+        $selectedGroupId = $request->input('group_id');
         
         $messages = [];
         if ($selectedModuleId) {
-            $messages = \App\Models\Message::where('module_id', $selectedModuleId)
-                ->where('class_id', $teacher->class_id)
-                ->with('user')
+            $query = \App\Models\Message::where('module_id', $selectedModuleId)
+                ->where('class_id', $teacher->class_id);
+            
+            if ($selectedGroupId) {
+                $query->where('group_id', $selectedGroupId);
+            }
+
+            $messages = $query->with(['user', 'group'])
                 ->oldest()
                 ->get();
         }
 
-        return view('teacher.forum.index', compact('messages', 'modules', 'selectedModuleId', 'class'));
+        return view('teacher.forum.index', compact('messages', 'modules', 'groups', 'selectedModuleId', 'selectedGroupId', 'class'));
     }
 
     public function export()
@@ -175,5 +183,62 @@ class DashboardController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+    public function groups()
+    {
+        $teacher = Auth::user();
+        $class = SchoolClass::find($teacher->class_id);
+        $groups = StudentGroup::where('teacher_id', $teacher->id)
+                             ->where('class_id', $teacher->class_id)
+                             ->with('students')
+                             ->get();
+        
+        $students = User::where('role', 'student')
+                        ->where('class_id', $teacher->class_id)
+                        ->orderBy('name')
+                        ->get();
+
+        return view('teacher.groups.index', compact('groups', 'students', 'class'));
+    }
+
+    public function storeGroup(Request $request)
+    {
+        $teacher = Auth::user();
+        $request->validate(['name' => 'required|string|max:100']);
+
+        StudentGroup::create([
+            'name' => $request->name,
+            'teacher_id' => $teacher->id,
+            'class_id' => $teacher->class_id,
+        ]);
+
+        return back()->with('success', 'Kelompok berhasil dibuat.');
+    }
+
+    public function deleteGroup(StudentGroup $group)
+    {
+        $teacher = Auth::user();
+        if ($group->teacher_id !== $teacher->id) abort(403);
+        
+        // Unassign students first (set group_id to null is handled by migration onDelete set null)
+        $group->delete();
+
+        return back()->with('success', 'Kelompok berhasil dihapus.');
+    }
+
+    public function assignStudents(Request $request, StudentGroup $group)
+    {
+        $teacher = Auth::user();
+        if ($group->teacher_id !== $teacher->id) abort(403);
+
+        $request->validate([
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'exists:users,id'
+        ]);
+
+        // Remove these students from any other group in this class (if needed) or just update them
+        User::whereIn('id', $request->student_ids)->update(['group_id' => $group->id]);
+
+        return back()->with('success', 'Siswa berhasil dimasukkan ke kelompok.');
     }
 }

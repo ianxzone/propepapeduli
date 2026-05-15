@@ -23,7 +23,7 @@
                     </span>
                     <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant px-3 py-1.5 rounded-full text-sm font-bold">
                         <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">school</span>
-                        Kelas {{ $student->class->name }}
+                        Kelas {{ $student->class?->name ?? 'Siswa Mandiri' }}
                     </span>
                 </div>
             </div>
@@ -87,8 +87,15 @@
                                         Perasaan: <span class="font-bold text-on-surface">{{ $journal->emotion_emoji }}</span>
                                     </p>
                                 </div>
-                            @else
+                            @elseif($journal->step == 'L')
                                 <div class="w-12 h-12 rounded-full bg-secondary-container/20 text-secondary flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-2xl">rocket_launch</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-headline font-bold text-on-surface">Aksi Nyata (Lakukan)</h4>
+                                </div>
+                            @else
+                                <div class="w-12 h-12 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0">
                                     <span class="material-symbols-outlined text-2xl">psychology</span>
                                 </div>
                                 <div>
@@ -96,6 +103,13 @@
                                 </div>
                             @endif
                         </div>
+
+                        <!-- Student's Image Proof -->
+                        @if($journal->image)
+                            <div class="mb-6 rounded-2xl overflow-hidden border border-outline-variant/30 shadow-sm">
+                                <img src="{{ asset($journal->image) }}" alt="Dokumentasi Aksi" class="w-full h-auto object-cover max-h-96">
+                            </div>
+                        @endif
 
                         <!-- Student's Writing -->
                         <div class="bg-surface-container-low p-5 rounded-2xl mb-6 border border-outline-variant/20 relative">
