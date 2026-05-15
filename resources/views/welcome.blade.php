@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProPePa PEDULI - Proyek Pelajar Pancasila LMS</title>
+    <title>{{ $site_settings['site_name'] ?? 'ProPePa PEDULI' }} - {{ $site_settings['site_description'] ?? 'LMS' }}</title>
     @vite('resources/css/app.css')
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -31,7 +31,6 @@
         <div class="max-w-7xl mx-auto glass rounded-2xl border border-white/40 shadow-lg px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <x-logo variant="pill" />
-                <span class="font-headline font-bold text-xl text-primary tracking-tight ml-2">PEDULI</span>
             </div>
             <div class="hidden md:flex items-center gap-8">
                 <a href="/" class="text-sm font-bold text-primary transition-colors">Beranda</a>
@@ -299,10 +298,9 @@
             <div class="text-center md:text-left space-y-4">
                 <div class="flex items-center gap-3 justify-center md:justify-start">
                     <x-logo variant="pill" />
-                    <span class="font-headline font-bold text-2xl tracking-tight ml-2">PEDULI</span>
                 </div>
                 <p class="text-white/50 text-sm max-w-sm">
-                    Platform inovatif untuk mendukung implementasi Kurikulum Merdeka dan Proyek Penguatan Profil Pelajar Pancasila.
+                    {{ $site_settings['site_description'] ?? 'Platform inovatif untuk mendukung implementasi Kurikulum Merdeka.' }}
                 </p>
             </div>
             <div class="flex gap-8">
@@ -312,7 +310,7 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-white/30 text-xs">
-            &copy; {{ date('Y') }} ProPePa PEDULI LMS. All Rights Reserved. Built with ❤️ by MATEK.
+            &copy; {{ date('Y') }} {{ $site_settings['site_name'] ?? 'ProPePa PEDULI LMS' }}. All Rights Reserved. Built with ❤️ by MATEK.
         </div>
     </footer>
 

@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Share settings globally
+        view()->composer('*', function ($view) {
+            $view->with('site_settings', \App\Models\Setting::pluck('value', 'key')->toArray());
+        });
     }
 }
