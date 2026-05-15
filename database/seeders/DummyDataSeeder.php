@@ -39,7 +39,7 @@ class DummyDataSeeder extends Seeder
         // 3. Create Teachers (as Users)
         User::create([
             'name' => 'Budi Santoso',
-            'email' => 'budi@guru.com',
+            'email' => 'guru@propepa.id',
             'password' => Hash::make('password'),
             'role' => 'teacher',
             'class_id' => $class5A->id
@@ -47,7 +47,7 @@ class DummyDataSeeder extends Seeder
 
         User::create([
             'name' => 'Siti Aminah',
-            'email' => 'siti@guru.com',
+            'email' => 'siti@propepa.id',
             'password' => Hash::make('password'),
             'role' => 'teacher',
             'class_id' => $class5B->id

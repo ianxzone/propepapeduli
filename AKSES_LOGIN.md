@@ -5,7 +5,7 @@ Catatan ini berisi kredensial untuk mencoba seluruh dashboard (Siswa, Guru, Admi
 | Role | Identitas / Email | Password / Kode | URL Login |
 | :--- | :--- | :--- | :--- |
 | **Siswa** | Pilih Nama (misal: **Budi Darmawan**) | **123456** (Kode Kelas) | `/login` |
-| **Dosen / Guru** | `dosen@propepa.id` | `password` | `/guru/login` |
+| **Dosen / Guru** | `guru@propepa.id` | `password` | `/guru/login` |
 | **Admin** | `admin@propepa.id` | `password` | `/admin/login` |
 | **Super Admin** | `superadmin@propepa.id` | `password` | `/admin/login` |
 
