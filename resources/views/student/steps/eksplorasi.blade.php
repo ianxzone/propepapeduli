@@ -120,21 +120,31 @@
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 new Swiper('.perspective-swiper', {
-                    slidesPerView: 1,
-                    spaceBetween: 20,
-                    loop: {{ count($perspectives) > 1 ? 'true' : 'false' }},
+                    slidesPerView: 1.15,
                     centeredSlides: true,
+                    spaceBetween: 16,
+                    grabCursor: true,
+                    loop: {{ count($perspectives) > 1 ? 'true' : 'false' }},
                     pagination: {
                         el: '.swiper-pagination',
                         clickable: true,
+                        dynamicBullets: true
                     },
                     navigation: {
                         nextEl: '.swiper-next',
                         prevEl: '.swiper-prev',
                     },
                     breakpoints: {
-                        640: { slidesPerView: 1.1, spaceBetween: 24 },
-                        1024: { slidesPerView: 1.2, spaceBetween: 32 }
+                        768: {
+                            slidesPerView: 2.2,
+                            centeredSlides: false,
+                            spaceBetween: 20
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            centeredSlides: false,
+                            spaceBetween: 24
+                        }
                     }
                 });
             });

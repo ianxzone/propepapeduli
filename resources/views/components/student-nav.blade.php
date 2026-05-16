@@ -1,6 +1,6 @@
 @props(['active' => 'home'])
 
-<nav class="fixed bottom-0 left-0 w-full bg-white/80 backdrop-blur-lg border-t border-outline-variant/30 px-6 py-3 flex justify-between items-center z-50">
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[1024px] bg-white/80 backdrop-blur-lg border-t border-outline-variant/30 px-6 py-3 flex justify-between items-center z-50">
     <a href="{{ route('student.dashboard') }}" class="flex flex-col items-center gap-1 {{ $active === 'home' ? 'text-primary' : 'text-outline' }}">
         <span class="material-symbols-outlined" style="{{ $active === 'home' ? "font-variation-settings: 'FILL' 1;" : "" }}">home</span>
         <span class="text-[10px] font-bold">Beranda</span>

@@ -34,9 +34,9 @@
                 <h3 class="font-headline text-sm font-bold uppercase tracking-widest">Lanjutkan Belajarmu</h3>
             </div>
             
-            <div class="flex gap-4 overflow-x-auto no-scrollbar -mx-container-padding px-container-padding pb-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($inProgressModules as $module)
-                <a href="{{ route('student.module.show', $module->id) }}" class="flex-shrink-0 w-72 bg-secondary/5 border-2 border-secondary/20 rounded-[2rem] p-5 flex items-center gap-4 group active:scale-95 transition-all">
+                <a href="{{ route('student.module.show', $module->id) }}" class="bg-secondary/5 border-2 border-secondary/20 rounded-[2rem] p-5 flex items-center gap-4 group active:scale-95 transition-all">
                     <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-sm shrink-0">
                         <img src="{{ $module->thumbnail }}" class="w-full h-full object-cover rounded-xl" alt="">
                     </div>
@@ -63,7 +63,8 @@
                 <a href="#" class="text-primary font-label text-sm">Lihat Semua</a>
             </div>
 
-            @foreach($modules as $module)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                @foreach($modules as $module)
             <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-outline-variant/30 group active:scale-[0.98] transition-all">
                 <div class="h-40 relative">
                     <img src="{{ $module->thumbnail }}" 
@@ -118,6 +119,7 @@
                 </div>
             </div>
             @endforeach
+            </div>
         </section>
 
         <!-- Badge Collection Section -->
@@ -127,8 +129,8 @@
                 <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">{{ $completedModules->count() }} Lencana</span>
             </div>
 
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/30">
-                <div class="grid grid-cols-3 gap-6">
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-outline-variant/30">
+                <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
                     @forelse($completedModules as $module)
                         <div class="flex flex-col items-center gap-2 group">
                             <div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-inner border-2 border-white group-hover:scale-110 transition-transform duration-300">

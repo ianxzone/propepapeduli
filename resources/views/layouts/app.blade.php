@@ -24,9 +24,11 @@
     @stack('styles')
 </head>
 <body class="bg-surface font-sans text-on-surface min-h-screen antialiased">
-    <main>
-        @yield('content')
-    </main>
+    <div class="app-container">
+        <div class="app-content">
+            @yield('content')
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

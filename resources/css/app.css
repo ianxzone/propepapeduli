@@ -23,3 +23,35 @@
     --spacing-container-padding: 20px;
     --spacing-touch-target: 44px;
 }
+
+@layer components {
+    .app-container {
+        @apply w-full mx-auto min-h-screen flex flex-col bg-surface;
+    }
+    
+    .app-content {
+        @apply w-full mx-auto bg-white min-h-screen shadow-sm flex flex-col relative;
+        max-width: 100%;
+    }
+    
+    @media (min-width: 1024px) {
+        .app-content {
+            max-width: 1024px;
+            @apply shadow-2xl;
+        }
+    }
+}
+
+/* Custom scrollbar for better desktop feel */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    @apply bg-outline-variant/30 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-outline-variant/60;
+}
