@@ -424,17 +424,34 @@
 
                 function deleteCard(id, e) {
                     if(e) e.stopPropagation();
-                    if(!confirm('Hapus argumen ini?')) return;
                     
-                    const card = document.getElementById(id);
-                    if(card) card.remove();
-                    
-                    // Remove connections where this card is either parent or child
-                    connections = connections.filter(c => c.from !== id && c.to !== id);
-                    updateLines();
-                    
-                    // Suggest saving after change
-                    console.log("Card deleted. User needs to click 'Simpan Peta' to persist.");
+                    Swal.fire({
+                        title: 'Hapus Argumen?',
+                        text: 'Tindakan ini akan menghapus kartu argumen dan koneksinya.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#570000',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, Hapus',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-[2rem]',
+                            confirmButton: 'rounded-xl px-6 py-3',
+                            cancelButton: 'rounded-xl px-6 py-3'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const card = document.getElementById(id);
+                            if(card) card.remove();
+                            
+                            // Remove connections where this card is either parent or child
+                            connections = connections.filter(c => c.from !== id && c.to !== id);
+                            updateLines();
+                            
+                            // Suggest saving after change
+                            console.log("Card deleted. User needs to click 'Simpan Peta' to persist.");
+                        }
+                    });
                 }
 
                 function editCard(id, e) {

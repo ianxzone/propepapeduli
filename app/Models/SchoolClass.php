@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
 
 class SchoolClass extends Model
 {
+    use LogsActivity;
     protected $table = 'classes';
     
     protected $fillable = ['school_id', 'name', 'class_code', 'teacher_name'];

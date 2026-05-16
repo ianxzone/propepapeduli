@@ -20,6 +20,7 @@
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('styles')
 </head>
 <body class="bg-surface font-sans text-on-surface min-h-screen antialiased">
@@ -27,6 +28,44 @@
         @yield('content')
     </main>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Intercept standard confirm() in forms
+            document.querySelectorAll('form[onsubmit*="confirm"]').forEach(form => {
+                const originalOnSubmit = form.getAttribute('onsubmit');
+                if (originalOnSubmit && originalOnSubmit.includes('confirm')) {
+                    // Extract message from confirm('...')
+                    const match = originalOnSubmit.match(/confirm\(['"](.+)['"]\)/);
+                    const message = match ? match[1] : 'Apakah Anda yakin?';
+                    
+                    form.removeAttribute('onsubmit');
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        Swal.fire({
+                            title: 'Konfirmasi',
+                            text: message,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#570000',
+                            cancelButtonColor: '#CAC4D0',
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            borderRadius: '1.5rem',
+                            customClass: {
+                                popup: 'rounded-[2rem]',
+                                confirmButton: 'rounded-xl px-6 py-3',
+                                cancelButton: 'rounded-xl px-6 py-3'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+                        });
+                    });
+                }
+            });
+        });
+    </script>
     @stack('scripts')
 </body>
 </html>

@@ -155,15 +155,31 @@
     }
 
     function deleteMedia() {
-        if (confirm('Hapus media ini secara permanen?')) {
-            fetch(`/admin/media/${currentMediaId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                }
-            }).then(() => window.location.reload());
-        }
+        Swal.fire({
+            title: 'Hapus Media?',
+            text: 'Media ini akan dihapus secara permanen dari server.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus Permanen',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-[2rem]',
+                confirmButton: 'rounded-xl px-6 py-3',
+                cancelButton: 'rounded-xl px-6 py-3'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/media/${currentMediaId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                }).then(() => window.location.reload());
+            }
+        });
     }
 
     // Main Page Drag and Drop
