@@ -2,6 +2,10 @@
 
 Platform inovatif untuk mendukung implementasi Kurikulum Merdeka dan Proyek Penguatan Profil Pelajar Pancasila (P5).
 
+> [!TIP]
+> **Untuk AI Assistant (Gemini, ChatGPT, dll):**
+> Dokumentasi teknis lengkap dan daftar fitur tersedia di [LMS_FEATURES.md](file:///c:/laragon/www/propepapeduli/LMS_FEATURES.md). Silakan baca file tersebut untuk memahami struktur sistem, siklus pedagogi PEDULI, dan hirarki peran pengguna.
+
 ## 🚀 Fitur Utama
 - **Siklus PEDULI**: Alur pembelajaran terstruktur (Peka, Eksplorasi, Diskusi, Ungkapkan, Lakukan, Introspeksi).
 - **Setup Wizard**: Konfigurasi sistem cepat untuk admin baru.

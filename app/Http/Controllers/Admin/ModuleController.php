@@ -29,6 +29,7 @@ class ModuleController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:modules',
             'description' => 'required|string',
             'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'thumbnail_url' => 'nullable|url',
@@ -46,8 +47,11 @@ class ModuleController extends Controller
             $thumbnail = asset('uploads/modules/' . $filename);
         }
 
+        $slug = $request->slug ?: \Illuminate\Support\Str::slug($request->title);
+
         Module::create([
             'title' => $request->title,
+            'slug' => $slug,
             'description' => $request->description,
             'thumbnail' => $thumbnail ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuA9yqfYEBcbNVaJBf6CnY12Ief-6eZDZAS2gOMaG3UzDS9WN9pY7zC2fLoTj2QUSPAISSvzVxlAUoWKgEx2kE824vJdqU9MkjHwHYxOT4clYKHwq-CwPlY1-s6lGn2vcu05_mRtrQSFErf-6ma90o6k-YrQkJhujSeJmfGMaupfaU8iC-4dp5WOCI8QusjjJU61FIX1kbNdxZtMIU2zbysu1yXI4Xq-0zrltzIkwwqYOQG2gMkdLl2DwAZo26-sWHUWQWv01zvCVYmD',
             'badge_name' => $request->badge_name,
@@ -67,6 +71,7 @@ class ModuleController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:modules,slug,' . $module->id,
             'description' => 'required|string',
             'thumbnail_file' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'thumbnail_url' => 'nullable|url',
@@ -83,8 +88,11 @@ class ModuleController extends Controller
             $thumbnail = asset('uploads/modules/' . $filename);
         }
 
+        $slug = $request->slug ?: \Illuminate\Support\Str::slug($request->title);
+
         $module->update([
             'title' => $request->title,
+            'slug' => $slug,
             'description' => $request->description,
             'thumbnail' => $thumbnail,
             'badge_name' => $request->badge_name,

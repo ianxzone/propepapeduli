@@ -27,12 +27,12 @@ class SecurityHeaders
 
         // Tighten Content Security Policy
         $csp = "default-src 'self'; ";
-        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://www.youtube.com https://s.ytimg.com; ";
-        $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com; ";
-        $csp .= "img-src 'self' data: https: http:; ";
+        $csp .= "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.ckeditor.com https://www.youtube.com https://s.ytimg.com; ";
+        $csp .= "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://cdn.tiny.cloud https://cdn.ckeditor.com; ";
+        $csp .= "img-src 'self' data: https: http: https://cdn.tiny.cloud; ";
         $csp .= "font-src 'self' https://fonts.gstatic.com; ";
         $csp .= "frame-src 'self' https://www.youtube.com; ";
-        $csp .= "connect-src 'self';";
+        $csp .= "connect-src 'self' https://*.tiny.cloud; ";
 
         // Allow local dev assets if in local environment
         if (app()->environment('local')) {

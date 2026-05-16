@@ -63,12 +63,10 @@
 @push('scripts')
 <script>
 function refreshCaptcha() {
-    const container = document.querySelector('.captcha-img-container');
-    fetch('/captcha/api/flat')
-        .then(response => response.json())
-        .then(data => {
-            container.innerHTML = data.img;
-        });
+    const img = document.querySelector('.captcha-img-container img');
+    if (img) {
+        img.src = '{{ captcha_src("flat") }}' + '?' + Math.random();
+    }
 }
 </script>
 @endpush

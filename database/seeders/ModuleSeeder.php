@@ -2,75 +2,99 @@
 
 namespace Database\Seeders;
 
-use App\Models\Module;
 use Illuminate\Database\Seeder;
+use App\Models\Module;
+use Illuminate\Support\Str;
 
 class ModuleSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        $modules = [
-            [
-                'title' => 'Bijak Menabung: Masa Depan Gemilang',
-                'description' => 'Belajar cara mengelola uang saku dan pentingnya menabung sejak dini dengan cara yang seru.',
-                'order' => 1,
-                'is_active' => true,
-                'content' => [
-                    'P' => [
-                        'video_url' => 'https://www.youtube.com/watch?v=M99_G-68Kk0',
-                        'story_images' => "https://images.unsplash.com/photo-1554224155-1696413565d3?w=800\nhttps://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800\nhttps://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=800",
-                        'text' => '<h2>Mengapa Harus Menabung?</h2><ul><li><strong>Kebutuhan Darurat:</strong> Membantu saat ada keperluan mendesak.</li><li><strong>Impian Masa Depan:</strong> Membeli barang yang diinginkan tanpa merepotkan orang lain.</li><li><strong>Disiplin:</strong> Melatih diri untuk tidak boros.</li></ul><p>Data menunjukkan bahwa 70% anak yang gemar menabung memiliki manajemen keuangan yang lebih baik saat dewasa.</p>',
-                        'file_url' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
-                    ],
-                    'E' => ['questions' => []],
-                    'D' => ['text' => ''],
-                    'U' => ['text' => ''],
-                    'L' => ['text' => ''],
-                    'I' => ['text' => '']
-                ]
+        $content = [
+            'P' => [
+                'title' => 'Krisis Sampah Plastik Kota Cimahi & Kisah Pak Ade',
+                'video_url' => 'https://www.youtube.com/embed/dummy-kali-cimahi',
+                'description' => 'Kota Cimahi menghasilkan 580 ton sampah per hari (14% plastik). Simak kisah nyata Pak Ade (52 tahun), nelayan Kali Cimahi yang jaringnya dipenuhi sampah plastik sehingga hasil tangkapan turun dari 15 kg menjadi 2 kg. Dampaknya, anak bungsunya, Sari (10 tahun), terpaksa berhenti les.',
+                'task_instruction' => 'Tuliskan 2-3 fakta baru atau hal yang paling mengejutkan bagi kamu dari kisah Pak Ade.',
             ],
-            [
-                'title' => 'Sahabat Alam: Melindungi Fauna Lokal',
-                'description' => 'Mengenal hewan-hewan unik di sekitar kita dan bagaimana cara menjaga habitat mereka.',
-                'order' => 2,
-                'is_active' => true,
-                'content' => [
-                    'P' => [
-                        'video_url' => 'https://www.youtube.com/watch?v=3-p6E-R87W8',
-                        'story_images' => "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=800\nhttps://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=800\nhttps://images.unsplash.com/photo-1516641396056-0ce60a85d49f?w=800",
-                        'text' => '<h2>Data Fauna Lokal</h2><p>Kita hidup berdampingan dengan banyak spesies unik. Namun, populasi mereka terus menurun akibat kehilangan habitat.</p><table border="1"><thead><tr><th>Spesies</th><th>Status</th></tr></thead><tbody><tr><td>Burung Pipit</td><td>Banyak</td></tr><tr><td>Kupu-Kupu Raja</td><td>Terancam</td></tr><tr><td>Landak Jawa</td><td>Langka</td></tr></tbody></table>',
-                        'file_url' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+            'E' => [
+                'title' => 'Kacamata Perspektif',
+                'stakeholders' => [
+                    [
+                        'role' => 'Masyarakat / Nelayan (Pak Ade)',
+                        'focus' => 'Penurunan pendapatan ekonomi dan pendidikan anak akibat jaring penuh plastik.'
                     ],
-                    'E' => ['questions' => []],
-                    'D' => ['text' => ''],
-                    'U' => ['text' => ''],
-                    'L' => ['text' => ''],
-                    'I' => ['text' => '']
-                ]
+                    [
+                        'role' => 'Pemerintah Kota (Dinas Lingkungan Hidup)',
+                        'focus' => 'Beban operasional pengelolaan 580 ton sampah/hari dan keterbatasan lahan TPA.'
+                    ],
+                    [
+                        'role' => 'Pengusaha Industri Plastik/Kemasan',
+                        'focus' => 'Efisiensi biaya produksi, penyerapan tenaga kerja pabrik, dan kebutuhan konsumen.'
+                    ],
+                    [
+                        'role' => 'Generasi Muda / Aktivis Lingkungan',
+                        'focus' => 'Kerusakan jangka panjang ekologi sungai, mikroplastik, dan masa depan bumi.'
+                    ],
+                ],
             ],
-            [
-                'title' => 'Pahlawan Digital: Anti Bullying di Internet',
-                'description' => 'Membangun karakter positif di dunia maya dan cara menghadapi perundungan digital.',
-                'order' => 3,
-                'is_active' => true,
-                'content' => [
-                    'P' => [
-                        'video_url' => 'https://www.youtube.com/watch?v=7X89Wn6z7gM',
-                        'story_images' => "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800\nhttps://images.unsplash.com/photo-1552664730-d307ca884978?w=800\nhttps://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800",
-                        'text' => '<h2>Etika Berkomentar</h2><blockquote>"Pikirkan sebelum mengetik."</blockquote><p>Dunia digital adalah cerminan dunia nyata. Gunakan kata-kata yang mendukung, bukan menjatuhkan.</p><ol><li>Verifikasi informasi sebelum berbagi.</li><li>Gunakan bahasa yang sopan.</li><li>Laporkan perundungan jika melihatnya.</li></ol>',
-                        'file_url' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+            'D' => [
+                'title' => 'Skenario Keputusan / Rapat Warga',
+                'type' => 'chat', // Default to chat as requested in logic
+                'dilemma_story' => 'Dalam rapat warga Kali Cimahi, muncul pertentangan mengenai solusi terbaik untuk mengatasi krisis sampah plastik ini.',
+                'options' => [
+                    'Usulan A' => 'Industri manufaktur wajib membayar biaya pembersihan sungai dan ganti rugi total kepada nelayan lokal.',
+                    'Usulan B' => 'Sistem pendanaan gotong royong untuk membuat TPS Terpadu (Industri 60%, Pemerintah 30%, Masyarakat/Siswa 10%).',
+                    'Usulan C' => 'Pelarangan plastik sekali pakai secara total di seluruh lingkungan sekolah se-Kota Cimahi dan wajib edukasi zero waste.',
+                ],
+            ],
+            'U' => [
+                'title' => 'Jurnal Empati',
+                'prompt_question' => 'Bagaimana perasaanmu setelah menempatkan diri pada kacamata perspektif Pak Ade dan Sari? Ungkapkan secara jujur.',
+                'features_enabled' => ['text_editor', 'emoji_picker_10_options', 'voice_note_recorder'],
+            ],
+            'L' => [
+                'title' => 'Menu Aksi Sosial SMART',
+                'options' => [
+                    [
+                        'type' => 'Aksi Individu',
+                        'description' => 'Komitmen 7 hari bebas kantong plastik sekali pakai dengan membawa tumbler dan kotak makan sendiri ke sekolah.'
                     ],
-                    'E' => ['questions' => []],
-                    'D' => ['text' => ''],
-                    'U' => ['text' => ''],
-                    'L' => ['text' => ''],
-                    'I' => ['text' => '']
-                ]
+                    [
+                        'type' => 'Aksi Kelompok',
+                        'description' => 'Membuat 2 poster kampanye lingkungan kreatif atau melakukan audit jenis sampah di area sekolah selama 3 hari.'
+                    ],
+                    [
+                        'type' => 'Aksi Kelas/Lanjutan',
+                        'description' => 'Mengorganisasi "Hari Bebas Plastik Sekolah" atau menulis surat saran bersama kepada Lurah/Dinas Lingkungan Hidup.'
+                    ],
+                ],
+                'submission_requirements' => ['photo_upload', 'mini_report_text'],
+            ],
+            'I' => [
+                'title' => 'Introspeksi',
+                'reflection_prompt' => 'Apa yang berubah dalam dirimu setelah menyelesaikan aksi nyata ini? Kebiasaan baik apa yang berkomitmen kamu jaga untuk bumi?',
+            ],
+            'S' => [
+                'title' => 'Selesai',
+                'summary' => 'Selamat! Kamu telah menyelesaikan petualangan empati di Modul 1. Teruslah menjadi pahlawan lingkungan bagi sekitarmu.',
             ]
         ];
 
-        foreach ($modules as $data) {
-            Module::create($data);
-        }
+        Module::updateOrCreate(
+            ['slug' => 'lingkungan-sehat-sampah-bukan-takdir'],
+            [
+                'title' => 'Sampah Bukan Takdir: Siapa Bertanggung Jawab?',
+                'description' => 'Modul 1: Investigasi krisis sampah plastik dan dampaknya terhadap masyarakat pesisir.',
+                'is_active' => true,
+                'content' => $content,
+                'thumbnail' => 'https://cdn.pixabay.com/photo/2017/04/05/01/16/ocean-2203720_1280.jpg',
+                'badge_name' => 'Pejuang Lingkungan',
+                'badge_icon' => 'eco',
+            ]
+        );
     }
 }

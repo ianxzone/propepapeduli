@@ -40,7 +40,7 @@ class AdminAuthController extends Controller
         $user = \App\Models\User::where('email', $credentials['email'])->first();
 
         if ($user && in_array($user->role, ['admin', 'dosen'])) {
-            if (Auth::attempt($credentials)) {
+            if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
                 ActivityLog::create([
                     'user_id' => $user->id,
                     'action' => 'login_success',

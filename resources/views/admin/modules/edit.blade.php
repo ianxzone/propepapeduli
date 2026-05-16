@@ -50,18 +50,27 @@
             @method('PUT')
             
             <!-- Judul Modul -->
-            <div>
-                <label for="title" class="block font-bold text-sm text-on-surface mb-2">Judul Modul <span class="text-error">*</span></label>
-                <input type="text" id="title" name="title" value="{{ old('title', $module->title) }}" required
-                       class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
-                       placeholder="Contoh: Ayo Jaga Kebersihan Sungai">
-                @error('title') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="title" class="block font-bold text-sm text-on-surface mb-2">Judul Modul <span class="text-error">*</span></label>
+                    <input type="text" id="title" name="title" value="{{ old('title', $module->title) }}" required
+                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
+                           placeholder="Contoh: Ayo Jaga Kebersihan Sungai">
+                    @error('title') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label for="slug" class="block font-bold text-sm text-on-surface mb-2">Slug URL (Otomatis)</label>
+                    <input type="text" id="slug" name="slug" value="{{ old('slug', $module->slug) }}"
+                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-low"
+                           placeholder="ayo-jaga-kebersihan-sungai">
+                    @error('slug') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
             </div>
 
             <!-- Deskripsi -->
             <div>
                 <label for="description" class="block font-bold text-sm text-on-surface mb-2">Deskripsi Singkat <span class="text-error">*</span></label>
-                <textarea id="description" name="description" rows="4" required
+                <textarea id="description" name="description" rows="4"
                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">{{ old('description', $module->description) }}</textarea>
                 @error('description') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
             </div>
@@ -132,3 +141,28 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#description',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 300,
+        branding: false,
+        promotion: false
+    });
+
+    const titleInput = document.getElementById('title');
+    const slugInput = document.getElementById('slug');
+
+    titleInput.addEventListener('keyup', function() {
+        const title = titleInput.value;
+        const slug = title.toLowerCase()
+            .replace(/[^\w ]+/g, '')
+            .replace(/ +/g, '-');
+        slugInput.value = slug;
+    });
+</script>
+@endpush

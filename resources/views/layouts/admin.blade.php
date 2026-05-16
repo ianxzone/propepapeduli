@@ -50,6 +50,7 @@
             
             <div class="h-px bg-white/10 my-4 mx-3"></div>
             
+            @if(Auth::user()->role === 'admin')
             <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.users.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.users.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">manage_accounts</span>
                 <span>Manajemen User</span>
@@ -58,6 +59,7 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.teams.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">groups</span>
                 <span>Manajemen Tim</span>
             </a>
+            @endif
             <a href="{{ route('admin.media.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.media.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.media.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">perm_media</span>
                 <span>Pustaka Media</span>
@@ -70,6 +72,7 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('teacher.groups.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">groups</span>
                 <span>Kelola Kelompok</span>
             </a>
+            @if(Auth::user()->role === 'admin')
             <a href="{{ route('admin.backups.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.backups.*') ? 'bg-primary-fixed/10 text-primary-fixed font-bold' : 'text-surface-variant hover:bg-white/5 hover:text-white' }}">
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.backups.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">database</span>
                 <span>Backup Data</span>
@@ -82,6 +85,7 @@
                 <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.settings.*') ? "font-variation-settings: 'FILL' 1;" : "" }}">settings</span>
                 <span>Pengaturan Sistem</span>
             </a>
+            @endif
         </div>
         
         <div class="p-4 border-t border-white/10 shrink-0">
@@ -107,8 +111,14 @@
                 <h1 class="font-headline text-lg font-bold text-on-surface">@yield('header_title', 'Admin ProPePa')</h1>
             </div>
             <div class="flex items-center gap-4">
-                <div class="w-8 h-8 rounded-full bg-primary-container text-white flex items-center justify-center font-bold text-sm">
-                    A
+                <div class="text-right hidden md:block">
+                    <p class="text-sm font-bold text-on-surface">{{ Auth::user()->name }}</p>
+                    <p class="text-[10px] text-on-surface-variant uppercase font-bold">
+                        {{ Auth::user()->role === 'admin' ? 'Super Admin' : 'Dosen Peneliti' }}
+                    </p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-primary-fixed/20 text-primary-fixed flex items-center justify-center font-bold border border-primary-fixed/10 shadow-sm">
+                    {{ substr(Auth::user()->name, 0, 1) }}
                 </div>
             </div>
         </header>
