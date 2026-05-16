@@ -134,51 +134,6 @@
             </div>
         </div>
 
-        @push('scripts')
-        <script>
-            let perspectiveCount = {{ count($perspectives) }};
-            function addPerspective() {
-                const container = document.getElementById('perspective_container');
-                const div = document.createElement('div');
-                const index = perspectiveCount++;
-                div.className = 'perspective-item bg-surface-container-low p-6 rounded-[2rem] border border-outline-variant/30 relative group animate-in fade-in slide-in-from-top-4 duration-300';
-                div.setAttribute('data-index', index);
-                div.innerHTML = `
-                    <button type="button" onclick="this.closest('.perspective-item').remove()" class="absolute -top-3 -right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all">
-                        <span class="material-symbols-outlined text-sm">close</span>
-                    </button>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block font-label text-xs text-on-surface-variant mb-2 font-bold uppercase tracking-wider">Nama Tokoh / Perspektif</label>
-                                <input type="text" name="content[E][perspectives][${index}][name]" 
-                                       class="w-full h-12 px-4 bg-white border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                                       placeholder="Contoh: Aktivis Lingkungan">
-                            </div>
-                            <div>
-                                <label class="block font-label text-xs text-on-surface-variant mb-2 font-bold uppercase tracking-wider">Gambar Tokoh</label>
-                                <div class="flex gap-2">
-                                    <input type="url" name="content[E][perspectives][${index}][image]" id="input_e_image_${index}"
-                                           class="flex-1 h-12 px-4 bg-white border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                                           placeholder="URL Gambar">
-                                    <button type="button" onclick="openMediaPicker('input_e_image_${index}', 'image')" class="h-12 px-4 bg-secondary-container/10 text-secondary font-bold rounded-xl border border-secondary/20 hover:bg-secondary hover:text-white transition-all flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-sm">image</span>
-                                        Media
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block font-label text-xs text-on-surface-variant mb-2 font-bold uppercase tracking-wider">Kutipan Pendapat</label>
-                            <textarea name="content[E][perspectives][${index}][text]" rows="5" class="w-full p-4 bg-white border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                                      placeholder="Apa pendapat tokoh ini tentang isunya?"></textarea>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            }
-        </script>
-        @endpush
 
         <!-- D: Diskusi -->
         <div class="bg-white p-8 rounded-[2.5rem] border border-outline-variant/30 shadow-sm space-y-6">
@@ -376,29 +331,36 @@
 
 @push('styles')
 <style>
-    .tox-tinymce {
-        border-radius: 1rem !important;
-        border: 1px solid #e5e7eb !important;
+    .ck-editor__editable {
+        min-height: 200px;
+        background-color: white !important;
+        border-radius: 0 0 1rem 1rem !important;
+    }
+    .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+        border-color: #e5e7eb !important;
     }
 </style>
 @endpush
 
 @push('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
 <script>
+    const editors = {};
+
     function initEditor(selector) {
-        tinymce.init({
-            selector: selector,
-            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
-            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
-            height: 250,
-            branding: false,
-            promotion: false,
-            setup: function (editor) {
-                editor.on('change', function () {
-                    editor.save();
+        document.querySelectorAll(selector).forEach(textarea => {
+            if (textarea.id === 'input_story_images') return;
+            
+            ClassicEditor
+                .create(textarea, {
+                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo']
+                })
+                .then(editor => {
+                    editors[textarea.name || textarea.id] = editor;
+                })
+                .catch(error => {
+                    console.error(error);
                 });
-            }
         });
     }
 
@@ -416,6 +378,7 @@
         div.setAttribute('data-index', index);
         
         const textareaId = `perspective_text_${index}`;
+        const textareaName = `content[E][perspectives][${index}][text]`;
         
         div.innerHTML = `
             <button type="button" onclick="this.closest('.perspective-item').remove()" class="absolute -top-3 -right-3 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-all z-10">
@@ -444,7 +407,7 @@
                 </div>
                 <div>
                     <label class="block font-label text-xs text-on-surface-variant mb-2 font-bold uppercase tracking-wider">Kutipan Pendapat</label>
-                    <textarea id="${textareaId}" name="content[E][perspectives][${index}][text]" rows="5" class="w-full p-4 bg-white border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                    <textarea id="${textareaId}" name="${textareaName}" rows="5" class="w-full p-4 bg-white border border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                               placeholder="Apa pendapat tokoh ini tentang isunya?"></textarea>
                 </div>
             </div>
@@ -452,12 +415,17 @@
         container.appendChild(div);
         
         // Init editor for the new textarea
-        initEditor(`#${textareaId}`);
+        ClassicEditor
+            .create(document.getElementById(textareaId), {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'insertTable', 'undo', 'redo']
+            })
+            .then(editor => {
+                editors[textareaName] = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
     }
-
-    document.getElementById('contentForm').addEventListener('submit', function() {
-        tinymce.triggerSave();
-    });
 
     let currentTargetId = null;
     let isAppendMode = false;
