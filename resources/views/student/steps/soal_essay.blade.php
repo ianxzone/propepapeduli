@@ -78,16 +78,24 @@
             @foreach($dimensions as $dim)
             <div class="bg-white p-8 rounded-[2rem] border-2 border-outline-variant/30 shadow-soft space-y-4 relative overflow-hidden">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl {{ $dim['color'] }} flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined">{{ $dim['icon'] }}</span>
+                    <div class="w-12 h-12 rounded-2xl {{ $dim['color'] }} flex items-center justify-center shrink-0 shadow-sm">
+                        <span class="material-symbols-outlined text-2xl">{{ $dim['icon'] }}</span>
                     </div>
-                    <h3 class="font-headline text-lg text-on-surface font-bold">{{ $dim['label'] }}</h3>
+                    <h3 class="font-headline text-headline-sm text-on-surface font-bold">{{ $dim['label'] }}</h3>
                 </div>
                 
-                <div class="bg-surface-container-low rounded-2xl p-1 border border-outline-variant/30">
+                <!-- Question Text -->
+                <div class="bg-surface-container-low/50 p-6 rounded-2xl border border-outline-variant/20">
+                    <div class="prose prose-sm prose-primary max-w-none text-on-surface leading-relaxed italic">
+                        {!! $dim['placeholder'] !!}
+                    </div>
+                </div>
+
+                <!-- Answer Area -->
+                <div class="bg-white rounded-2xl border-2 border-outline-variant/30 focus-within:border-primary transition-all">
                     <textarea name="essay_{{ $dim['id'] }}" rows="4" required form="final-essay-form"
-                              class="w-full bg-transparent border-none focus:ring-0 p-4 text-body-md text-on-surface placeholder:text-outline-variant transition-all" 
-                              placeholder="{{ $dim['placeholder'] }}"></textarea>
+                              class="w-full bg-transparent border-none focus:ring-0 p-5 text-body-md text-on-surface placeholder:text-outline-variant/50" 
+                              placeholder="Tuliskan jawabanmu di sini..."></textarea>
                 </div>
             </div>
             @endforeach
