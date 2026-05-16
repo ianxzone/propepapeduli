@@ -14,6 +14,7 @@ class Team extends Model
         'nip',
         'nidn',
         'academic_rank',
+        'homebase',
         'description',
         'bio',
         'education',

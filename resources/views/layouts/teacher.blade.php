@@ -105,7 +105,7 @@
                 <a href="{{ route('teacher.notifications') }}" class="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-all">
                     <span class="material-symbols-outlined text-on-surface-variant">notifications</span>
                     @if($unreadCount > 0)
-                        <span class="absolute top-2 right-2 w-4 h-4 bg-error text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                        <span class="absolute top-2 right-2 w-4 h-4 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white shadow-sm">
                             {{ $unreadCount }}
                         </span>
                     @endif

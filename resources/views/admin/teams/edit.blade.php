@@ -75,11 +75,18 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block font-bold text-sm text-on-surface mb-2">Jabatan Struktural / Posisi <span class="text-error">*</span></label>
-                        <input type="text" name="position" value="{{ old('position', $team->position) }}" required
+                        <label class="block font-bold text-sm text-on-surface mb-2">Home Base Dosen</label>
+                        <input type="text" name="homebase" value="{{ old('homebase', $team->homebase) }}"
                                class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
-                               placeholder="Contoh: Dekan Fakultas / Peneliti">
+                               placeholder="Contoh: Universitas Pendidikan Indonesia">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Jabatan Struktural / Posisi <span class="text-error">*</span></label>
+                    <input type="text" name="position" value="{{ old('position', $team->position) }}" required
+                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
+                           placeholder="Contoh: Dekan Fakultas / Peneliti">
                 </div>
 
                 <div>

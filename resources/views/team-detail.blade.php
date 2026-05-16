@@ -104,6 +104,13 @@
                     <h1 class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface leading-tight">{{ $team->name }}</h1>
                     <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-on-surface-variant">
                         <p class="font-bold text-lg text-primary">{{ $team->position }}</p>
+                        @if($team->homebase)
+                        <div class="w-1.5 h-1.5 rounded-full bg-outline-variant hidden md:block"></div>
+                        <div class="flex items-center gap-1.5 text-sm font-bold bg-surface-container-low px-3 py-1 rounded-lg border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-[16px]">account_balance</span>
+                            <span>{{ $team->homebase }}</span>
+                        </div>
+                        @endif
                         @if($team->nip || $team->nidn)
                         <div class="w-1.5 h-1.5 rounded-full bg-outline-variant hidden md:block"></div>
                         <p class="text-sm font-medium">

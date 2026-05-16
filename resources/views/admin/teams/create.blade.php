@@ -25,6 +25,29 @@
                     @error('name') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Foto Anggota (URL)</label>
+                    <div class="flex gap-4 items-start">
+                        <div class="w-16 h-16 rounded-2xl bg-surface-container overflow-hidden shrink-0 border border-outline-variant/30">
+                            <img id="image_preview" src="https://ui-avatars.com/api/?name=Team+Member&size=200&background=F9DEDC&color=410002" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1 space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" name="image" id="team_image" value="{{ old('image') }}"
+                                       class="flex-1 rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
+                                       placeholder="https://..." onchange="document.getElementById('image_preview').src = this.value">
+                                <button type="button" onclick="openMediaPicker('team_image', 'image')"
+                                        class="bg-surface-container-high text-on-surface px-4 rounded-xl font-bold text-sm hover:bg-surface-container-highest transition-all flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">image</span>
+                                    Media
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    @error('image') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block font-bold text-sm text-on-surface mb-2">NIP (Opsional)</label>
@@ -51,11 +74,18 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block font-bold text-sm text-on-surface mb-2">Jabatan Struktural / Posisi <span class="text-error">*</span></label>
-                        <input type="text" name="position" value="{{ old('position') }}" required
+                        <label class="block font-bold text-sm text-on-surface mb-2">Home Base Dosen</label>
+                        <input type="text" name="homebase" value="{{ old('homebase') }}"
                                class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
-                               placeholder="Contoh: Dekan Fakultas / Peneliti">
+                               placeholder="Contoh: Universitas Pendidikan Indonesia">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Jabatan Struktural / Posisi <span class="text-error">*</span></label>
+                    <input type="text" name="position" value="{{ old('position') }}" required
+                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest"
+                           placeholder="Contoh: Dekan Fakultas / Peneliti">
                 </div>
 
                 <div>
