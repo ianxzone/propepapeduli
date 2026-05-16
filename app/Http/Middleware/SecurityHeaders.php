@@ -32,7 +32,7 @@ class SecurityHeaders
         $csp .= "img-src 'self' data: https: http: https://cdn.tiny.cloud; ";
         $csp .= "font-src 'self' https://fonts.gstatic.com; ";
         $csp .= "frame-src 'self' https://www.youtube.com; ";
-        $csp .= "connect-src 'self' https://*.tiny.cloud; ";
+        $csp .= "connect-src 'self' https://cdn.ckeditor.com; ";
 
         // Allow local dev assets if in local environment
         if (app()->environment('local')) {
