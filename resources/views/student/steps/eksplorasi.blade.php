@@ -32,69 +32,114 @@
         @endphp
 
         @if(count($perspectives) > 0)
-        <section class="swiper perspective-swiper overflow-visible">
-            <div class="swiper-wrapper">
-                @foreach($perspectives as $p)
-                <div class="swiper-slide">
-                    <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-soft border border-outline-variant/30 h-full flex flex-col">
-                        <!-- Image Area -->
-                        <div class="w-full h-64 relative bg-surface-container-high flex items-center justify-center overflow-hidden shrink-0">
-                            @if(!empty($p['image']))
-                                <img src="{{ $p['image'] }}" 
-                                     alt="{{ $p['name'] ?? 'Perspektif' }}" 
-                                     class="w-full h-full object-cover">
-                            @else
-                                <div class="flex flex-col items-center gap-2 text-on-surface-variant/30">
-                                    <span class="material-symbols-outlined text-6xl">person_search</span>
-                                    <p class="text-xs font-bold uppercase tracking-widest">Gambar Belum Tersedia</p>
+        <section class="perspective-section -mx-container-padding overflow-hidden">
+            <div class="swiper perspective-swiper px-container-padding overflow-visible">
+                <div class="swiper-wrapper">
+                    @foreach($perspectives as $p)
+                    <div class="swiper-slide !h-auto">
+                        <div class="bg-white rounded-[3rem] overflow-hidden shadow-soft border border-outline-variant/30 h-full flex flex-col group transition-all duration-500 hover:shadow-2xl">
+                            <!-- Image Area with Premium Overlay -->
+                            <div class="w-full aspect-[16/9] relative bg-surface-container-high overflow-hidden shrink-0">
+                                @if(!empty($p['image']))
+                                    <img src="{{ $p['image'] }}" 
+                                         alt="{{ $p['name'] ?? 'Perspektif' }}" 
+                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                @else
+                                    <div class="flex flex-col items-center justify-center h-full gap-2 text-on-surface-variant/30">
+                                        <span class="material-symbols-outlined text-6xl">person_search</span>
+                                        <p class="text-xs font-bold uppercase tracking-widest">Gambar Belum Tersedia</p>
+                                    </div>
+                                @endif
+                                
+                                <!-- Decorative Badge -->
+                                <div class="absolute top-6 left-6 z-10">
+                                    <div class="bg-secondary/90 backdrop-blur-md text-white px-5 py-2 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">visibility</span>
+                                        <span>Kacamata Perspektif</span>
+                                    </div>
                                 </div>
-                            @endif
-                            <div class="absolute top-4 left-4 bg-secondary text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                                Perspektif
+
+                                <!-- Gradient Overlay for text readability -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                                
+                                <!-- Name Overlay on Image -->
+                                <div class="absolute bottom-6 left-6 right-6">
+                                    <h2 class="font-headline text-headline-sm text-white drop-shadow-md">{{ $p['name'] ?? 'Tokoh Tanpa Nama' }}</h2>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Content Area -->
-                        <div class="p-8 text-center space-y-6 flex-1 flex flex-col justify-center">
-                            <h2 class="font-headline text-headline-md text-primary">{{ $p['name'] ?? 'Tokoh Tanpa Nama' }}</h2>
-                            <div class="bg-surface-container-low p-6 rounded-3xl relative min-h-[120px] flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary/10 absolute top-2 left-2 text-6xl">format_quote</span>
-                                <div class="prose prose-primary max-w-none text-body-lg text-on-surface font-medium italic relative z-10 leading-relaxed">
-                                    {!! $p['text'] ?? 'Materi belum diisi.' !!}
+                            
+                            <!-- Content Area -->
+                            <div class="p-8 space-y-6 flex-1 flex flex-col">
+                                <div class="bg-surface-container-lowest p-8 rounded-[2rem] border border-outline-variant/20 relative flex-1 flex items-center justify-center shadow-inner">
+                                    <span class="material-symbols-outlined text-primary/10 absolute -top-2 -left-2 text-8xl pointer-events-none">format_quote</span>
+                                    <div class="prose prose-primary max-w-none text-body-lg text-on-surface font-medium italic relative z-10 leading-relaxed text-center">
+                                        {!! $p['text'] ?? 'Materi belum diisi.' !!}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    @endforeach
                 </div>
-                @endforeach
+                
+                @if(count($perspectives) > 1)
+                <!-- Custom Navigation -->
+                <div class="flex items-center justify-center gap-6 mt-12 mb-4">
+                    <button class="swiper-prev w-14 h-14 rounded-2xl bg-white border border-outline-variant/30 shadow-sm flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all active:scale-95 group">
+                        <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    </button>
+                    <div class="swiper-pagination !static !w-auto"></div>
+                    <button class="swiper-next w-14 h-14 rounded-2xl bg-white border border-outline-variant/30 shadow-sm flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all active:scale-95 group">
+                        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </button>
+                </div>
+                @endif
             </div>
-            
-            @if(count($perspectives) > 1)
-            <!-- Custom Pagination -->
-            <div class="swiper-pagination !-bottom-8"></div>
-            <!-- Navigation Arrows -->
-            <div class="swiper-button-next !text-primary !-right-4 md:!-right-12"></div>
-            <div class="swiper-button-prev !text-primary !-left-4 md:!-left-12"></div>
-            @endif
         </section>
 
+        @push('styles')
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <style>
+            .perspective-swiper .swiper-pagination-bullet {
+                width: 10px;
+                height: 10px;
+                background: #e5e7eb;
+                opacity: 1;
+                transition: all 0.3s ease;
+            }
+            .perspective-swiper .swiper-pagination-bullet-active {
+                width: 32px;
+                border-radius: 5px;
+                background: var(--md-sys-color-primary, #570000);
+            }
+            .perspective-swiper {
+                padding-bottom: 2rem !important;
+            }
+        </style>
+        @endpush
+
         @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         <script>
-            new Swiper('.perspective-swiper', {
-                slidesPerView: 1,
-                spaceBetween: 30,
-                pagination: {
-                    el: '.swiper-pagination',
-                    clickable: true,
-                },
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                breakpoints: {
-                    640: { slidesPerView: 1 },
-                    1024: { slidesPerView: 1 }
-                }
+            document.addEventListener('DOMContentLoaded', () => {
+                new Swiper('.perspective-swiper', {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                    loop: {{ count($perspectives) > 1 ? 'true' : 'false' }},
+                    centeredSlides: true,
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    navigation: {
+                        nextEl: '.swiper-next',
+                        prevEl: '.swiper-prev',
+                    },
+                    breakpoints: {
+                        640: { slidesPerView: 1.1, spaceBetween: 24 },
+                        1024: { slidesPerView: 1.2, spaceBetween: 32 }
+                    }
+                });
             });
         </script>
         @endpush
