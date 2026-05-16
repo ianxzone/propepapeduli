@@ -37,42 +37,39 @@
                 <div class="swiper-wrapper">
                     @foreach($perspectives as $p)
                     <div class="swiper-slide !h-auto">
-                        <div class="bg-white rounded-[3rem] overflow-hidden shadow-soft border border-outline-variant/30 h-full flex flex-col group transition-all duration-500 hover:shadow-2xl">
-                            <!-- Image Area with Premium Overlay -->
-                            <div class="w-full aspect-[16/9] relative bg-surface-container-high overflow-hidden shrink-0">
+                        <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-soft border border-outline-variant/30 h-full flex flex-col group transition-all duration-500 hover:shadow-xl max-w-4xl mx-auto">
+                            <!-- Compact Image Area -->
+                            <div class="w-full h-48 md:h-64 relative bg-surface-container-high overflow-hidden shrink-0">
                                 @if(!empty($p['image']))
                                     <img src="{{ $p['image'] }}" 
                                          alt="{{ $p['name'] ?? 'Perspektif' }}" 
-                                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                                 @else
                                     <div class="flex flex-col items-center justify-center h-full gap-2 text-on-surface-variant/30">
-                                        <span class="material-symbols-outlined text-6xl">person_search</span>
-                                        <p class="text-xs font-bold uppercase tracking-widest">Gambar Belum Tersedia</p>
+                                        <span class="material-symbols-outlined text-4xl">person_search</span>
+                                        <p class="text-[10px] font-bold uppercase tracking-widest">Gambar Belum Tersedia</p>
                                     </div>
                                 @endif
                                 
                                 <!-- Decorative Badge -->
-                                <div class="absolute top-6 left-6 z-10">
-                                    <div class="bg-secondary/90 backdrop-blur-md text-white px-5 py-2 rounded-2xl text-xs font-bold shadow-lg flex items-center gap-2">
-                                        <span class="material-symbols-outlined text-sm">visibility</span>
-                                        <span>Kacamata Perspektif</span>
+                                <div class="absolute top-4 left-4 z-10">
+                                    <div class="bg-secondary/80 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-[10px] font-bold shadow-lg flex items-center gap-1.5">
+                                        <span class="material-symbols-outlined text-xs">visibility</span>
+                                        <span>Perspektif</span>
                                     </div>
                                 </div>
 
-                                <!-- Gradient Overlay for text readability -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
-                                
-                                <!-- Name Overlay on Image -->
-                                <div class="absolute bottom-6 left-6 right-6">
-                                    <h2 class="font-headline text-headline-sm text-white drop-shadow-md">{{ $p['name'] ?? 'Tokoh Tanpa Nama' }}</h2>
-                                </div>
+                                <!-- Gradient Overlay -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-40"></div>
                             </div>
                             
                             <!-- Content Area -->
-                            <div class="p-8 space-y-6 flex-1 flex flex-col">
-                                <div class="bg-surface-container-lowest p-8 rounded-[2rem] border border-outline-variant/20 relative flex-1 flex items-center justify-center shadow-inner">
-                                    <span class="material-symbols-outlined text-primary/10 absolute -top-2 -left-2 text-8xl pointer-events-none">format_quote</span>
-                                    <div class="prose prose-primary max-w-none text-body-lg text-on-surface font-medium italic relative z-10 leading-relaxed text-center">
+                            <div class="p-6 md:p-8 space-y-4 flex-1 flex flex-col">
+                                <h2 class="font-headline text-headline-sm text-primary text-center">{{ $p['name'] ?? 'Tokoh Tanpa Nama' }}</h2>
+                                
+                                <div class="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 relative flex-1 flex items-center justify-center shadow-inner min-h-[100px]">
+                                    <span class="material-symbols-outlined text-primary/5 absolute top-2 left-2 text-6xl pointer-events-none">format_quote</span>
+                                    <div class="prose prose-primary max-w-none text-body-md md:text-body-lg text-on-surface font-medium italic relative z-10 leading-relaxed text-center">
                                         {!! $p['text'] ?? 'Materi belum diisi.' !!}
                                     </div>
                                 </div>
