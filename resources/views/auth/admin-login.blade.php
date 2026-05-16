@@ -37,6 +37,7 @@
                    placeholder="••••••••">
         </div>
 
+        @if(\App\Models\Setting::get('enable_captcha', '0') == '1')
         <div class="space-y-3">
             <label class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-1 ml-1 text-center">Verifikasi Manusia</label>
             <div class="flex flex-col items-center gap-3 p-4 bg-surface-container-lowest rounded-2xl border border-outline-variant/30">
@@ -52,6 +53,7 @@
                    class="w-full h-14 px-4 bg-surface-container-low border border-outline-variant rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-on-surface text-center tracking-widest"
                    placeholder="Ketik kode di atas">
         </div>
+        @endif
     </div>
 
     <button type="submit" 

@@ -23,6 +23,7 @@ class SettingController extends Controller
             'site_favicon' => 'nullable|image|mimes:png,ico,svg|max:1024',
             'enable_rate_limiting' => 'nullable|boolean',
             'enable_security_headers' => 'nullable|boolean',
+            'enable_captcha' => 'nullable|boolean',
             'max_login_attempts' => 'nullable|integer|min:1|max:20',
         ]);
 
@@ -31,6 +32,7 @@ class SettingController extends Controller
         // Handle checkboxes for booleans
         $data['enable_rate_limiting'] = $request->has('enable_rate_limiting') ? '1' : '0';
         $data['enable_security_headers'] = $request->has('enable_security_headers') ? '1' : '0';
+        $data['enable_captcha'] = $request->has('enable_captcha') ? '1' : '0';
 
         // Handle Logo Upload
         if ($request->hasFile('site_logo')) {
@@ -62,7 +64,7 @@ class SettingController extends Controller
         if (in_array($key, ['timezone', 'locale'])) {
             return 'localization';
         }
-        if (in_array($key, ['enable_rate_limiting', 'enable_security_headers', 'max_login_attempts'])) {
+        if (in_array($key, ['enable_rate_limiting', 'enable_security_headers', 'enable_captcha', 'max_login_attempts'])) {
             return 'security';
         }
         return 'general';

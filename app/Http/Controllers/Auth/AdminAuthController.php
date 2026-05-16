@@ -20,11 +20,16 @@ class AdminAuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $rules = [
             'email' => ['required', 'email'],
             'password' => ['required'],
-            'captcha' => ['required', 'captcha'],
-        ], [
+        ];
+
+        if (\App\Models\Setting::get('enable_captcha', '0') == '1') {
+            $rules['captcha'] = ['required', 'captcha'];
+        }
+
+        $credentials = $request->validate($rules, [
             'captcha.captcha' => 'Kode captcha tidak valid.',
         ]);
 
