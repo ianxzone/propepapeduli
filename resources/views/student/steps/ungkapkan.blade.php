@@ -47,9 +47,9 @@
             @endif
 
             <h1 class="font-headline text-headline-lg text-primary">Jurnal Empati Digital</h1>
-            <p class="text-body-md text-on-surface-variant">
-                {{ $module->content['U']['task'] ?? 'Bagaimana perasaanmu setelah mempelajari isu ini? Ungkapkan dalam jurnalmu!' }}
-            </p>
+            <div class="prose prose-sm prose-primary max-w-none text-on-surface-variant leading-relaxed">
+                {!! $module->content['U']['task'] ?? 'Bagaimana perasaanmu setelah mempelajari isu ini? Ungkapkan dalam jurnalmu!' !!}
+            </div>
         </div>
 
         <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-8">

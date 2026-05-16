@@ -58,9 +58,9 @@
             
             <!-- Reflection Section -->
             <section class="bg-white p-8 rounded-[2rem] border border-outline-variant/30 shadow-soft space-y-4 text-left">
-                <label class="block font-headline text-headline-md text-primary" for="reflection">
-                    {{ $module->content['I']['questions'] ?? 'Apa yang paling kamu pelajari hari ini?' }}
-                </label>
+                <div class="prose prose-primary max-w-none text-on-surface leading-relaxed">
+                    {!! $module->content['I']['questions'] ?? 'Apa yang paling kamu pelajari hari ini?' !!}
+                </div>
                 <textarea id="reflection" name="content" rows="4" required
                           class="w-full rounded-2xl border-2 border-outline-variant/30 focus:border-primary focus:ring-0 bg-surface-container-low p-4 text-sm text-on-surface placeholder:text-outline-variant transition-all" 
                           placeholder="Tuliskan pengalaman seru kamu di sini..."></textarea>

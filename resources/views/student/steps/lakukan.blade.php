@@ -48,9 +48,9 @@
             @endif
 
             <h1 class="font-headline text-headline-lg text-on-surface leading-tight">Waktunya Beraksi!</h1>
-            <p class="text-body-md text-on-surface-variant">
-                {{ $module->content['L']['task'] ?? 'Pilih aksi nyata yang akan kamu lakukan untuk membantu menjaga lingkungan.' }}
-            </p>
+            <div class="prose prose-sm prose-primary max-w-none text-on-surface-variant leading-relaxed">
+                {!! $module->content['L']['task'] ?? 'Pilih aksi nyata yang akan kamu lakukan untuk membantu menjaga lingkungan.' !!}
+            </div>
         </div>
 
         <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
