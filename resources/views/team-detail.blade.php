@@ -6,7 +6,7 @@
     <title>{{ $team->name }} - {{ $site_settings['site_name'] ?? 'ProPePa PEDULI' }}</title>
     
     @if(isset($site_settings['site_favicon']))
-    <link rel="icon" type="image/x-icon" href="{{ $site_settings['site_favicon'] }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset($site_settings['site_favicon']) }}">
     @endif
 
     <!-- Fonts -->

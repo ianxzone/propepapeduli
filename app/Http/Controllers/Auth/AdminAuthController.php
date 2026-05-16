@@ -23,6 +23,9 @@ class AdminAuthController extends Controller
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'captcha' => ['required', 'captcha'],
+        ], [
+            'captcha.captcha' => 'Kode captcha tidak valid.',
         ]);
 
         $throttleKey = Str::lower($request->input('email')) . '|' . $request->ip();

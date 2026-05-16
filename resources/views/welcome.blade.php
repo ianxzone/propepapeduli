@@ -6,7 +6,7 @@
     <title>{{ $site_settings['site_name'] ?? 'ProPePa PEDULI' }} - {{ $site_settings['site_description'] ?? 'LMS' }}</title>
     
     @if(isset($site_settings['site_favicon']))
-    <link rel="icon" type="image/x-icon" href="{{ $site_settings['site_favicon'] }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset($site_settings['site_favicon']) }}">
     @endif
     @vite('resources/css/app.css')
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -367,6 +367,10 @@
         new Swiper('.team-swiper', {
             slidesPerView: 1,
             spaceBetween: 30,
+            navigation: {
+                nextEl: '.team-next',
+                prevEl: '.team-prev',
+            },
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,

@@ -49,6 +49,20 @@
                                    placeholder="Masukkan kata sandi">
                         </div>
                     </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-black/20 p-4 rounded-2xl border border-white/10">
+                            <div class="captcha-img-container flex-1">
+                                {!! captcha_img('flat') !!}
+                            </div>
+                            <button type="button" class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all" onclick="refreshCaptcha()">
+                                <span class="material-symbols-outlined text-white">refresh</span>
+                            </button>
+                        </div>
+                        <input type="text" name="captcha" required
+                               class="w-full h-14 px-4 bg-black/20 border border-white/10 rounded-2xl focus:border-primary-fixed focus:ring-2 focus:ring-primary-fixed/20 transition-all font-body-md text-white text-center tracking-widest"
+                               placeholder="Ketik kode di atas">
+                    </div>
                 </div>
 
                 <button type="submit" 
@@ -65,4 +79,16 @@
         &copy; {{ date('Y') }} MurniBadi Teknologi. All rights reserved.
     </footer>
 </div>
+@push('scripts')
+<script>
+function refreshCaptcha() {
+    const container = document.querySelector('.captcha-img-container');
+    fetch('/captcha/flat')
+        .then(response => {
+            // The captcha package returns the image directly
+            container.innerHTML = `<img src="/captcha/flat?${Math.random()}" alt="captcha">`;
+        });
+}
+</script>
+@endpush
 @endsection

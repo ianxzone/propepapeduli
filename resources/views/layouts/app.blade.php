@@ -7,7 +7,7 @@
     
     <!-- Favicon -->
     @if(isset($site_settings['site_favicon']))
-        <link rel="icon" type="image/x-icon" href="{{ $site_settings['site_favicon'] }}">
+        <link rel="icon" type="image/x-icon" href="{{ asset($site_settings['site_favicon']) }}">
     @endif
 
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">

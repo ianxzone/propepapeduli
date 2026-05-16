@@ -47,6 +47,20 @@
                                    placeholder="Masukkan kata sandi">
                         </div>
                     </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-2xl border border-outline-variant">
+                            <div class="captcha-img-container flex-1">
+                                {!! captcha_img('flat') !!}
+                            </div>
+                            <button type="button" class="w-10 h-10 rounded-xl bg-white border border-outline-variant flex items-center justify-center hover:bg-surface-container-low transition-all" onclick="refreshCaptcha()">
+                                <span class="material-symbols-outlined text-primary">refresh</span>
+                            </button>
+                        </div>
+                        <input type="text" name="captcha" required
+                               class="w-full h-14 px-4 bg-surface-container-low border border-outline-variant rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-on-surface text-center tracking-widest"
+                               placeholder="Ketik kode di atas">
+                    </div>
                 </div>
 
                 <button type="submit" 
@@ -65,4 +79,15 @@
     <!-- Footer Identity -->
     <x-institutional-footer />
 </div>
+@push('scripts')
+<script>
+function refreshCaptcha() {
+    const container = document.querySelector('.captcha-img-container');
+    fetch('/captcha/flat')
+        .then(response => {
+            container.innerHTML = `<img src="/captcha/flat?${Math.random()}" alt="captcha">`;
+        });
+}
+</script>
+@endpush
 @endsection
