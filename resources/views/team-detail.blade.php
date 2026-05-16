@@ -193,7 +193,7 @@
     </main>
 
     <footer class="py-12 border-t border-outline-variant/20 text-center text-[10px] font-bold text-outline uppercase tracking-[0.3em]">
-        &copy; {{ date('Y') }} ProPePa PEDULI LMS
+        &copy; {{ date('Y') }} Murni Abadi Teknologi (MATEK). All Rights Reserved.
     </footer>
 
 </body>

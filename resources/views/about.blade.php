@@ -223,7 +223,7 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-white/5 text-center text-white/30 text-xs">
-            &copy; {{ date('Y') }} ProPePa PEDULI LMS. All Rights Reserved. Built with ❤️ by MATEK.
+            &copy; {{ date('Y') }} ProPePa PEDULI LMS. All Rights Reserved. Built with ❤️ by Murni Abadi Teknologi (MATEK).
         </div>
     </footer>
 </body>

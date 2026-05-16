@@ -22,4 +22,7 @@
     <p class="text-body-md text-outline text-center text-sm">
         Membangun karakter bangsa melalui pendidikan pancasila yang menyenangkan.
     </p>
+    <div class="mt-4 text-center text-[10px] tracking-wider text-outline-variant font-bold">
+        &copy; {{ date('Y') }} Murni Abadi Teknologi (MATEK). All Rights Reserved.
+    </div>
 </footer>
