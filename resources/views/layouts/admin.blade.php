@@ -8,15 +8,28 @@
     @if(isset($site_settings['site_favicon']))
     <link rel="icon" type="image/x-icon" href="{{ asset($site_settings['site_favicon']) }}">
     @endif
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     @stack('styles')
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden">
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
     
+    <!-- Sidebar Overlay (Mobile) -->
+    <div x-show="sidebarOpen" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
+
     <!-- Sidebar -->
-    <aside class="w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-20">
+    <aside class="fixed inset-y-0 left-0 w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-40 transform lg:translate-x-0 lg:static"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
         <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
             <x-logo variant="pill" />
         </div>
@@ -106,9 +119,12 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Topbar -->
-        <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-6 shrink-0 z-10 shadow-sm">
+        <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm">
             <div class="flex items-center gap-4">
-                <h1 class="font-headline text-lg font-bold text-on-surface">@yield('header_title', 'Admin ProPePa')</h1>
+                <button @click="sidebarOpen = true" class="lg:hidden p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <h1 class="font-headline text-lg font-bold text-on-surface truncate">@yield('header_title', 'Admin ProPePa')</h1>
             </div>
             <div class="flex items-center gap-4">
                 <div class="text-right hidden md:block">
