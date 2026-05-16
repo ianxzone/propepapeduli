@@ -25,11 +25,12 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="sidebarOpen = false"
-         class="fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
+         class="fixed inset-0 bg-black/50 z-40 lg:hidden" style="display: none;"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-40 transform lg:translate-x-0 lg:static"
-           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <aside class="fixed inset-y-0 left-0 w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-50 transform lg:translate-x-0 lg:static"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           @click.away="sidebarOpen = false">
         <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
             <x-logo variant="pill" />
         </div>

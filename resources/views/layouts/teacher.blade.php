@@ -10,6 +10,8 @@
     @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 </head>
 <body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
     
@@ -22,11 +24,12 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="sidebarOpen = false"
-         class="fixed inset-0 bg-black/50 z-30 lg:hidden"></div>
+         class="fixed inset-0 bg-black/50 z-40 lg:hidden" style="display: none;"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-64 bg-white text-on-surface flex flex-col transition-all duration-300 shadow-xl z-40 border-r border-outline-variant/30 transform lg:translate-x-0 lg:static"
-           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+    <aside class="fixed inset-y-0 left-0 w-64 bg-white text-on-surface flex flex-col transition-all duration-300 shadow-xl z-50 border-r border-outline-variant/30 transform lg:translate-x-0 lg:static"
+           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           @click.away="sidebarOpen = false">
         <div class="h-16 flex items-center px-6 border-b border-outline-variant/30 shrink-0">
             <x-logo variant="pill" />
         </div>
