@@ -8,6 +8,8 @@ use App\Models\SchoolClass;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
+
 
 class StudentAuthController extends Controller
 {
@@ -32,14 +34,35 @@ class StudentAuthController extends Controller
             ]);
         }
 
-        $class = SchoolClass::where('class_code', $request->class_code)->first();
+        $classCode = strtoupper(trim($request->class_code));
+        $class = SchoolClass::where('class_code', $classCode)->first();
 
         if (!$class) {
             \Illuminate\Support\Facades\RateLimiter::hit($throttleKey, 300);
+            
+            ActivityLog::create([
+                'user_id' => null,
+                'action' => 'student_class_auth_failed',
+                'module' => 'Authentication',
+                'details' => json_encode(['class_code' => $classCode]),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return back()->withErrors(['class_code' => 'Kode kelas tidak ditemukan.']);
         }
 
         \Illuminate\Support\Facades\RateLimiter::clear($throttleKey);
+        
+        ActivityLog::create([
+            'user_id' => null,
+            'action' => 'student_class_auth_success',
+            'module' => 'Authentication',
+            'details' => json_encode(['class_code' => $classCode, 'class_id' => $class->id]),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         session(['pending_class_id' => $class->id]);
 
         return redirect()->route('student.select.name');
@@ -66,6 +89,15 @@ class StudentAuthController extends Controller
         
         Auth::login($user);
         
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'student_login_success',
+            'module' => 'Authentication',
+            'details' => json_encode(['name' => $user->name]),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         session()->forget('pending_class_id');
 
         return redirect()->route('student.dashboard');
@@ -73,6 +105,16 @@ class StudentAuthController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'student_logout',
+                'module' => 'Authentication',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

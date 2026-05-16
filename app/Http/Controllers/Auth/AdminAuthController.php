@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
+use App\Models\ActivityLog;
+
 
 class AdminAuthController extends Controller
 {
@@ -36,6 +38,15 @@ class AdminAuthController extends Controller
 
         if ($user && in_array($user->role, ['admin', 'dosen'])) {
             if (Auth::attempt($credentials)) {
+                ActivityLog::create([
+                    'user_id' => $user->id,
+                    'action' => 'login_success',
+                    'module' => 'Authentication',
+                    'details' => json_encode(['role' => $user->role]),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+
                 RateLimiter::clear($throttleKey);
                 $request->session()->regenerate();
                 return redirect()->intended(route('admin.dashboard'));
@@ -44,6 +55,15 @@ class AdminAuthController extends Controller
 
         RateLimiter::hit($throttleKey);
 
+        ActivityLog::create([
+            'user_id' => $user ? $user->id : null,
+            'action' => 'login_failed',
+            'module' => 'Authentication',
+            'details' => json_encode(['email' => $credentials['email']]),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         return back()->withErrors([
             'email' => 'Kredensial admin tidak valid.',
         ])->onlyInput('email');
@@ -51,6 +71,16 @@ class AdminAuthController extends Controller
 
     public function logout(Request $request)
     {
+        if (Auth::check()) {
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'logout',
+                'module' => 'Authentication',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

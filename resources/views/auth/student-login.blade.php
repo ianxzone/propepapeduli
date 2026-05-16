@@ -54,3 +54,13 @@
     </main>
 </div>
 @endsection
+ 
+@push('scripts')
+<script>
+    document.getElementById('class_code').addEventListener('input', function(e) {
+        // Auto uppercase and remove non-alphanumeric/hyphen
+        let val = e.target.value.toUpperCase();
+        e.target.value = val.replace(/[^A-Z0-9-]/g, '');
+    });
+</script>
+@endpush
