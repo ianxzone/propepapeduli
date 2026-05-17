@@ -28,16 +28,7 @@
             </div>
             <h1 class="font-headline text-headline-lg text-on-surface leading-tight">{{ $module->title }}</h1>
             
-            @if(!empty($module->content['P']['teacher_instruction']))
-            <div class="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex gap-3 mt-4">
-                <span class="material-symbols-outlined text-primary">record_voice_over</span>
-                <div class="prose prose-sm prose-primary max-w-none text-on-surface leading-relaxed">
-                    {!! $module->content['P']['teacher_instruction'] !!}
-                </div>
-            </div>
-            @else
             <p class="text-body-md text-on-surface-variant">Tonton video atau pelajari materi di bawah ini untuk memahami topik ini.</p>
-            @endif
         </div>
 
         @php
@@ -160,6 +151,18 @@
                           class="w-full bg-surface-container-low border border-outline-variant/50 rounded-2xl p-4 text-sm focus:border-primary focus:ring-0 transition-all"
                           placeholder="Tuliskan poin penting yang kamu dapatkan..."></textarea>
             </section>
+
+            @if(!empty($module->content['P']['teacher_instruction']))
+            <div class="bg-primary/5 p-4.5 rounded-2xl border border-primary/10 flex gap-3.5 shadow-sm">
+                <span class="material-symbols-outlined text-primary text-xl">record_voice_over</span>
+                <div class="space-y-1">
+                    <span class="block text-[10px] font-bold uppercase tracking-widest text-primary">Instruksi Guru:</span>
+                    <div class="prose prose-sm prose-primary max-w-none text-on-surface leading-relaxed font-medium">
+                        {!! $module->content['P']['teacher_instruction'] !!}
+                    </div>
+                </div>
+            </div>
+            @endif
 
             <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-outline-variant/30 shadow-sm">
                 <input type="checkbox" id="confirm-learn" required class="w-6 h-6 rounded-lg text-primary focus:ring-primary border-outline-variant/50">
