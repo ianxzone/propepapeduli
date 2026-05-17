@@ -367,4 +367,203 @@ class DashboardController extends Controller
 
         return back()->with('success', 'Siswa berhasil dimasukkan ke kelompok.');
     }
+
+    public function createStudent(Request $request)
+    {
+        $teacher = Auth::user();
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) {
+            abort(403);
+        }
+
+        $classes = SchoolClass::with('school')->get();
+        
+        // Determine selected class
+        $classId = $request->input('class_id', $teacher->class_id);
+        if (!$classId && in_array($teacher->role, ['admin', 'dosen'])) {
+            $classId = $classes->first()?->id;
+        }
+        $class = SchoolClass::find($classId);
+
+        return view('teacher.students.create', compact('classes', 'class', 'teacher'));
+    }
+
+    public function storeStudent(Request $request)
+    {
+        $teacher = Auth::user();
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'class_id' => 'required|exists:classes,id',
+        ]);
+
+        // Security check: normal teacher can only add students to their own class
+        if ($teacher->role === 'teacher' && $request->class_id != $teacher->class_id) {
+            return back()->with('error', 'Anda hanya bisa menambahkan siswa ke kelas Anda sendiri.')->withInput();
+        }
+
+        User::create([
+            'name' => $request->name,
+            'class_id' => $request->class_id,
+            'points' => 0,
+            'role' => 'student',
+            'password' => bcrypt('123456'),
+        ]);
+
+        return redirect()->route('teacher.students.index', ['class_id' => $request->class_id])
+            ->with('success', 'Siswa ' . $request->name . ' berhasil ditambahkan.');
+    }
+
+    public function showImportStudents(Request $request)
+    {
+        $teacher = Auth::user();
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) {
+            abort(403);
+        }
+
+        $classes = SchoolClass::with('school')->get();
+        
+        $classId = $request->input('class_id', $teacher->class_id);
+        if (!$classId && in_array($teacher->role, ['admin', 'dosen'])) {
+            $classId = $classes->first()?->id;
+        }
+        $class = SchoolClass::find($classId);
+
+        return view('teacher.students.import', compact('classes', 'class', 'teacher'));
+    }
+
+    public function downloadSampleCsv()
+    {
+        $fileName = 'Template_Import_Siswa.csv';
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=$fileName",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['name'];
+        $samples = [
+            ['Budi Darmawan'],
+            ['Siti Aminah'],
+            ['Ahmad Fauzi'],
+            ['Dewi Lestari']
+        ];
+
+        $callback = function() use($columns, $samples) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach ($samples as $sample) {
+                fputcsv($file, $sample);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function importStudents(Request $request)
+    {
+        $teacher = Auth::user();
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) {
+            abort(403);
+        }
+
+        $request->validate([
+            'class_id' => 'required|exists:classes,id',
+            'import_method' => 'required|in:file,paste',
+            'import_file' => 'required_if:import_method,file|file|mimes:csv,txt|max:2048',
+            'import_paste' => 'required_if:import_method,paste|string|nullable',
+        ]);
+
+        if ($teacher->role === 'teacher' && $request->class_id != $teacher->class_id) {
+            return back()->with('error', 'Anda hanya bisa mengimpor siswa ke kelas Anda sendiri.')->withInput();
+        }
+
+        $classId = $request->class_id;
+        $names = [];
+
+        if ($request->import_method === 'file') {
+            $file = $request->file('import_file');
+            $path = $file->getRealPath();
+            
+            if (($handle = fopen($path, "r")) !== FALSE) {
+                $header = fgetcsv($handle, 1000, ",");
+                
+                // If it's a simple TXT file or CSV without a strict name header, 
+                // we check if the first column is 'name' or similar, else we treat the first line as a student if it's not a header.
+                $isHeaderName = false;
+                if ($header && (strtolower(trim($header[0])) === 'name' || strtolower(trim($header[0])) === 'nama')) {
+                    $isHeaderName = true;
+                } else if ($header) {
+                    $names[] = trim($header[0]);
+                }
+
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    if (isset($data[0]) && trim($data[0]) !== '') {
+                        $names[] = trim($data[0]);
+                    }
+                }
+                fclose($handle);
+            }
+        } else {
+            // Paste method
+            $lines = explode("\n", $request->import_paste);
+            foreach ($lines as $line) {
+                $trimmed = trim($line);
+                if ($trimmed !== '') {
+                    // Check if it matches a CSV header to skip
+                    if (strtolower($trimmed) === 'name' || strtolower($trimmed) === 'nama') {
+                        continue;
+                    }
+                    $names[] = $trimmed;
+                }
+            }
+        }
+
+        if (count($names) === 0) {
+            return back()->with('error', 'Tidak ada data nama siswa yang ditemukan atau terbaca.')->withInput();
+        }
+
+        $importedCount = 0;
+        \Illuminate\Support\Facades\DB::transaction(function() use ($names, $classId, &$importedCount) {
+            foreach ($names as $name) {
+                User::create([
+                    'name' => $name,
+                    'class_id' => $classId,
+                    'points' => 0,
+                    'role' => 'student',
+                    'password' => bcrypt('123456'),
+                ]);
+                $importedCount++;
+            }
+        });
+
+        return redirect()->route('teacher.students.index', ['class_id' => $classId])
+            ->with('success', 'Berhasil mengimpor ' . $importedCount . ' siswa baru.');
+    }
+
+    public function deleteStudent(User $student)
+    {
+        $teacher = Auth::user();
+        if (!in_array($teacher->role, ['teacher', 'admin', 'dosen'])) {
+            abort(403);
+        }
+
+        if ($student->role !== 'student') {
+            abort(404);
+        }
+
+        // Security check: normal teacher can only delete students in their own class
+        if ($teacher->role === 'teacher' && $student->class_id != $teacher->class_id) {
+            abort(403, 'Akses ditolak untuk menghapus siswa di kelas lain.');
+        }
+
+        $student->delete();
+
+        return back()->with('success', 'Siswa ' . $student->name . ' berhasil dihapus.');
+    }
 }

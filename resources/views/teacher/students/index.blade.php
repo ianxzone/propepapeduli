@@ -19,7 +19,17 @@
                     </form>
                 @endif
             </div>
-            <p class="text-on-surface-variant italic">Daftar seluruh siswa di {{ $class->name }} &bull; {{ $class->school->name }}</p>
+            <p class="text-on-surface-variant italic">Daftar seluruh siswa di {{ $class?->name ?? 'Kelas' }} &bull; {{ $class?->school->name ?? 'Sekolah' }}</p>
+        </div>
+        <div class="flex items-center gap-2 self-start md:self-center">
+            <a href="{{ route('teacher.students.create', ['class_id' => $class?->id]) }}" class="flex items-center gap-2 bg-primary text-white px-4 py-2.5 rounded-2xl font-bold text-xs shadow-soft hover:bg-primary/95 transition-all">
+                <span class="material-symbols-outlined text-[18px]">person_add</span>
+                <span>Tambah Siswa</span>
+            </a>
+            <a href="{{ route('teacher.students.import', ['class_id' => $class?->id]) }}" class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-4 py-2.5 rounded-2xl font-bold text-xs hover:bg-secondary-container/90 transition-all">
+                <span class="material-symbols-outlined text-[18px]">cloud_upload</span>
+                <span>Impor Massal</span>
+            </a>
         </div>
     </div>
 
@@ -83,10 +93,19 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('teacher.student.detail', $student->id) }}" class="inline-flex items-center gap-2 bg-surface-container text-primary px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary/10 transition-all">
-                                <span>Detail Progres</span>
-                                <span class="material-symbols-outlined text-sm">chevron_right</span>
-                            </a>
+                            <div class="flex justify-end items-center gap-2">
+                                <a href="{{ route('teacher.student.detail', $student->id) }}" class="inline-flex items-center gap-2 bg-surface-container text-primary px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary/10 transition-all">
+                                    <span>Detail Progres</span>
+                                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                                </a>
+                                <form action="{{ route('teacher.student.delete', $student) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini akan menghapus semua kemajuan belajar dan jurnal siswa tersebut.')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-9 h-9 flex items-center justify-center rounded-xl bg-surface-container text-error hover:bg-error/10 transition-all" title="Hapus Siswa">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty

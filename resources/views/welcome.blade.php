@@ -70,21 +70,21 @@
 
         <!-- Hero Content Overlay -->
         <div class="absolute inset-0 z-10 flex items-center px-6">
-            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="max-w-7xl mx-auto w-full grid grid-cols-1 {{ ($site_settings['hero_show_leaderboard'] ?? '1') == '1' ? 'lg:grid-cols-2' : 'max-w-3xl' }} gap-12 items-center">
                 <div class="space-y-8 text-left text-white">
                     <div class="inline-flex items-center gap-2 bg-primary/20 backdrop-blur-md text-primary-fixed-dim px-4 py-2 rounded-full font-bold text-sm border border-white/10">
                         <span class="material-symbols-outlined text-sm">stars</span>
-                        LMS Pembelajaran Berbasis Proyek
+                        {{ $site_settings['hero_badge'] ?? 'LMS Pembelajaran Berbasis Proyek' }}
                     </div>
                     <h1 class="font-headline text-5xl md:text-7xl font-bold leading-tight">
-                        Wujudkan <span class="text-primary-fixed-dim">Profil Pelajar</span> Pancasila.
+                        {!! $site_settings['hero_title'] ?? 'Wujudkan <span class="text-primary-fixed-dim">Profil Pelajar</span> Pancasila.' !!}
                     </h1>
                     <p class="text-lg md:text-xl text-white/80 leading-relaxed max-w-xl">
-                        Platform LMS modern yang dirancang khusus untuk mendukung Siklus PEDULI dalam pembelajaran berbasis proyek yang interaktif dan menyenangkan.
+                        {{ $site_settings['hero_description'] ?? 'Platform LMS modern yang dirancang khusus untuk mendukung Siklus PEDULI dalam pembelajaran berbasis proyek yang interaktif dan menyenangkan.' }}
                     </p>
                     <div class="flex flex-col sm:flex-row items-center gap-4 pt-4">
                         <a href="{{ route('login') }}" class="w-full sm:w-auto bg-primary text-white text-lg font-bold px-10 py-4 rounded-2xl shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3">
-                            Mulai Belajar Sekarang
+                            {{ $site_settings['hero_cta_text'] ?? 'Mulai Belajar Sekarang' }}
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </a>
                         <div class="flex -space-x-3">
@@ -94,13 +94,14 @@
                             </div>
                             @endfor
                             <div class="pl-5 text-sm font-bold text-white/60 flex items-center">
-                                +100 Siswa Terdaftar
+                                {{ $site_settings['hero_students_count'] ?? '+100 Siswa Terdaftar' }}
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Floating Card in Hero -->
+                @if(($site_settings['hero_show_leaderboard'] ?? '1') == '1')
                 <div class="hidden lg:block relative">
                     <div class="glass p-8 rounded-[3rem] border border-white/20 shadow-2xl relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all"></div>
@@ -111,10 +112,19 @@
                                 </div>
                                 <div>
                                     <h4 class="font-headline font-bold text-xl text-on-surface">Papan Peringkat</h4>
-                                    <p class="text-sm text-on-surface-variant">Update terbaru kelas 5A</p>
+                                    <p class="text-sm text-on-surface-variant">Update terbaru secara real-time</p>
                                 </div>
                             </div>
                             <div class="space-y-3">
+                                @forelse($topStudents ?? [] as $index => $student)
+                                <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-bold {{ $index == 0 ? 'text-primary' : 'text-outline' }}">{{ $index + 1 }}</span>
+                                        <span class="text-sm font-bold text-on-surface">{{ $student->name }}</span>
+                                    </div>
+                                    <span class="text-xs font-bold {{ $index == 0 ? 'text-primary' : 'text-outline' }}">{{ number_format($student->points, 0, ',', '.') }} Poin</span>
+                                </div>
+                                @empty
                                 <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
                                     <div class="flex items-center gap-3">
                                         <span class="font-bold text-primary">1</span>
@@ -129,10 +139,12 @@
                                     </div>
                                     <span class="text-xs font-bold text-outline">2.310 Poin</span>
                                 </div>
+                                @endforelse
                             </div>
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
     </section>

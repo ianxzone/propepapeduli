@@ -25,6 +25,12 @@ class SettingController extends Controller
             'enable_security_headers' => 'nullable|boolean',
             'enable_captcha' => 'nullable|boolean',
             'max_login_attempts' => 'nullable|integer|min:1|max:20',
+            'hero_badge' => 'nullable|string|max:100',
+            'hero_title' => 'nullable|string|max:255',
+            'hero_description' => 'nullable|string|max:1000',
+            'hero_cta_text' => 'nullable|string|max:100',
+            'hero_students_count' => 'nullable|string|max:100',
+            'hero_show_leaderboard' => 'nullable|boolean',
         ]);
 
         $data = $request->except('_token');
@@ -33,6 +39,7 @@ class SettingController extends Controller
         $data['enable_rate_limiting'] = $request->has('enable_rate_limiting') ? '1' : '0';
         $data['enable_security_headers'] = $request->has('enable_security_headers') ? '1' : '0';
         $data['enable_captcha'] = $request->has('enable_captcha') ? '1' : '0';
+        $data['hero_show_leaderboard'] = $request->has('hero_show_leaderboard') ? '1' : '0';
 
         // Handle Logo Upload
         if ($request->hasFile('site_logo')) {
@@ -66,6 +73,9 @@ class SettingController extends Controller
         }
         if (in_array($key, ['enable_rate_limiting', 'enable_security_headers', 'enable_captcha', 'max_login_attempts'])) {
             return 'security';
+        }
+        if (in_array($key, ['hero_badge', 'hero_title', 'hero_description', 'hero_cta_text', 'hero_students_count', 'hero_show_leaderboard'])) {
+            return 'hero';
         }
         return 'general';
     }

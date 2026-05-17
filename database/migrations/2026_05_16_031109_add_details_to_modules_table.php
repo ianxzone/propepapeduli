@@ -12,10 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('modules', function (Blueprint $table) {
-            $table->string('slug')->after('title')->unique()->nullable(); // nullable temporarily to avoid issues if data exists
-            $table->json('content')->after('is_active')->nullable();
-            $table->string('badge_name')->after('content')->nullable();
-            $table->string('badge_icon')->after('badge_name')->nullable();
+            if (!Schema::hasColumn('modules', 'slug')) {
+                $table->string('slug')->after('title')->unique()->nullable();
+            }
+            if (!Schema::hasColumn('modules', 'content')) {
+                $table->json('content')->after('is_active')->nullable();
+            }
+            if (!Schema::hasColumn('modules', 'badge_name')) {
+                $table->string('badge_name')->after('content')->nullable();
+            }
+            if (!Schema::hasColumn('modules', 'badge_icon')) {
+                $table->string('badge_icon')->after('badge_name')->nullable();
+            }
         });
     }
 
@@ -25,7 +33,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('modules', function (Blueprint $table) {
-            $table->dropColumn(['slug', 'content', 'badge_name', 'badge_icon']);
+            $cols = [];
+            if (Schema::hasColumn('modules', 'slug')) $cols[] = 'slug';
+            if (Schema::hasColumn('modules', 'content')) $cols[] = 'content';
+            if (Schema::hasColumn('modules', 'badge_name')) $cols[] = 'badge_name';
+            if (Schema::hasColumn('modules', 'badge_icon')) $cols[] = 'badge_icon';
+            
+            if (count($cols) > 0) {
+                $table->dropColumn($cols);
+            }
         });
     }
 };

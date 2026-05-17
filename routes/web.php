@@ -10,7 +10,11 @@ use App\Http\Controllers\Teacher\DashboardController as TeacherDashboard;
 
 Route::get('/', function () {
     $teams = \App\Models\Team::where('is_active', true)->orderBy('order')->get();
-    return view('welcome', compact('teams'));
+    $topStudents = \App\Models\User::where('role', 'student')
+        ->orderBy('points', 'desc')
+        ->limit(2)
+        ->get();
+    return view('welcome', compact('teams', 'topStudents'));
 });
 
 Route::get('/about', function () {
@@ -56,7 +60,13 @@ Route::post('/admin/logout', [App\Http\Controllers\Auth\AdminAuthController::cla
 Route::middleware(['auth'])->prefix('guru')->name('teacher.')->group(function () {
     Route::get('/dashboard', [TeacherDashboard::class, 'index'])->name('dashboard');
     Route::get('/students', [TeacherDashboard::class, 'students'])->name('students.index');
+    Route::get('/students/create', [TeacherDashboard::class, 'createStudent'])->name('students.create');
+    Route::post('/students/store', [TeacherDashboard::class, 'storeStudent'])->name('students.store');
+    Route::get('/students/import', [TeacherDashboard::class, 'showImportStudents'])->name('students.import');
+    Route::get('/students/import/sample', [TeacherDashboard::class, 'downloadSampleCsv'])->name('students.import.sample');
+    Route::post('/students/import', [TeacherDashboard::class, 'importStudents'])->name('students.import.submit');
     Route::get('/student/{student}', [TeacherDashboard::class, 'studentDetail'])->name('student.detail');
+    Route::delete('/student/{student}/delete', [TeacherDashboard::class, 'deleteStudent'])->name('student.delete');
     Route::get('/journals', [TeacherDashboard::class, 'journals'])->name('journals.index');
     Route::post('/journal/{journal}/feedback', [TeacherDashboard::class, 'saveFeedback'])->name('journal.feedback');
     Route::get('/forum', [TeacherDashboard::class, 'forum'])->name('forum.index');

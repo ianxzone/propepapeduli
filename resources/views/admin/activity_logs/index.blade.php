@@ -52,13 +52,17 @@
                             </td>
                             <td class="px-6 py-4">
                                 @php
-                                    $actionClass = match($log->action) {
-                                        'created' => 'bg-primary/10 text-primary',
-                                        'updated' => 'bg-secondary/10 text-secondary',
-                                        'deleted' => 'bg-error/10 text-error',
-                                        'login' => 'bg-tertiary/10 text-tertiary',
-                                        default => 'bg-outline-variant/10 text-on-surface-variant'
-                                    };
+                                    $actionLower = strtolower($log->action);
+                                    $actionClass = 'bg-outline-variant/10 text-on-surface-variant';
+                                    if (str_contains($actionLower, 'created')) {
+                                        $actionClass = 'bg-primary/10 text-primary';
+                                    } elseif (str_contains($actionLower, 'updated')) {
+                                        $actionClass = 'bg-secondary/10 text-secondary';
+                                    } elseif (str_contains($actionLower, 'delete')) {
+                                        $actionClass = 'bg-error/10 text-error';
+                                    } elseif (str_contains($actionLower, 'login') || str_contains($actionLower, 'auth')) {
+                                        $actionClass = 'bg-tertiary/10 text-tertiary';
+                                    }
                                 @endphp
                                 <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase {{ $actionClass }}">
                                     {{ $log->action }}
@@ -67,8 +71,22 @@
                             <td class="px-6 py-4 text-sm font-bold text-on-surface">
                                 {{ $log->module }}
                             </td>
-                            <td class="px-6 py-4 text-xs text-on-surface-variant max-w-xs truncate">
-                                {{ $log->details }}
+                            <td class="px-6 py-4 text-xs text-on-surface-variant max-w-xs">
+                                @php
+                                    $details = json_decode($log->details, true);
+                                @endphp
+                                @if(is_array($details))
+                                    <div class="space-y-1">
+                                        @foreach($details as $key => $value)
+                                            <div class="flex items-start gap-1.5">
+                                                <span class="font-bold text-on-surface uppercase text-[9px] tracking-wider shrink-0 mt-[2px]">{{ str_replace('_', ' ', $key) }}:</span>
+                                                <span class="text-on-surface-variant">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    {{ $log->details ?? '-' }}
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-xs text-on-surface-variant font-mono">
                                 {{ $log->ip_address }}

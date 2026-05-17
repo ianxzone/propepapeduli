@@ -65,6 +65,60 @@
             </div>
         </div>
 
+        <!-- Hero Homepage Settings -->
+        <div class="bg-white rounded-[2rem] border border-outline-variant/30 shadow-sm overflow-hidden">
+            <div class="p-6 border-b border-outline-variant/30 bg-surface-container-low flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">home</span>
+                </div>
+                <div>
+                    <h2 class="font-headline text-headline-sm text-on-surface">Hero Beranda</h2>
+                    <p class="text-xs text-on-surface-variant">Atur konten hero dan tampilan papan peringkat di halaman beranda.</p>
+                </div>
+            </div>
+            <div class="p-8 space-y-6">
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Tagline Hero (Badge Atas)</label>
+                    <input type="text" name="hero_badge" value="{{ \App\Models\Setting::get('hero_badge', 'LMS Pembelajaran Berbasis Proyek') }}" 
+                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
+                </div>
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Judul Hero (Title)</label>
+                    <input type="text" name="hero_title" value="{{ \App\Models\Setting::get('hero_title', 'Wujudkan Profil Pelajar Pancasila.') }}" 
+                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
+                    <p class="text-[10px] text-on-surface-variant mt-2 italic">Tips: Gunakan &lt;span class="text-primary-fixed-dim"&gt;Teks&lt;/span&gt; untuk memberikan warna highlight pada kata tertentu.</p>
+                </div>
+                <div>
+                    <label class="block font-bold text-sm text-on-surface mb-2">Deskripsi Hero</label>
+                    <textarea name="hero_description" rows="3" 
+                              class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">{{ \App\Models\Setting::get('hero_description', 'Platform LMS modern yang dirancang khusus untuk mendukung Siklus PEDULI dalam pembelajaran berbasis proyek yang interaktif dan menyenangkan.') }}</textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block font-bold text-sm text-on-surface mb-2">Teks Tombol Aksi (CTA)</label>
+                        <input type="text" name="hero_cta_text" value="{{ \App\Models\Setting::get('hero_cta_text', 'Mulai Belajar Sekarang') }}" 
+                               class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-sm text-on-surface mb-2">Teks Keterangan Siswa</label>
+                        <input type="text" name="hero_students_count" value="{{ \App\Models\Setting::get('hero_students_count', '+100 Siswa Terdaftar') }}" 
+                               class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant/20">
+                    <div>
+                        <h4 class="font-bold text-sm text-on-surface">Tampilkan Papan Peringkat (Leaderboard)</h4>
+                        <p class="text-[10px] text-on-surface-variant">Aktifkan atau nonaktifkan tampilan kartu papan peringkat mengambang di hero beranda.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="hero_show_leaderboard" value="1" {{ \App\Models\Setting::get('hero_show_leaderboard', '1') == '1' ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <!-- Localization Settings -->
         <div class="bg-white rounded-[2rem] border border-outline-variant/30 shadow-sm overflow-hidden">
             <div class="p-6 border-b border-outline-variant/30 bg-surface-container-low flex items-center gap-4">
