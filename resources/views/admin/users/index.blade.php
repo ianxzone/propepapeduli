@@ -9,6 +9,7 @@
         <div class="flex items-center gap-2">
             <a href="{{ route('admin.users.index') }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ !$role ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Semua</a>
             <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ $role == 'admin' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Admin</a>
+            <a href="{{ route('admin.users.index', ['role' => 'dosen']) }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ $role == 'dosen' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Dosen</a>
             <a href="{{ route('admin.users.index', ['role' => 'teacher']) }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ $role == 'teacher' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Guru</a>
             <a href="{{ route('admin.users.index', ['role' => 'student']) }}" class="px-4 py-2 rounded-xl text-sm font-bold {{ $role == 'student' ? 'bg-primary text-white' : 'bg-white text-on-surface hover:bg-surface-container-low' }} transition-all">Siswa</a>
         </div>
@@ -47,6 +48,8 @@
                         <td class="p-6 text-center">
                             @if($user->role == 'admin')
                                 <span class="bg-error/10 text-error px-3 py-1 rounded-full text-[10px] font-bold uppercase">Admin</span>
+                            @elseif($user->role == 'dosen')
+                                <span class="bg-[#002d6d]/10 text-[#002d6d] px-3 py-1 rounded-full text-[10px] font-bold uppercase">Dosen</span>
                             @elseif($user->role == 'teacher')
                                 <span class="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[10px] font-bold uppercase">Guru</span>
                             @else
