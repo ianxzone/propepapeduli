@@ -116,9 +116,42 @@
                            class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
                 </div>
                 <div>
-                    <label for="badge_icon" class="block font-bold text-sm text-on-surface mb-2">Ikon Lencana</label>
-                    <input type="text" id="badge_icon" name="badge_icon" value="{{ old('badge_icon', $module->badge_icon) }}"
-                           class="w-full rounded-xl border border-outline-variant/50 focus:border-primary focus:ring-0 px-4 py-3 bg-surface-container-lowest">
+                    <label for="badge_icon" class="block font-bold text-sm text-on-surface mb-2">Ikon Lencana <span class="text-xs text-outline font-normal">(Pilih secara visual)</span></label>
+                    <input type="hidden" id="badge_icon" name="badge_icon" value="{{ old('badge_icon', $module->badge_icon ?: 'workspace_premium') }}">
+                    
+                    <div class="grid grid-cols-4 gap-2.5 p-3.5 bg-surface-container-low border border-outline-variant/30 rounded-2xl max-h-48 overflow-y-auto no-scrollbar">
+                        @php
+                            $icons = [
+                                'workspace_premium' => 'Medali',
+                                'emoji_events' => 'Piala',
+                                'military_tech' => 'Lencana',
+                                'stars' => 'Bintang',
+                                'school' => 'Toga',
+                                'menu_book' => 'Buku',
+                                'psychology' => 'Pikiran',
+                                'eco' => 'Lingkungan',
+                                'auto_awesome' => 'Kreatif',
+                                'local_fire_department' => 'Semangat',
+                                'star' => 'Favorit',
+                                'verified' => 'Verifikasi',
+                                'public' => 'Global',
+                                'groups' => 'Kelompok',
+                                'favorite' => 'Peduli',
+                                'volunteer_activism' => 'Sosial',
+                                'handshake' => 'Toleransi',
+                                'diversity_3' => 'Kebinekaan',
+                                'lightbulb' => 'Ide',
+                                'shield' => 'Akhlak'
+                            ];
+                        @endphp
+                        @foreach($icons as $iconName => $label)
+                            <button type="button" onclick="selectBadgeIcon('{{ $iconName }}')" id="badge-icon-{{ $iconName }}"
+                                    class="badge-icon-btn flex flex-col items-center justify-center p-2 rounded-xl border-2 border-transparent bg-white hover:border-primary/30 transition-all gap-1 text-on-surface-variant cursor-pointer group">
+                                <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">{{ $iconName }}</span>
+                                <span class="text-[9px] font-bold tracking-tight text-center">{{ $label }}</span>
+                            </button>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
@@ -162,6 +195,23 @@
             .replace(/[^\w ]+/g, '')
             .replace(/ +/g, '-');
         slugInput.value = slug;
+    });
+
+    function selectBadgeIcon(iconName) {
+        document.getElementById('badge_icon').value = iconName;
+        document.querySelectorAll('.badge-icon-btn').forEach(btn => {
+            btn.classList.remove('border-primary', 'bg-primary/5', 'text-primary');
+            btn.classList.add('border-transparent', 'bg-white', 'text-on-surface-variant');
+        });
+        const activeBtn = document.getElementById('badge-icon-' + iconName);
+        if (activeBtn) {
+            activeBtn.classList.remove('border-transparent', 'bg-white', 'text-on-surface-variant');
+            activeBtn.classList.add('border-primary', 'bg-primary/5', 'text-primary');
+        }
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const currentIcon = document.getElementById('badge_icon').value || 'workspace_premium';
+        selectBadgeIcon(currentIcon);
     });
 </script>
 @endpush
