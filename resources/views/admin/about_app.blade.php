@@ -119,10 +119,28 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @forelse($teams ?? [] as $member)
+                        <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+                                <img src="{{ $member->image ?: 'https://ui-avatars.com/api/?name='.urlencode($member->name).'&size=100&background=F9DEDC&color=410002' }}" 
+                                     alt="{{ $member->name }}" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($member->name) }}&size=100&background=F9DEDC&color=410002'">
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-on-surface truncate">{{ $member->name }}</h5>
+                                <p class="text-[10px] text-primary font-semibold leading-none mt-0.5">{{ $member->position }}</p>
+                                @if($member->homebase)
+                                <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">{{ $member->homebase }}</p>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <!-- Fallback Hardcoded Members if Database is Empty -->
                         <!-- Member 1 -->
                         <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
                             <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
-                                <img src="https://propepapeduli.id/assets/img/team/farid.png" alt="Faridillah Fahmi N" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Faridillah+Fahmi+N&size=100&background=F9DEDC&color=410002'">
+                                <img src="https://ui-avatars.com/api/?name=Faridillah+Fahmi+N&size=100&background=F9DEDC&color=410002" alt="Faridillah Fahmi N" class="w-full h-full object-cover">
                             </div>
                             <div class="min-w-0">
                                 <h5 class="text-xs font-bold text-on-surface truncate">Faridillah Fahmi N, M.Pd.</h5>
@@ -130,11 +148,10 @@
                                 <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">IKIP Siliwangi / UPI</p>
                             </div>
                         </div>
-
                         <!-- Member 2 -->
                         <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
                             <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
-                                <img src="https://propepapeduli.id/assets/img/team/bunyamin.png" alt="Prof. Dr. Bunyamin Maftuh" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Bunyamin+Maftuh&size=100&background=F9DEDC&color=410002'">
+                                <img src="https://ui-avatars.com/api/?name=Bunyamin+Maftuh&size=100&background=F9DEDC&color=410002" alt="Prof. Dr. Bunyamin Maftuh" class="w-full h-full object-cover">
                             </div>
                             <div class="min-w-0">
                                 <h5 class="text-xs font-bold text-on-surface truncate">Prof. Dr. Bunyamin Maftuh, M.Pd., M.A.</h5>
@@ -142,11 +159,10 @@
                                 <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">Universitas Pendidikan Indonesia</p>
                             </div>
                         </div>
-
                         <!-- Member 3 -->
                         <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
                             <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
-                                <img src="https://propepapeduli.id/assets/img/team/mubiar.png" alt="Prof. Dr. Mubiar Agustin" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Mubiar+Agustin&size=100&background=F9DEDC&color=410002'">
+                                <img src="https://ui-avatars.com/api/?name=Mubiar+Agustin&size=100&background=F9DEDC&color=410002" alt="Prof. Dr. Mubiar Agustin" class="w-full h-full object-cover">
                             </div>
                             <div class="min-w-0">
                                 <h5 class="text-xs font-bold text-on-surface truncate">Prof. Dr. Mubiar Agustin, M.Pd.</h5>
@@ -154,6 +170,7 @@
                                 <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">Universitas Pendidikan Indonesia</p>
                             </div>
                         </div>
+                        @endforelse
 
                         <!-- Member 4 (MATEK) -->
                         <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">

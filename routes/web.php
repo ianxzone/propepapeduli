@@ -107,7 +107,8 @@ Route::middleware(['auth', 'admin_dosen'])->prefix('admin')->group(function () {
 
     // NEW: About App
     Route::get('/about-app', function () {
-        return view('admin.about_app');
+        $teams = \App\Models\Team::where('is_active', true)->orderBy('order')->get();
+        return view('admin.about_app', compact('teams'));
     })->name('admin.about-app');
 
     // NEW: Setup Wizard
