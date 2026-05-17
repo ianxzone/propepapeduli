@@ -13,25 +13,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden">
     
     <!-- Sidebar Overlay (Mobile) -->
-    <div x-show="sidebarOpen" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         @click="sidebarOpen = false"
-         class="fixed inset-0 bg-black/50 z-40 lg:hidden" style="display: none;"></div>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-64 bg-white text-on-surface flex flex-col transition-all duration-300 shadow-xl z-50 border-r border-outline-variant/30 transform lg:translate-x-0 lg:static"
-           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           @click.away="sidebarOpen = false">
-        <div class="h-16 flex items-center px-6 border-b border-outline-variant/30 shrink-0">
+    <aside id="app-sidebar" class="fixed inset-y-0 left-0 w-64 bg-white text-on-surface flex flex-col transition-all duration-300 shadow-xl z-50 border-r border-outline-variant/30 transform -translate-x-full lg:translate-x-0 lg:static">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-outline-variant/30 shrink-0">
             <x-logo variant="pill" />
+            <button id="close-sidebar-btn" class="lg:hidden p-1 text-surface-variant hover:text-surface rounded-lg">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
         
         <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
@@ -104,13 +97,13 @@
     <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Topbar -->
         <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm">
-            <div class="flex items-center gap-4">
-                <button @click="sidebarOpen = true" class="lg:hidden p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">
+            <div class="flex items-center gap-4 w-full">
+                <button id="mobile-menu-btn" class="lg:hidden p-2 -ml-2 text-on-surface-variant hover:bg-surface-container rounded-lg shrink-0">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <h1 class="font-headline text-lg font-bold text-on-surface truncate">@yield('header_title', 'Portal Guru')</h1>
+                <h1 class="font-headline text-lg font-bold text-on-surface truncate flex-1">@yield('header_title', 'Portal Guru')</h1>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4 shrink-0 ml-auto">
                 @php
                     $unreadCount = \App\Models\Notification::where('read_at', null)
                         ->where(function($q) {
@@ -162,6 +155,21 @@
     <!-- Global Modal Cleanup & Navigation Fix -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Sidebar Toggle Logic (Vanilla JS)
+            const sidebar = document.getElementById('app-sidebar');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const closeBtn = document.getElementById('close-sidebar-btn');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
+            }
+
+            if(menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+            if(backdrop) backdrop.addEventListener('click', toggleSidebar);
+
             // Tutup modal jika user menekan tombol Back/Forward di browser
             window.addEventListener('popstate', () => closeModalOverlays());
 
@@ -170,6 +178,9 @@
             sidebarLinks.forEach(link => {
                 link.addEventListener('click', () => {
                     closeModalOverlays();
+                    if (window.innerWidth < 1024 && !sidebar.classList.contains('-translate-x-full')) {
+                        toggleSidebar();
+                    }
                 });
             });
 
@@ -181,7 +192,7 @@
                 });
                 
                 // Jika ada overlay backdrop manual dari library lain
-                const overlays = document.querySelectorAll('.modal-backdrop, .fixed.inset-0.bg-black');
+                const overlays = document.querySelectorAll('.modal-backdrop, .fixed.inset-0.bg-black:not(#sidebar-backdrop)');
                 overlays.forEach(overlay => {
                     overlay.classList.add('hidden');
                 });
