@@ -108,7 +108,7 @@ class DashboardController extends Controller
     public function studentDetail(Request $request, User $student)
     {
         $teacher = Auth::user();
-        if ($student->role !== 'student') abort(404);
+        if (in_array($student->role, ['teacher', 'dosen'])) abort(404);
         
         $selectedModuleId = $request->input('module_id');
         $modules = Module::where('is_active', true)->get();
