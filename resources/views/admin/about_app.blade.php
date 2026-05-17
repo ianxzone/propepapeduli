@@ -85,16 +85,85 @@
 
                 <hr class="border-outline-variant/20">
 
-                <div class="space-y-4">
-                    <h4 class="font-bold text-on-surface">Tim Pengembang</h4>
-                    <p class="text-sm text-on-surface-variant leading-relaxed">
-                        Platform ini dikembangkan oleh tim ahli pendidikan dan teknologi untuk mewujudkan transformasi digital pendidikan di Indonesia, selaras dengan visi Indonesia Emas 2045.
-                    </p>
-                    <div class="flex items-center gap-4 pt-2">
-                        <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">F</div>
-                        <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white font-bold text-xs">B</div>
-                        <div class="w-10 h-10 rounded-full bg-tertiary flex items-center justify-center text-white font-bold text-xs">M</div>
-                        <span class="text-xs font-bold text-outline">+ Tim Ahli</span>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-bold text-on-surface text-lg">Tim Pengembang & Mitra Akademik</h4>
+                        <p class="text-xs text-on-surface-variant mt-1">
+                            Platform ini lahir dari kolaborasi erat antara peneliti pendidikan dan praktisi teknologi informasi terpercaya.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Member 1 -->
+                        <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+                                <img src="https://propepapeduli.id/assets/img/team/farid.png" alt="Faridillah Fahmi N" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Faridillah+Fahmi+N&size=100&background=F9DEDC&color=410002'">
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-on-surface truncate">Faridillah Fahmi N, M.Pd.</h5>
+                                <p class="text-[10px] text-primary font-semibold leading-none mt-0.5">Peneliti Utama (Disertasi)</p>
+                                <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">IKIP Siliwangi / UPI</p>
+                            </div>
+                        </div>
+
+                        <!-- Member 2 -->
+                        <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+                                <img src="https://propepapeduli.id/assets/img/team/bunyamin.png" alt="Prof. Dr. Bunyamin Maftuh" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Bunyamin+Maftuh&size=100&background=F9DEDC&color=410002'">
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-on-surface truncate">Prof. Dr. Bunyamin Maftuh, M.Pd., M.A.</h5>
+                                <p class="text-[10px] text-primary font-semibold leading-none mt-0.5">Promotor</p>
+                                <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">Universitas Pendidikan Indonesia</p>
+                            </div>
+                        </div>
+
+                        <!-- Member 3 -->
+                        <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 shrink-0">
+                                <img src="https://propepapeduli.id/assets/img/team/mubiar.png" alt="Prof. Dr. Mubiar Agustin" class="w-full h-full object-cover" onerror="this.src='https://ui-avatars.com/api/?name=Mubiar+Agustin&size=100&background=F9DEDC&color=410002'">
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-on-surface truncate">Prof. Dr. Mubiar Agustin, M.Pd.</h5>
+                                <p class="text-[10px] text-primary font-semibold leading-none mt-0.5">Co-Promotor</p>
+                                <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">Universitas Pendidikan Indonesia</p>
+                            </div>
+                        </div>
+
+                        <!-- Member 4 (MATEK) -->
+                        <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-surface-container-low border border-outline-variant/20 transition-all hover:shadow-sm">
+                            <div class="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/30 bg-white shrink-0 p-1.5 flex items-center justify-center">
+                                <img src="https://murniabadi.co.id/gambar/logomatek.png" alt="Logo MATEK" class="w-full h-auto object-contain">
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-on-surface truncate">CV. Murni Abadi Teknologi</h5>
+                                <p class="text-[10px] text-primary font-semibold leading-none mt-0.5">Sistem & Tek. Developer (MATEK)</p>
+                                <p class="text-[9px] text-on-surface-variant font-semibold mt-0.5">Mitra Teknologi Informasi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Promotional Banner for MATEK -->
+                <div class="bg-gradient-to-r from-primary to-primary-container p-6 rounded-[2rem] text-white relative overflow-hidden shadow-sm mt-6">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-2xl rounded-full translate-x-1/3 -translate-y-1/3"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                        <div class="space-y-1.5 flex-1">
+                            <h4 class="font-headline font-bold text-lg text-white">Tertarik Membangun LMS atau Aplikasi Serupa?</h4>
+                            <p class="text-xs text-white/85 leading-relaxed max-w-xl">
+                                Hubungi tim ahli kami di <strong>CV. Murni Abadi Teknologi (MATEK)</strong> untuk konsultasi kebutuhan website, sistem informasi, aplikasi mobile, atau platform LMS kustom Anda dengan kualitas premium.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-2.5 shrink-0">
+                            <a href="https://murniabadi.co.id" target="_blank" class="px-4 py-2.5 bg-white/15 hover:bg-white/25 text-white rounded-xl text-xs font-bold transition-all border border-white/20 flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm">language</span>
+                                Website
+                            </a>
+                            <a href="https://wa.me/6285215353973?text=Halo%20MATEK,%20saya%20tertarik%20untuk%20berkonsultasi%20membuat%20sistem%20atau%20LMS%20serupa%20dengan%20ProPePa%20PEDULI." target="_blank" class="px-4 py-2.5 bg-white text-primary hover:bg-surface-container rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5">
+                                <span class="material-symbols-outlined text-sm">chat</span>
+                                Hubungi WA
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
