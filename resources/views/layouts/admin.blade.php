@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     @stack('styles')
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen overflow-hidden" x-data="{ sidebarOpen: false }">
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen w-full overflow-hidden" x-data="{ sidebarOpen: false }">
     
     <!-- Sidebar Overlay (Mobile) -->
     <div x-show="sidebarOpen" 
@@ -28,9 +28,9 @@
          class="fixed inset-0 bg-black/50 z-40 lg:hidden" style="display: none;"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-64 bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-50 transform lg:translate-x-0 lg:static"
+    <aside class="fixed inset-y-0 left-0 w-[260px] bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-50 transform lg:translate-x-0 lg:static shrink-0"
            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           @click.away="sidebarOpen = false">
+           @click.away="if(window.innerWidth < 1024) sidebarOpen = false">
         <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
             <x-logo variant="pill" />
         </div>
@@ -118,14 +118,14 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-surface-container-low">
         <!-- Topbar -->
-        <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm">
-            <div class="flex items-center gap-4">
-                <button @click="sidebarOpen = true" class="lg:hidden p-2 text-on-surface-variant hover:bg-surface-container rounded-lg">
+        <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm relative">
+            <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
+                <button @click="sidebarOpen = true" class="lg:hidden p-2 -ml-2 text-on-surface-variant hover:bg-surface-container rounded-lg shrink-0">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <h1 class="font-headline text-lg font-bold text-on-surface truncate">@yield('header_title', 'Admin ProPePa')</h1>
+                <h1 class="font-headline text-lg sm:text-xl font-bold text-on-surface truncate pb-0.5 leading-none">@yield('header_title', 'Admin ProPePa')</h1>
             </div>
             <div class="flex items-center gap-4">
                 <div class="text-right hidden md:block">
@@ -141,7 +141,7 @@
         </header>
         
         <!-- Content Area -->
-        <main class="flex-1 overflow-y-auto p-6 bg-surface-container-low">
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
             @if(session('success'))
                 <div class="bg-[#d4edda] text-[#155724] border border-[#c3e6cb] px-4 py-3 rounded-xl mb-6 shadow-sm">
                     {{ session('success') }}

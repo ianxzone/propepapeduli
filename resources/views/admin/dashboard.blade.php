@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
         <!-- Stat Cards -->
         <div class="bg-white p-6 rounded-3xl border border-outline-variant/30 shadow-sm flex items-center gap-4">
             <div class="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
