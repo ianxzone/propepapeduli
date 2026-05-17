@@ -139,7 +139,7 @@
                             <span class="text-[10px] font-bold text-center text-on-surface leading-tight">{{ $module->badge_name ?? $module->title }}</span>
                         </div>
                     @empty
-                        <div class="col-span-3 py-8 text-center">
+                        <div class="col-span-full py-8 text-center flex flex-col items-center justify-center">
                             <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-3 border border-dashed border-outline-variant">
                                 <span class="material-symbols-outlined text-outline">lock</span>
                             </div>
