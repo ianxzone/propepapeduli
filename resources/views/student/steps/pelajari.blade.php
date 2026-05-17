@@ -146,15 +146,20 @@
             @csrf
             
             @if(!empty($module->content['P']['teacher_instruction']))
-            <div class="bg-primary/5 p-4.5 rounded-2xl border border-primary/10 flex gap-3.5 shadow-sm">
-                <span class="material-symbols-outlined text-primary text-xl">record_voice_over</span>
-                <div class="space-y-1">
-                    <span class="block text-[10px] font-bold uppercase tracking-widest text-primary">Instruksi Guru:</span>
-                    <div class="prose prose-sm prose-primary max-w-none text-on-surface leading-relaxed font-medium">
+            <section class="space-y-4">
+                <div class="flex items-center gap-2 text-primary">
+                    <span class="material-symbols-outlined text-xl">record_voice_over</span>
+                    <h2 class="font-headline text-headline-sm font-bold">Instruksi Guru</h2>
+                </div>
+                
+                <div class="bg-white p-6 rounded-[2rem] border border-outline-variant/30 shadow-sm">
+                    <div class="prose prose-primary max-w-none text-on-surface-variant leading-relaxed
+                                prose-headings:font-headline prose-headings:text-on-surface
+                                prose-p:text-sm prose-li:text-sm prose-strong:text-primary">
                         {!! $module->content['P']['teacher_instruction'] !!}
                     </div>
                 </div>
-            </div>
+            </section>
             @endif
 
             <section class="bg-white p-6 rounded-3xl border border-outline-variant/30 shadow-soft space-y-4">
