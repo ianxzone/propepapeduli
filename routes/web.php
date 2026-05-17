@@ -104,14 +104,18 @@ Route::middleware(['auth', 'admin_dosen'])->prefix('admin')->group(function () {
     Route::post('/backups', [App\Http\Controllers\Admin\BackupController::class, 'create'])->name('admin.backups.create');
     Route::get('/backups/download/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'download'])->name('admin.backups.download');
     Route::delete('/backups/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'delete'])->name('admin.backups.delete');
-
-    // NEW: About App
-    Route::get('/about-app', function () {
-        $teams = \App\Models\Team::where('is_active', true)->orderBy('order')->get();
-        return view('admin.about_app', compact('teams'));
-    })->name('admin.about-app');
-
     // NEW: Setup Wizard
     Route::get('/setup-wizard', [App\Http\Controllers\Admin\SetupWizardController::class, 'index'])->name('admin.setup.wizard');
     Route::post('/setup-wizard', [App\Http\Controllers\Admin\SetupWizardController::class, 'save'])->name('admin.setup.save');
+});
+
+// Common route for Admin, Dosen, and Teacher
+Route::middleware(['auth'])->group(function () {
+    Route::get('/about-app', function () {
+        if (!in_array(Auth::user()->role, ['admin', 'dosen', 'teacher'])) {
+            abort(403, 'Akses ditolak.');
+        }
+        $teams = \App\Models\Team::where('is_active', true)->orderBy('order')->get();
+        return view('admin.about_app', compact('teams'));
+    })->name('admin.about-app');
 });

@@ -69,6 +69,11 @@
                 <span>Manajemen User</span>
             </a>
             @endif
+            <div class="h-px bg-outline-variant/30 my-4 mx-3"></div>
+            <a href="{{ route('admin.about-app') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {{ request()->routeIs('admin.about-app') ? 'bg-primary/10 text-primary font-bold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface' }}">
+                <span class="material-symbols-outlined text-[20px]" style="{{ request()->routeIs('admin.about-app') ? "font-variation-settings: 'FILL' 1;" : "" }}">info</span>
+                <span>Tentang Aplikasi</span>
+            </a>
         </div>
         
         <div class="p-4 border-t border-outline-variant/30 shrink-0">

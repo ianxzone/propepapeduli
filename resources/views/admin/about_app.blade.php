@@ -1,4 +1,5 @@
-@extends('layouts.admin')
+@extends(Auth::user()->role === 'teacher' ? 'layouts.teacher' : 'layouts.admin')
+
 
 @section('title', 'Tentang Aplikasi - ProPePa')
 @section('header_title', 'Tentang Aplikasi')
