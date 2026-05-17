@@ -29,7 +29,7 @@
 
     <!-- Sidebar -->
     <aside class="fixed inset-y-0 left-0 w-[260px] bg-[#1e1e1e] text-white flex flex-col transition-transform duration-300 shadow-xl z-50 transform -translate-x-full lg:translate-x-0 lg:static shrink-0"
-           :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
            @click.away="if(window.innerWidth < 1024) sidebarOpen = false">
         <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
             <x-logo variant="pill" />
