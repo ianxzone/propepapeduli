@@ -10,14 +10,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::table('settings')->insert([
+        $settings = [
             ['key' => 'hero_badge', 'value' => 'LMS Pembelajaran Berbasis Proyek', 'group' => 'hero'],
             ['key' => 'hero_title', 'value' => 'Wujudkan <span class="text-primary-fixed-dim">Profil Pelajar</span> Pancasila.', 'group' => 'hero'],
             ['key' => 'hero_description', 'value' => 'Platform LMS modern yang dirancang khusus untuk mendukung Siklus PEDULI dalam pembelajaran berbasis proyek yang interaktif dan menyenangkan.', 'group' => 'hero'],
             ['key' => 'hero_cta_text', 'value' => 'Mulai Belajar Sekarang', 'group' => 'hero'],
             ['key' => 'hero_students_count', 'value' => '+100 Siswa Terdaftar', 'group' => 'hero'],
             ['key' => 'hero_show_leaderboard', 'value' => '1', 'group' => 'hero'],
-        ]);
+        ];
+
+        foreach ($settings as $setting) {
+            DB::table('settings')->updateOrInsert(
+                ['key' => $setting['key']],
+                ['value' => $setting['value'], 'group' => $setting['group']]
+            );
+        }
     }
 
     /**
