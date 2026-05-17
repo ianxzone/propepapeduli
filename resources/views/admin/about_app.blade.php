@@ -6,35 +6,37 @@
 @section('content')
 <div class="space-y-8">
     <!-- Hero Info -->
-    <div class="bg-primary rounded-[3rem] p-8 md:p-12 text-white relative overflow-hidden shadow-2xl">
+    <div class="bg-primary rounded-[3rem] p-8 md:p-10 text-white relative overflow-hidden shadow-2xl">
         <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
         <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <!-- Left Side: LMS Info -->
-            <div class="lg:col-span-7 space-y-6">
-                <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest">
+            <div class="lg:col-span-7 space-y-5">
+                <div class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider">
                     Versi 1.0.0 Stable
                 </div>
-                <h1 class="font-headline text-4xl md:text-5xl font-bold">ProPePa PEDULI</h1>
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight font-sans" style="font-family: 'Lexend', 'Nunito Sans', sans-serif;">ProPePa PEDULI</h1>
                 <p class="text-white/80 text-base md:text-lg leading-relaxed">
                     Platform Learning Management System (LMS) inovatif yang dirancang khusus untuk mendukung Proyek Penguatan Profil Pelajar Pancasila melalui pendekatan Isu Sosiosaintifik.
                 </p>
             </div>
 
             <!-- Right Side: MATEK Promotion (Beautiful glassmorphism matching the design system) -->
-            <div class="lg:col-span-5 bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 space-y-4">
-                <div class="space-y-1.5">
-                    <h4 class="font-headline font-bold text-base md:text-lg text-white">Tertarik Membangun LMS Serupa?</h4>
+            <div class="lg:col-span-5 bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-3xl border border-white/20 space-y-4">
+                <div class="space-y-2">
+                    <h4 class="font-bold text-base md:text-lg text-white font-sans" style="font-family: 'Lexend', 'Nunito Sans', sans-serif;">Tertarik Membangun LMS Serupa?</h4>
                     <p class="text-xs text-white/80 leading-relaxed">
                         Hubungi tim pengembang kami di <strong>CV. Murni Abadi Teknologi (MATEK)</strong> untuk konsultasi kebutuhan website, aplikasi, atau LMS kustom Anda.
                     </p>
                 </div>
-                <div class="flex flex-wrap gap-2 pt-1">
-                    <a href="https://murniabadi.co.id" target="_blank" class="px-3.5 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-xs font-bold transition-all border border-white/25 flex items-center gap-1.5">
-                        <span class="material-symbols-outlined text-sm">language</span>
+                <div class="flex flex-wrap gap-3 pt-2">
+                    <!-- Website Button: Premium Solid White with Maroon Text -->
+                    <a href="https://murniabadi.co.id" target="_blank" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-gray-100 rounded-xl shadow-md transition-all font-bold text-xs shrink-0" style="color: #570000;">
+                        <span class="material-symbols-outlined text-[16px] font-bold">language</span>
                         Website
                     </a>
-                    <a href="https://wa.me/6285215353973?text=Halo%20MATEK,%20saya%20tertarik%20untuk%20berkonsultasi%20membuat%20sistem%20atau%20LMS%20serupa%20dengan%20ProPePa%20PEDULI." target="_blank" class="px-3.5 py-2 bg-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5 hover:bg-white/95" style="color: #410002;">
-                        <span class="material-symbols-outlined text-sm">chat</span>
+                    <!-- WhatsApp Button: Premium Solid WhatsApp Green -->
+                    <a href="https://wa.me/6285215353973?text=Halo%20MATEK,%20saya%20tertarik%20untuk%20berkonsultasi%20membuat%20sistem%20atau%20LMS%20serupa%20dengan%20ProPePa%20PEDULI." target="_blank" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-xl shadow-md transition-all font-bold text-xs shrink-0">
+                        <span class="material-symbols-outlined text-[16px] font-bold">chat</span>
                         Hubungi WA
                     </a>
                 </div>
