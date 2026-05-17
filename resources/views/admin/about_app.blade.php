@@ -8,9 +8,9 @@
     <!-- Hero Info -->
     <div class="bg-primary rounded-[3rem] p-8 md:p-10 text-white relative overflow-hidden shadow-2xl">
         <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
             <!-- Left Side: LMS Info -->
-            <div class="lg:col-span-7 space-y-5">
+            <div class="lg:col-span-2 space-y-5">
                 <div class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-wider">
                     Versi 1.0.0 Stable
                 </div>
@@ -21,7 +21,7 @@
             </div>
 
             <!-- Right Side: MATEK Promotion (Beautiful glassmorphism matching the design system) -->
-            <div class="lg:col-span-5 bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-3xl border border-white/20 space-y-4">
+            <div class="lg:col-span-1 bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-3xl border border-white/20 space-y-4">
                 <div class="space-y-2">
                     <h4 class="font-bold text-base md:text-lg text-white font-sans" style="font-family: 'Lexend', 'Nunito Sans', sans-serif;">Tertarik Membangun LMS Serupa?</h4>
                     <p class="text-xs text-white/80 leading-relaxed">
