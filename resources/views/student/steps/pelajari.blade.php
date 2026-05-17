@@ -153,9 +153,9 @@
                 </div>
                 
                 <div class="bg-white p-6 rounded-[2rem] border border-outline-variant/30 shadow-sm">
-                    <div class="prose prose-primary max-w-none text-on-surface-variant leading-relaxed
+                    <div class="prose prose-primary max-w-none text-on-surface font-bold leading-relaxed
                                 prose-headings:font-headline prose-headings:text-on-surface
-                                prose-p:text-sm prose-li:text-sm prose-strong:text-primary">
+                                prose-p:text-sm prose-p:font-bold prose-p:text-on-surface prose-li:text-sm prose-strong:text-primary">
                         {!! $module->content['P']['teacher_instruction'] !!}
                     </div>
                 </div>
