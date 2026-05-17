@@ -40,7 +40,7 @@
                     <!-- Content -->
                     <div class="p-5 flex-1 flex flex-col">
                         <h3 class="font-headline text-lg font-bold text-on-surface mb-2 line-clamp-1" title="{{ $module->title }}">{{ $module->title }}</h3>
-                        <p class="text-sm text-on-surface-variant line-clamp-2 mb-4 flex-1">{{ $module->description }}</p>
+                        <p class="text-sm text-on-surface-variant line-clamp-2 mb-4 flex-1">{{ strip_tags($module->description) }}</p>
                         
                         <!-- Actions -->
                         <div class="flex items-center justify-between pt-4 border-t border-outline-variant/30 mt-auto">
