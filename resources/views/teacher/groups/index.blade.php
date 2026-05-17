@@ -1,7 +1,7 @@
 @extends('layouts.teacher')
 
 @section('title', 'Kelola Kelompok - ' . $class->name)
-@section('header_title', 'Manajemen Kelompok Diskusi')
+@section('header_title', 'Manajemen Kel. Diskusi')
 
 @section('content')
 <div class="space-y-6">
