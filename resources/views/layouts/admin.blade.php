@@ -28,7 +28,7 @@
          class="fixed inset-0 bg-black/50 z-40 lg:hidden" style="display: none;"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-[260px] bg-[#1e1e1e] text-white flex flex-col transition-all duration-300 shadow-xl z-50 transform lg:translate-x-0 lg:static shrink-0"
+    <aside class="fixed inset-y-0 left-0 w-[260px] bg-[#1e1e1e] text-white flex flex-col transition-transform duration-300 shadow-xl z-50 transform -translate-x-full lg:translate-x-0 lg:static shrink-0"
            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
            @click.away="if(window.innerWidth < 1024) sidebarOpen = false">
         <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
@@ -122,7 +122,7 @@
         <!-- Topbar -->
         <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm relative">
             <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
-                <button @click="sidebarOpen = true" class="lg:hidden p-2 -ml-2 text-on-surface-variant hover:bg-surface-container rounded-lg shrink-0">
+                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 -ml-2 text-on-surface-variant hover:bg-surface-container rounded-lg shrink-0">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
                 <h1 class="font-headline text-lg sm:text-xl font-bold text-on-surface truncate pb-0.5 leading-none">@yield('header_title', 'Admin ProPePa')</h1>
