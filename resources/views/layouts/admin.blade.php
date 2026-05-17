@@ -14,25 +14,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     @stack('styles')
 </head>
-<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen w-full overflow-hidden" x-data="{ sidebarOpen: false }">
+<body class="bg-surface-container-lowest text-on-surface font-body-md antialiased flex h-screen w-full overflow-hidden">
     
     <!-- Sidebar Overlay (Mobile) -->
-    <div x-show="sidebarOpen" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         @click="sidebarOpen = false"
-         class="fixed inset-0 bg-black/50 z-40 lg:hidden" style="display: none;"></div>
+    <div id="sidebar-backdrop" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
 
     <!-- Sidebar -->
-    <aside class="fixed inset-y-0 left-0 w-[260px] bg-[#1e1e1e] text-white flex flex-col transition-transform duration-300 shadow-xl z-50 transform -translate-x-full lg:translate-x-0 lg:static shrink-0"
-           :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}"
-           @click.away="if(window.innerWidth < 1024) sidebarOpen = false">
-        <div class="h-16 flex items-center px-6 border-b border-white/10 shrink-0">
+    <aside id="admin-sidebar" class="fixed inset-y-0 left-0 w-[260px] bg-[#1e1e1e] text-white flex flex-col transition-transform duration-300 shadow-xl z-50 transform -translate-x-full lg:translate-x-0 lg:static shrink-0">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-white/10 shrink-0">
             <x-logo variant="pill" />
+            <button id="close-sidebar-btn" class="lg:hidden p-1 text-surface-variant hover:text-white rounded-lg">
+                <span class="material-symbols-outlined">close</span>
+            </button>
         </div>
         
         <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
@@ -121,21 +114,22 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-surface-container-low">
         <!-- Topbar -->
         <header class="h-16 bg-white border-b border-outline-variant/30 flex items-center justify-between px-4 md:px-6 shrink-0 z-10 shadow-sm relative">
-            <div class="flex items-center gap-3 md:gap-4 overflow-hidden">
-                <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 -ml-2 text-on-surface-variant hover:bg-surface-container rounded-lg shrink-0">
+            <div class="flex items-center gap-3 md:gap-4 w-full">
+                <button id="mobile-menu-btn" class="lg:hidden p-2 -ml-2 text-on-surface-variant hover:bg-surface-container rounded-lg shrink-0">
                     <span class="material-symbols-outlined">menu</span>
                 </button>
-                <h1 class="font-headline text-lg sm:text-xl font-bold text-on-surface truncate pb-0.5 leading-none">@yield('header_title', 'Admin ProPePa')</h1>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="text-right hidden md:block">
-                    <p class="text-sm font-bold text-on-surface">{{ Auth::user()->name }}</p>
-                    <p class="text-[10px] text-on-surface-variant uppercase font-bold">
-                        {{ Auth::user()->role === 'admin' ? 'Super Admin' : 'Dosen Peneliti' }}
-                    </p>
-                </div>
-                <div class="w-10 h-10 rounded-full bg-primary-fixed/20 text-primary-fixed flex items-center justify-center font-bold border border-primary-fixed/10 shadow-sm">
-                    {{ substr(Auth::user()->name, 0, 1) }}
+                <h1 class="font-headline text-lg sm:text-xl font-bold text-on-surface truncate pb-0.5 leading-none flex-1">@yield('header_title', 'Admin ProPePa')</h1>
+                
+                <div class="flex items-center gap-4 shrink-0 ml-auto">
+                    <div class="text-right hidden md:block">
+                        <p class="text-sm font-bold text-on-surface">{{ Auth::user()->name }}</p>
+                        <p class="text-[10px] text-on-surface-variant uppercase font-bold">
+                            {{ Auth::user()->role === 'admin' ? 'Super Admin' : 'Dosen Peneliti' }}
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-primary-fixed/20 text-primary-fixed flex items-center justify-center font-bold border border-primary-fixed/10 shadow-sm">
+                        {{ substr(Auth::user()->name, 0, 1) }}
+                    </div>
                 </div>
             </div>
         </header>
@@ -161,16 +155,37 @@
     <!-- Global Modal Cleanup & Navigation Fix -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Sidebar Toggle Logic (Vanilla JS)
+            const sidebar = document.getElementById('admin-sidebar');
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const closeBtn = document.getElementById('close-sidebar-btn');
+            const backdrop = document.getElementById('sidebar-backdrop');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                backdrop.classList.toggle('hidden');
+            }
+
+            if(menuBtn) menuBtn.addEventListener('click', toggleSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+            if(backdrop) backdrop.addEventListener('click', toggleSidebar);
+
+            // Existing logic
             window.addEventListener('popstate', () => closeModalOverlays());
             const sidebarLinks = document.querySelectorAll('aside a');
             sidebarLinks.forEach(link => {
-                link.addEventListener('click', () => closeModalOverlays());
+                link.addEventListener('click', () => {
+                    closeModalOverlays();
+                    if (window.innerWidth < 1024 && !sidebar.classList.contains('-translate-x-full')) {
+                        toggleSidebar();
+                    }
+                });
             });
 
             function closeModalOverlays() {
                 const modals = document.querySelectorAll('[id*="modal-"]');
                 modals.forEach(modal => modal.classList.add('hidden'));
-                const overlays = document.querySelectorAll('.modal-backdrop, .fixed.inset-0.bg-black');
+                const overlays = document.querySelectorAll('.modal-backdrop, .fixed.inset-0.bg-black:not(#sidebar-backdrop)');
                 overlays.forEach(overlay => overlay.classList.add('hidden'));
             }
         });
