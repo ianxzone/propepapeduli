@@ -527,35 +527,91 @@
                     const canvas = document.getElementById('mapping-canvas');
                     const btn = document.querySelector('button[onclick="exportMapImage()"]');
                     const originalHTML = btn.innerHTML;
+                    const svg = document.getElementById('map-svg');
                     
                     btn.disabled = true;
                     btn.innerHTML = '<span class="animate-spin material-symbols-outlined text-sm">progress_activity</span> Memproses...';
 
                     // Temporarily hide control panel
                     const controls = canvas.querySelector('.absolute.bottom-4.right-4');
-                    controls.style.display = 'none';
+                    if (controls) controls.style.display = 'none';
+
+                    // Set explicit pixel dimensions on SVG to prevent html2canvas crash
+                    const originalSvgWidth = svg.style.width;
+                    const originalSvgHeight = svg.style.height;
+                    svg.style.width = canvas.clientWidth + 'px';
+                    svg.style.height = canvas.clientHeight + 'px';
+
+                    // Safety Timeout: Auto-restore UI after 5 seconds if html2canvas hangs
+                    let isCompleted = false;
+                    const cleanup = () => {
+                        if (isCompleted) return;
+                        isCompleted = true;
+                        if (controls) controls.style.display = 'flex';
+                        btn.disabled = false;
+                        btn.innerHTML = originalHTML;
+                        svg.style.width = originalSvgWidth;
+                        svg.style.height = originalSvgHeight;
+                    };
+
+                    const safetyTimeout = setTimeout(() => {
+                        if (!isCompleted) {
+                            cleanup();
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Proses Selesai',
+                                text: 'Proses ekspor gambar selesai. Jika unduhan tidak dimulai otomatis, silakan coba lagi.',
+                                confirmButtonColor: '#570000',
+                                customClass: {
+                                    popup: 'rounded-[2rem]',
+                                    confirmButton: 'rounded-xl px-6 py-3'
+                                }
+                            });
+                        }
+                    }, 5000);
 
                     html2canvas(canvas, {
                         backgroundColor: '#f8fafc',
                         scale: 2, // Higher quality
                         logging: false,
-                        useCORS: true
+                        useCORS: false, // Prevents hanging on external CDN fonts/images
+                        allowTaint: true
                     }).then(capturedCanvas => {
+                        clearTimeout(safetyTimeout);
+                        if (isCompleted) return;
+
                         const link = document.createElement('a');
                         link.download = 'Peta-Argumen-{{ $module->id }}-' + Date.now() + '.png';
                         link.href = capturedCanvas.toDataURL('image/png');
                         link.click();
                         
-                        // Restore
-                        controls.style.display = 'flex';
-                        btn.disabled = false;
-                        btn.innerHTML = originalHTML;
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Unduh Berhasil!',
+                            text: 'Peta argumen telah berhasil diunduh sebagai gambar PNG.',
+                            confirmButtonColor: '#570000',
+                            customClass: {
+                                popup: 'rounded-[2rem]',
+                                confirmButton: 'rounded-xl px-6 py-3'
+                            }
+                        });
+                        cleanup();
                     }).catch(err => {
+                        clearTimeout(safetyTimeout);
                         console.error('Export error:', err);
-                        alert("Gagal mengekspor gambar. Silakan coba lagi.");
-                        controls.style.display = 'flex';
-                        btn.disabled = false;
-                        btn.innerHTML = originalHTML;
+                        if (isCompleted) return;
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal Mengunduh',
+                            text: 'Gagal mengekspor gambar. Silakan coba lagi.',
+                            confirmButtonColor: '#570000',
+                            customClass: {
+                                popup: 'rounded-[2rem]',
+                                confirmButton: 'rounded-xl px-6 py-3'
+                            }
+                        });
+                        cleanup();
                     });
                 }
 
@@ -579,12 +635,12 @@
                             connections: connections
                         }
                     };
-
+ 
                     const saveBtn = document.querySelector('button[onclick="saveMapToDatabase()"]');
                     const originalHTML = saveBtn.innerHTML;
                     saveBtn.disabled = true;
                     saveBtn.innerHTML = '<span class="animate-spin material-symbols-outlined text-sm">progress_activity</span> Menyimpan...';
-
+ 
                     fetch("{{ route('student.discussion.map.save') }}", {
                         method: 'POST',
                         headers: {
@@ -596,14 +652,41 @@
                     .then(response => response.json())
                     .then(result => {
                         if (result.success) {
-                            alert("✅ Peta argumen berhasil disimpan!");
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil Disimpan!',
+                                text: 'Peta argumen kelompokmu telah berhasil disimpan ke database.',
+                                confirmButtonColor: '#570000',
+                                customClass: {
+                                    popup: 'rounded-[2rem]',
+                                    confirmButton: 'rounded-xl px-6 py-3'
+                                }
+                            });
                         } else {
-                            alert("❌ Gagal menyimpan: " + result.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal Menyimpan',
+                                text: 'Gagal menyimpan peta: ' + result.message,
+                                confirmButtonColor: '#570000',
+                                customClass: {
+                                    popup: 'rounded-[2rem]',
+                                    confirmButton: 'rounded-xl px-6 py-3'
+                                }
+                            });
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert("❌ Terjadi kesalahan jaringan.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi Kesalahan',
+                            text: 'Gagal menghubungi server. Silakan periksa koneksi internet Anda.',
+                            confirmButtonColor: '#570000',
+                            customClass: {
+                                popup: 'rounded-[2rem]',
+                                confirmButton: 'rounded-xl px-6 py-3'
+                            }
+                        });
                     })
                     .finally(() => {
                         saveBtn.disabled = false;
@@ -639,6 +722,23 @@
             <!-- Next Action -->
             <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" id="next-phase-form" class="space-y-4" enctype="multipart/form-data">
                 @csrf
+                
+                <!-- Reflection Form (Asking Student's Opinion) -->
+                <section class="bg-white p-6 rounded-3xl border border-outline-variant/30 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2 text-primary">
+                        <span class="material-symbols-outlined text-xl">rate_review</span>
+                        <h3 class="font-headline text-body-lg font-bold text-on-surface">Apa pendapatmu tentang diskusi kelompok ini?</h3>
+                    </div>
+                    <div class="relative">
+                        <textarea 
+                            name="content"
+                            rows="4" 
+                            required
+                            placeholder="Tuliskan pendapat atau refleksi kamu tentang jalannya diskusi kelompok hari ini..." 
+                            class="w-full p-4.5 bg-surface-container-lowest border border-outline-variant rounded-2xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm resize-none font-medium text-on-surface"
+                        ></textarea>
+                    </div>
+                </section>
                 
                 <div class="flex items-center gap-3 bg-white p-4 rounded-2xl border border-outline-variant/30 shadow-sm">
                     <input type="checkbox" id="confirm-discussion" required class="w-6 h-6 rounded-lg text-primary focus:ring-primary border-outline-variant/50">
