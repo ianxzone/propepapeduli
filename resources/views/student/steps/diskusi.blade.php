@@ -523,6 +523,113 @@
                     });
                 }
 
+                // Helper functions to convert oklab() and oklch() color spaces to standard RGB/RGBA for compatibility with html2canvas
+                function oklabToRgb(L, a, b, A) {
+                    const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+                    const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+                    const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+
+                    const l = Math.pow(Math.max(0, l_), 3);
+                    const m = Math.pow(Math.max(0, m_), 3);
+                    const s = Math.pow(Math.max(0, s_), 3);
+
+                    let r_lin = +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
+                    let g_lin = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
+                    let b_lin = -0.0041960863 * l - 0.7034186147 * m + 1.7076282910 * s;
+
+                    const gammaCorrect = (c) => {
+                        const positiveC = Math.max(0, c);
+                        return positiveC <= 0.0031308 ? 12.92 * positiveC : 1.055 * Math.pow(positiveC, 1 / 2.4) - 0.055;
+                    };
+
+                    let r = Math.min(255, Math.max(0, Math.round(gammaCorrect(r_lin) * 255)));
+                    let g = Math.min(255, Math.max(0, Math.round(gammaCorrect(g_lin) * 255)));
+                    let b_val = Math.min(255, Math.max(0, Math.round(gammaCorrect(b_lin) * 255)));
+
+                    if (A === 1) {
+                        return `rgb(${r}, ${g}, ${b_val})`;
+                    } else {
+                        return `rgba(${r}, ${g}, ${b_val}, ${A})`;
+                    }
+                }
+
+                function convertOklchToRgb(oklchStr) {
+                    const match = oklchStr.match(/oklch\(\s*([0-9.-]+%?)(?:[\s,]+)([0-9.-]+%?)(?:[\s,]+)([0-9.-]+(?:deg|rad|grad|turn)?)(?:\s*[\/,]\s*([0-9.-]+%?))?\s*\)/i);
+                    if (!match) return oklchStr;
+
+                    let L = parseFloat(match[1]);
+                    if (match[1].endsWith('%')) L /= 100;
+
+                    let C = parseFloat(match[2]);
+                    if (match[2].endsWith('%')) C /= 100;
+
+                    let H_str = match[3];
+                    let H = parseFloat(H_str);
+                    if (H_str.endsWith('rad')) {
+                        // already radians
+                    } else if (H_str.endsWith('grad')) {
+                        H = H * (Math.PI / 200);
+                    } else if (H_str.endsWith('turn')) {
+                        H = H * 2 * Math.PI;
+                    } else {
+                        H = H * (Math.PI / 180);
+                    }
+
+                    let A = match[4] !== undefined ? parseFloat(match[4]) : 1;
+                    if (match[4] && match[4].endsWith('%')) A /= 100;
+
+                    const a = C * Math.cos(H);
+                    const b = C * Math.sin(H);
+
+                    return oklabToRgb(L, a, b, A);
+                }
+
+                function convertOklabToRgbStr(oklabStr) {
+                    const match = oklabStr.match(/oklab\(\s*([0-9.-]+%?)(?:[\s,]+)([0-9.-]+%?)(?:[\s,]+)([0-9.-]+%?)(?:\s*[\/,]\s*([0-9.-]+%?))?\s*\)/i);
+                    if (!match) return oklabStr;
+
+                    let L = parseFloat(match[1]);
+                    if (match[1].endsWith('%')) L /= 100;
+
+                    let a = parseFloat(match[2]);
+                    if (match[2].endsWith('%')) a /= 100;
+
+                    let b = parseFloat(match[3]);
+                    if (match[3].endsWith('%')) b /= 100;
+
+                    let A = match[4] !== undefined ? parseFloat(match[4]) : 1;
+                    if (match[4] && match[4].endsWith('%')) A /= 100;
+
+                    return oklabToRgb(L, a, b, A);
+                }
+
+                function replaceModernColors(str) {
+                    if (typeof str !== 'string') return str;
+                    let result = str;
+
+                    const oklchRegex = /oklch\(\s*[^)]+\)/gi;
+                    result = result.replace(oklchRegex, (match) => {
+                        try {
+                            return convertOklchToRgb(match);
+                        } catch (e) {
+                            console.warn("Failed to parse oklch color:", match, e);
+                            return 'rgb(0, 0, 0)';
+                        }
+                    });
+
+                    const oklabRegex = /oklab\(\s*[^)]+\)/gi;
+                    result = result.replace(oklabRegex, (match) => {
+                        try {
+                            return convertOklabToRgbStr(match);
+                        } catch (e) {
+                            console.warn("Failed to parse oklab color:", match, e);
+                            return 'rgb(0, 0, 0)';
+                        }
+                    });
+
+                    return result;
+                }
+
                 function exportMapImage() {
                     const canvas = document.getElementById('mapping-canvas');
                     const btn = document.querySelector('button[onclick="exportMapImage()"]');
@@ -542,6 +649,33 @@
                     svg.style.width = canvas.clientWidth + 'px';
                     svg.style.height = canvas.clientHeight + 'px';
 
+                    // Override window.getComputedStyle temporarily to translate oklab/oklch colors to standard sRGB
+                    const originalGetComputedStyle = window.getComputedStyle;
+                    window.getComputedStyle = function(element, pseudoElement) {
+                        const style = originalGetComputedStyle(element, pseudoElement);
+                        return new Proxy(style, {
+                            get(target, prop) {
+                                if (prop === 'getPropertyValue') {
+                                    return function(propertyName) {
+                                        let val = target.getPropertyValue(propertyName);
+                                        if (typeof val === 'string' && (val.includes('oklab') || val.includes('oklch'))) {
+                                            return replaceModernColors(val);
+                                        }
+                                        return val;
+                                    };
+                                }
+                                let val = target[prop];
+                                if (typeof val === 'string' && (val.includes('oklab') || val.includes('oklch'))) {
+                                    return replaceModernColors(val);
+                                }
+                                if (typeof val === 'function') {
+                                    return val.bind(target);
+                                }
+                                return val;
+                            }
+                        });
+                    };
+
                     // Safety Timeout: Auto-restore UI after 5 seconds if html2canvas hangs
                     let isCompleted = false;
                     const cleanup = () => {
@@ -552,6 +686,9 @@
                         btn.innerHTML = originalHTML;
                         svg.style.width = originalSvgWidth;
                         svg.style.height = originalSvgHeight;
+                        
+                        // Restore window.getComputedStyle
+                        window.getComputedStyle = originalGetComputedStyle;
                     };
 
                     const safetyTimeout = setTimeout(() => {
