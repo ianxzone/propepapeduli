@@ -142,7 +142,7 @@
         @endif
 
         <!-- Action Button -->
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-6">
+        <form id="pelajari-form" action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-6" novalidate>
             @csrf
             
             @if(!empty($module->content['P']['teacher_instruction']))
@@ -209,6 +209,64 @@
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
         },
+    });
+
+    document.getElementById('pelajari-form').addEventListener('submit', function(e) {
+        let isValid = true;
+        const contentTextarea = document.getElementById('pelajari-content');
+        const confirmCheckbox = document.getElementById('confirm-learn');
+        
+        // Remove existing error elements and styles
+        document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+        contentTextarea.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+        confirmCheckbox.parentElement.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+        
+        // Validate textarea
+        if (!contentTextarea.value.trim()) {
+            isValid = false;
+            contentTextarea.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            
+            // Append error message under textarea
+            const errMsg = document.createElement('p');
+            errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+            errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Tuliskan poin penting yang kamu pelajari terlebih dahulu ya!';
+            contentTextarea.parentElement.appendChild(errMsg);
+        }
+        
+        // Validate checkbox
+        if (!confirmCheckbox.checked) {
+            isValid = false;
+            confirmCheckbox.parentElement.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            
+            // Append error message under checkbox container
+            const errMsg = document.createElement('p');
+            errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+            errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Kamu harus menyetujui pernyataan ini untuk melanjutkan!';
+            confirmCheckbox.parentElement.parentElement.appendChild(errMsg);
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            
+            // Children-friendly Alert Dialog
+            Swal.fire({
+                title: 'Ada yang Terlewat! 🌟',
+                text: 'Yuk, isi jawabanmu dan centang kotak persetujuan terlebih dahulu sebelum melanjutkan perjalanan belajarmu!',
+                icon: 'warning',
+                confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                confirmButtonColor: '#570000',
+                customClass: {
+                    popup: 'rounded-[2rem]',
+                    confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                }
+            });
+            
+            // Scroll to the first error element
+            const firstError = document.querySelector('.border-red-500');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
     });
 </script>
 @endpush

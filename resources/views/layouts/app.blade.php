@@ -19,6 +19,25 @@
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        
+        /* Custom Animations for Child-Friendly UX */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .error-shake {
+            animation: shake 0.15s ease-in-out 3;
+        }
+
+        @keyframes pop-bounce {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1.1); }
+        }
+        .animate-pop-bounce {
+            animation: pop-bounce 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('styles')

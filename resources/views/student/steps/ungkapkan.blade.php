@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-8">
+        <form id="ungkapkan-form" action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-8" novalidate>
             @csrf
             
             <!-- Emotional Selection -->
@@ -205,6 +205,64 @@
                     }
                 } else {
                     recognition.stop();
+                }
+            });
+
+            // Child-Friendly Form Validation
+            document.getElementById('ungkapkan-form').addEventListener('submit', function(e) {
+                let isValid = true;
+                const emotionSelected = document.querySelector('input[name="emotion"]:checked');
+                const emotionContainer = document.querySelector('input[name="emotion"]').closest('section');
+                const contentTextarea = document.querySelector('textarea[name="content"]');
+                
+                // Remove existing errors
+                document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+                if (emotionContainer) emotionContainer.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake', 'border', 'rounded-[2rem]', 'p-4');
+                if (contentTextarea) contentTextarea.parentElement.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                
+                // 1. Validate emotion radio buttons
+                if (!emotionSelected) {
+                    isValid = false;
+                    if (emotionContainer) {
+                        emotionContainer.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake', 'border', 'rounded-[2rem]', 'p-4');
+                        
+                        const errMsg = document.createElement('p');
+                        errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 text-center flex items-center justify-center gap-1';
+                        errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Silakan pilih salah satu perasaanmu di atas ya!';
+                        emotionContainer.appendChild(errMsg);
+                    }
+                }
+                
+                // 2. Validate textarea
+                if (contentTextarea && !contentTextarea.value.trim()) {
+                    isValid = false;
+                    contentTextarea.parentElement.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                    
+                    const errMsg = document.createElement('p');
+                    errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                    errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Tuliskan jurnal empatimu terlebih dahulu ya!';
+                    contentTextarea.parentElement.appendChild(errMsg);
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    
+                    Swal.fire({
+                        title: 'Ada yang Terlewat! 🌟',
+                        text: 'Silakan pilih perasaanmu dan tulis jurnal empatimu sebelum melanjutkan.',
+                        icon: 'warning',
+                        confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                        confirmButtonColor: '#570000',
+                        customClass: {
+                            popup: 'rounded-[2rem]',
+                            confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                        }
+                    });
+                    
+                    const firstError = document.querySelector('.border-red-500');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
                 }
             });
         });

@@ -962,6 +962,78 @@
                         if (e.key === 'Enter') sendMessage();
                     });
                 }
+
+                // Child-Friendly Form Validation
+                const nextPhaseForm = document.getElementById('next-phase-form');
+                if (nextPhaseForm) {
+                    nextPhaseForm.setAttribute('novalidate', '');
+                    nextPhaseForm.addEventListener('submit', function(e) {
+                        let isValid = true;
+                        const contentTextarea = document.querySelector('#next-phase-form textarea[name="content"]');
+                        const confirmCheckbox = document.getElementById('confirm-discussion');
+                        const fileInput = document.getElementById('discussion_result');
+                        
+                        // Remove existing error elements and styles
+                        document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+                        if (contentTextarea) contentTextarea.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                        if (confirmCheckbox) confirmCheckbox.parentElement.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                        if (fileInput) fileInput.parentElement.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                        
+                        // Validate file input
+                        if (fileInput && fileInput.hasAttribute('required') && !fileInput.files.length) {
+                            isValid = false;
+                            fileInput.parentElement.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                            
+                            const errMsg = document.createElement('p');
+                            errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center justify-center gap-1';
+                            errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Kamu harus mengunggah file hasil diskusi terlebih dahulu ya!';
+                            fileInput.parentElement.parentElement.appendChild(errMsg);
+                        }
+                        
+                        // Validate textarea
+                        if (contentTextarea && !contentTextarea.value.trim()) {
+                            isValid = false;
+                            contentTextarea.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                            
+                            const errMsg = document.createElement('p');
+                            errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                            errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Tuliskan pendapatmu tentang diskusi terlebih dahulu ya!';
+                            contentTextarea.parentElement.appendChild(errMsg);
+                        }
+                        
+                        // Validate checkbox
+                        if (confirmCheckbox && !confirmCheckbox.checked) {
+                            isValid = false;
+                            confirmCheckbox.parentElement.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                            
+                            const errMsg = document.createElement('p');
+                            errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                            errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Kamu harus mencentang kotak persetujuan diskusi!';
+                            confirmCheckbox.parentElement.parentElement.appendChild(errMsg);
+                        }
+                        
+                        if (!isValid) {
+                            e.preventDefault();
+                            
+                            Swal.fire({
+                                title: 'Ada yang Terlewat! 🌟',
+                                text: 'Silakan isi seluruh bidang wajib dan centang kotak persetujuan untuk melanjutkan.',
+                                icon: 'warning',
+                                confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                                confirmButtonColor: '#570000',
+                                customClass: {
+                                    popup: 'rounded-[2rem]',
+                                    confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                                }
+                            });
+                            
+                            const firstError = document.querySelector('.border-red-500');
+                            if (firstError) {
+                                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                    });
+                }
             });
         </script>
     </main>

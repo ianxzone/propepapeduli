@@ -153,7 +153,7 @@
         @endif
 
         <!-- Action Button -->
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" id="next-form" class="space-y-6">
+        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" id="next-form" class="space-y-6" novalidate>
             @csrf
             <input type="hidden" name="emotion" id="selected_emotion" value="">
             
@@ -164,10 +164,19 @@
                     @foreach(['😢', '☹️', '😐', '🙂', '😄'] as $index => $emoji)
                         <button type="button" 
                                 onclick="selectEmotion(this, '{{ $emoji }}')"
-                                class="emotion-btn w-14 h-14 rounded-2xl bg-surface-container-low flex items-center justify-center text-3xl border border-outline-variant/30 hover:border-primary hover:bg-primary/5 transition-all active:scale-90">
+                                class="emotion-btn relative w-14 h-14 rounded-2xl bg-surface-container-low flex items-center justify-center text-3xl border border-outline-variant/30 hover:border-primary hover:bg-primary/5 transition-all active:scale-90">
                             {{ $emoji }}
+                            <!-- Checkmark Badge -->
+                            <span class="checkmark-badge hidden absolute -top-1.5 -right-1.5 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center border-2 border-white text-[10px] font-black shadow-sm">
+                                ✓
+                            </span>
                         </button>
                     @endforeach
+                </div>
+
+                <!-- Dinamis feedback prompt -->
+                <div id="emotion-feedback" class="text-center text-xs font-bold text-secondary hidden transition-all duration-300">
+                    Kamu memilih: <span id="selected-emotion-display" class="text-xl"></span>. Klik emoji lain jika ingin mengubah.
                 </div>
 
                 <div class="pt-4 border-t border-outline-variant/20">
@@ -192,14 +201,7 @@
             </button>
         </form>
 
-        <script>
-            document.getElementById('next-form').addEventListener('submit', function(e) {
-                if (!document.getElementById('selected_emotion').value) {
-                    e.preventDefault();
-                    alert('Silakan pilih salah satu emoji perasaanmu terlebih dahulu!');
-                }
-            });
-        </script>
+        <!-- Script removed to be in push script stack -->
     </main>
 
     @push('scripts')
@@ -207,16 +209,36 @@
         function selectEmotion(btn, emoji) {
             // Reset all buttons
             document.querySelectorAll('.emotion-btn').forEach(b => {
-                b.classList.remove('ring-4', 'ring-primary/30', 'border-primary', 'scale-110', 'bg-primary/10');
+                b.classList.remove('ring-4', 'ring-primary/30', 'border-amber-500', 'bg-amber-400', 'text-white', 'animate-pop-bounce');
                 b.classList.add('bg-surface-container-low', 'border-outline-variant/30');
+                
+                // Hide checkmark badge
+                const checkmark = b.querySelector('.checkmark-badge');
+                if (checkmark) checkmark.classList.add('hidden');
+                
                 // Reset emoji opacity
                 b.style.filter = 'grayscale(100%) opacity(50%)';
             });
             
-            // Mark selected button
-            btn.classList.add('ring-4', 'ring-primary/30', 'border-primary', 'scale-110', 'bg-primary/10');
+            // Mark selected button (Kuning solid terang / Amber & Bounce animation)
+            btn.classList.add('ring-4', 'ring-primary/30', 'border-amber-500', 'bg-amber-400', 'text-white', 'animate-pop-bounce');
             btn.classList.remove('bg-surface-container-low', 'border-outline-variant/30');
             btn.style.filter = 'grayscale(0%) opacity(100%)';
+            
+            // Show checkmark badge
+            const checkmark = btn.querySelector('.checkmark-badge');
+            if (checkmark) checkmark.classList.remove('hidden');
+            
+            // Play Pop Sound
+            playPopSound();
+            
+            // Update dynamic text prompt
+            const feedbackContainer = document.getElementById('emotion-feedback');
+            const displaySpan = document.getElementById('selected-emotion-display');
+            if (feedbackContainer && displaySpan) {
+                displaySpan.innerText = emoji;
+                feedbackContainer.classList.remove('hidden');
+            }
             
             // Update hidden input
             document.getElementById('selected_emotion').value = emoji;
@@ -225,6 +247,100 @@
         // Initialize emojis to grayscale
         document.querySelectorAll('.emotion-btn').forEach(b => {
             b.style.filter = 'grayscale(100%) opacity(50%)';
+        });
+
+        // CHEERFUL SYNTH SOUND GENERATOR using Web Audio API
+        function playPopSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.12);
+                
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start();
+                osc.stop(ctx.currentTime + 0.12);
+            } catch (e) {
+                console.warn('AudioContext not allowed or blocked:', e);
+            }
+        }
+
+        // Form Validation
+        document.getElementById('next-form').addEventListener('submit', function(e) {
+            let isValid = true;
+            const selectedEmotion = document.getElementById('selected_emotion').value;
+            const contentTextarea = document.getElementById('eksplorasi-content');
+            const confirmCheckbox = document.getElementById('confirm-explore');
+            const emojiSection = document.querySelector('.emotion-btn').parentElement;
+            
+            // Remove existing error elements and styles
+            document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+            emojiSection.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake', 'border', 'rounded-2xl', 'p-2');
+            contentTextarea.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            confirmCheckbox.parentElement.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            
+            // Validate emoji choice
+            if (!selectedEmotion) {
+                isValid = false;
+                emojiSection.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake', 'border', 'rounded-2xl', 'p-2');
+                
+                const errMsg = document.createElement('p');
+                errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 text-center flex items-center justify-center gap-1';
+                errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Silakan pilih salah satu emoji perasaanmu terlebih dahulu ya!';
+                emojiSection.parentElement.appendChild(errMsg);
+            }
+            
+            // Validate textarea
+            if (!contentTextarea.value.trim()) {
+                isValid = false;
+                contentTextarea.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                
+                const errMsg = document.createElement('p');
+                errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Tuliskan deskripsi perasaanmu terlebih dahulu ya!';
+                contentTextarea.parentElement.appendChild(errMsg);
+            }
+            
+            // Validate checkbox
+            if (!confirmCheckbox.checked) {
+                isValid = false;
+                confirmCheckbox.parentElement.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                
+                const errMsg = document.createElement('p');
+                errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Kamu harus mencentang kotak persetujuan eksplorasi!';
+                confirmCheckbox.parentElement.parentElement.appendChild(errMsg);
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                
+                // Friendly Alert Dialog
+                Swal.fire({
+                    title: 'Ada yang Terlewat! 🌟',
+                    text: 'Silakan pilih emoji perasaanmu, tulis deskripsi perasaanmu, dan centang kotak persetujuan untuk melanjutkan.',
+                    icon: 'warning',
+                    confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                    confirmButtonColor: '#570000',
+                    customClass: {
+                        popup: 'rounded-[2rem]',
+                        confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                    }
+                });
+                
+                const firstError = document.querySelector('.border-red-500');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
         });
     </script>
     @endpush

@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+        <form id="lakukan-form" action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" enctype="multipart/form-data" class="space-y-8" novalidate>
             @csrf
             
             <!-- Action Task Card -->
@@ -128,6 +128,64 @@
                     placeholder.classList.add('hidden');
                 }
                 reader.readAsDataURL(file);
+            }
+        });
+
+        // Child-Friendly Form Validation
+        document.getElementById('lakukan-form').addEventListener('submit', function(e) {
+            let isValid = true;
+            const contentTextarea = document.querySelector('textarea[name="content"]');
+            const fileInput = document.getElementById('image-upload');
+            const fileLabel = document.querySelector('label[for="image-upload"]');
+            
+            // Remove existing errors
+            document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+            if (contentTextarea) contentTextarea.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            if (fileLabel) fileLabel.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            
+            // 1. Validate textarea
+            if (contentTextarea && !contentTextarea.value.trim()) {
+                isValid = false;
+                contentTextarea.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                
+                const errMsg = document.createElement('p');
+                errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Tuliskan deskripsi aksi nyatamu terlebih dahulu ya!';
+                contentTextarea.parentElement.appendChild(errMsg);
+            }
+            
+            // 2. Validate file upload
+            if (fileInput && fileInput.hasAttribute('required') && !fileInput.files.length) {
+                isValid = false;
+                if (fileLabel) {
+                    fileLabel.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                    
+                    const errMsg = document.createElement('p');
+                    errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center justify-center gap-1';
+                    errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Kamu harus mengunggah foto aksi nyatamu terlebih dahulu ya!';
+                    fileLabel.parentElement.appendChild(errMsg);
+                }
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
+                
+                Swal.fire({
+                    title: 'Ada yang Terlewat! 🌟',
+                    text: 'Silakan tulis rencana aksi nyatamu dan unggah bukti fotonya sebelum melanjutkan.',
+                    icon: 'warning',
+                    confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                    confirmButtonColor: '#570000',
+                    customClass: {
+                        popup: 'rounded-[2rem]',
+                        confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                    }
+                });
+                
+                const firstError = document.querySelector('.border-red-500');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
         });
     </script>

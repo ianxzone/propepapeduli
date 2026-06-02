@@ -102,7 +102,7 @@
         </section>
 
         <!-- Final CTA -->
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" id="final-essay-form">
+        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" id="final-essay-form" novalidate>
             @csrf
             <button type="submit" 
                     class="w-full h-16 bg-primary text-white rounded-2xl font-headline text-button-text flex items-center justify-center gap-3 shadow-[0_4px_0_0_#410000] active:translate-y-[2px] active:shadow-[0_2px_0_0_#410000] hover:bg-primary-container transition-all">
@@ -115,4 +115,55 @@
     <!-- Bottom Navigation Bar -->
     <x-student-nav active="modul" />
 </div>
+
+@push('scripts')
+<script>
+    document.getElementById('final-essay-form').addEventListener('submit', function(e) {
+        let isValid = true;
+        const dimensions = ['emotional', 'perspective', 'care', 'responsibility'];
+        
+        // Remove existing error elements and styles
+        document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+        
+        dimensions.forEach(dimId => {
+            const textarea = document.querySelector(`textarea[name="essay_${dimId}"]`);
+            if (textarea) {
+                const container = textarea.parentElement;
+                container.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                
+                if (!textarea.value.trim()) {
+                    isValid = false;
+                    container.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+                    
+                    const errMsg = document.createElement('p');
+                    errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+                    errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Jawaban ini tidak boleh kosong ya!';
+                    container.parentElement.appendChild(errMsg);
+                }
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Ada Jawaban yang Kosong! 🌟',
+                text: 'Yuk, jawab seluruh pertanyaan evaluasi akhir terlebih dahulu sebelum menyimpan hasil belajarmu!',
+                icon: 'warning',
+                confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                confirmButtonColor: '#570000',
+                customClass: {
+                    popup: 'rounded-[2rem]',
+                    confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                }
+            });
+            
+            const firstError = document.querySelector('.border-red-500');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+</script>
+@endpush
 @endsection

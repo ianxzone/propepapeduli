@@ -53,7 +53,7 @@
         </section>
 
         <!-- Final CTA -->
-        <form action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-8">
+        <form id="introspeksi-form" action="{{ route('student.module.next', [$module->id, $step]) }}" method="POST" class="space-y-8" novalidate>
             @csrf
             
             <!-- Reflection Section -->
@@ -77,4 +77,48 @@
     <!-- Bottom Navigation Bar -->
     <x-student-nav active="modul" />
 </div>
+
+@push('scripts')
+<script>
+    document.getElementById('introspeksi-form').addEventListener('submit', function(e) {
+        let isValid = true;
+        const contentTextarea = document.getElementById('reflection');
+        
+        // Remove existing error elements and styles
+        document.querySelectorAll('.error-feedback-msg').forEach(el => el.remove());
+        if (contentTextarea) contentTextarea.classList.remove('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+        
+        // Validate textarea
+        if (contentTextarea && !contentTextarea.value.trim()) {
+            isValid = false;
+            contentTextarea.classList.add('border-red-500', 'ring-4', 'ring-red-100', 'error-shake');
+            
+            const errMsg = document.createElement('p');
+            errMsg.className = 'error-feedback-msg text-red-500 text-xs font-bold mt-2 flex items-center gap-1';
+            errMsg.innerHTML = '<span class="material-symbols-outlined text-sm">error</span> Tuliskan pengalaman introspeksimu terlebih dahulu ya!';
+            contentTextarea.parentElement.appendChild(errMsg);
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            
+            Swal.fire({
+                title: 'Ada yang Terlewat! 🌟',
+                text: 'Yuk, tuliskan introspeksi atau refleksi belajarmu hari ini sebelum melanjutkan!',
+                icon: 'warning',
+                confirmButtonText: 'Oke, Aku Lengkapi! 👍',
+                confirmButtonColor: '#570000',
+                customClass: {
+                    popup: 'rounded-[2rem]',
+                    confirmButton: 'rounded-xl px-6 py-3 font-bold'
+                }
+            });
+            
+            if (contentTextarea) {
+                contentTextarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+</script>
+@endpush
 @endsection
